@@ -5,6 +5,12 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked", "ApacBreachersRanked\ApacBreachersRanked.csproj", "{472FA17F-6969-4DEC-BBB2-789526714338}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Domain", "ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj", "{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Application", "ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj", "{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Infrastructure", "ApacBreachersRanked.Infrastructure\ApacBreachersRanked.Infrastructure.csproj", "{762B4400-BDAC-4BD9-8300-86E9D1F0A113}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{472FA17F-6969-4DEC-BBB2-789526714338}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{472FA17F-6969-4DEC-BBB2-789526714338}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{472FA17F-6969-4DEC-BBB2-789526714338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

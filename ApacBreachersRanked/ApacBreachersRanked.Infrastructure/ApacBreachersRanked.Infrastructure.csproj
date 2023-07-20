@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Bson" Version="2.20.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.20.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj" />
+    <ProjectReference Include="..\ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
