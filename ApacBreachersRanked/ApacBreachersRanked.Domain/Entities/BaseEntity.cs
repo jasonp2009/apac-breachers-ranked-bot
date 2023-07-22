@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Domain.Events;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Domain.Entities
 {
+    public interface IDomainEvent : INotification
+    {
+    }
     public abstract class BaseEntity
     {
         public Guid Id { get; set; }

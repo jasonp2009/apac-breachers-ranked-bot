@@ -1,41 +1,34 @@
-﻿using Discord;
+﻿using ApacBreachersRanked.Application.Config;
+using Discord;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace ApacBreachersRanked.Application.Users
 {
-    public class GetDiscordUserQuery : IRequest<DiscordUser>
+    public class GetDiscordUserQuery : IRequest<ApplicationDiscordUser>
     {
         public ulong DiscordUserId { get; set; }
     }
 
-    public class GetDiscordUserQueryHandler : IRequestHandler<GetDiscordUserQuery, DiscordUser>
+    public class GetDiscordUserQueryHandler : IRequestHandler<GetDiscordUserQuery, ApplicationDiscordUser>
     {
-        private readonly IDiscordUserRepository _userRepository;
         private readonly IDiscordClient _discordClient;
+        private readonly BreachersDiscordOptions _breachersDiscordOptions;
 
         public GetDiscordUserQueryHandler(
-            IDiscordUserRepository userRepository,
-            IDiscordClient discordClient)
+            IDiscordClient discordClient,
+            IOptions<BreachersDiscordOptions> beachersDiscordOptions)
         {
-            _userRepository = userRepository;
             _discordClient = discordClient;
+            _breachersDiscordOptions = beachersDiscordOptions.Value;
         }
 
-        public async Task<DiscordUser> Handle(GetDiscordUserQuery request, CancellationToken cancellationToken)
+        public async Task<ApplicationDiscordUser> Handle(GetDiscordUserQuery request, CancellationToken cancellationToken)
         {
-            DiscordUser? discordUser = _userRepository.Query.FirstOrDefault(user => user.DiscordUserId == request.DiscordUserId);
-            if (discordUser == null)
-            {
-                IGuild guild = await _discordClient.GetGuildAsync(123);
-                IGuildUser guildUser = await guild.GetUserAsync(request.DiscordUserId)
-                    ?? throw new InvalidOperationException("Cannot find user in server");
-                discordUser = new()
-                {
-                    DiscordUserId = guildUser.Id
-                };
-                await _userRepository.SaveAsync(discordUser, cancellationToken);
-            }
-            return discordUser;
+            IGuild guild = await _discordClient.GetGuildAsync(_breachersDiscordOptions.GuildId);
+            IGuildUser guildUser = await guild.GetUserAsync(request.DiscordUserId)
+                ?? throw new InvalidOperationException("Cannot find user in server");
+            return new ApplicationDiscordUser(guildUser);
         }
     }
 }
