@@ -48,9 +48,9 @@ namespace ApacBreachersRanked.Application.Match.Events
         {
             MatchThreads matchThreads = new(match);
             ITextChannel matchChannel = await _discordClient.GetChannelAsync(_breachersDiscordOptions.MatchChannelId) as ITextChannel;
-            var matchThreadTask = CreateThreadWithPlayers(matchChannel, "Match", "@here Welcome to the match", match.AllPlayers);
-            var homeThreadTask = CreateThreadWithPlayers(matchChannel, "Home", "@here This is a thread for just your team", match.HomePlayers);
-            var awayThreadTask = CreateThreadWithPlayers(matchChannel, "Away", "@here This is a thread for just your team", match.AwayPlayers);
+            var matchThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", GenerateMatchEmbed(match), match.AllPlayers);
+            var homeThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}: Home", "@here", GenerateHomeEmbed(match), match.HomePlayers);
+            var awayThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}: Away", "@here", GenerateAwayEmbed(match), match.AwayPlayers);
 
             await Task.WhenAll(matchThreadTask, homeThreadTask, awayThreadTask);
 
@@ -60,13 +60,13 @@ namespace ApacBreachersRanked.Application.Match.Events
             return matchThreads;
         }
 
-        private async Task<IThreadChannel> CreateThreadWithPlayers(ITextChannel matchChannel, string threadName, string welcomeMessage, IEnumerable<MatchPlayer> players)
+        private async Task<IThreadChannel> CreateThreadWithPlayers(ITextChannel matchChannel, string threadName, string welcomeMessage, Embed embed, IEnumerable<MatchPlayer> players)
         {
             IThreadChannel thread = await matchChannel.CreateThreadAsync(threadName, ThreadType.PrivateThread, ThreadArchiveDuration.OneDay);
             await Task.WhenAll(
                 players.Select(player => InviteUserToThread(thread, player)));
 
-            await thread.SendMessageAsync(welcomeMessage);
+            await thread.SendMessageAsync(welcomeMessage, embed: embed);
             return thread;
         }
 
@@ -80,6 +80,44 @@ namespace ApacBreachersRanked.Application.Match.Events
                     await threadChannel.AddUserAsync(guildUser);
                 }
             }
+        }
+
+        private Embed GenerateMatchEmbed(MatchEntity match)
+        {
+            EmbedBuilder eb = new();
+            eb.WithTitle("Welcome to the match");
+            eb.WithDescription(
+                $"The teams are:{Environment.NewLine}" +
+                $"Home:{Environment.NewLine}" +
+                string.Join(Environment.NewLine, match.HomePlayers.Select(homePlayer => $"    <@{homePlayer.UserId.GetDiscordId()}>")) +
+                $"{Environment.NewLine}vs{Environment.NewLine}" +
+                string.Join(Environment.NewLine, match.AwayPlayers.Select(awayPlayer => $"    <@{awayPlayer.UserId.GetDiscordId()}>"))
+            );
+            return eb.Build();
+        }
+
+        private Embed GenerateHomeEmbed(MatchEntity match)
+        {
+            EmbedBuilder eb = new();
+            eb.WithTitle("Welcome to the match Home team");
+            eb.WithDescription(
+                $"This is a thread for just your team{Environment.NewLine}" +
+                $"You team is:{Environment.NewLine}" +
+                string.Join(Environment.NewLine, match.HomePlayers.Select(homePlayer => $"    <@{homePlayer.UserId.GetDiscordId()}>"))
+            );
+            return eb.Build();
+        }
+
+        private Embed GenerateAwayEmbed(MatchEntity match)
+        {
+            EmbedBuilder eb = new();
+            eb.WithTitle("Welcome to the match Away team");
+            eb.WithDescription(
+                $"This is a thread for just your team{Environment.NewLine}" +
+                $"You team is:{Environment.NewLine}" +
+                string.Join(Environment.NewLine, match.AwayPlayers.Select(awayPlayer => $"    <@{awayPlayer.UserId.GetDiscordId()}>"))
+            );
+            return eb.Build();
         }
     }
 }

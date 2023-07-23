@@ -27,17 +27,15 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
             modelBuilder.Entity<MatchEntity>(e =>
             {
-                e.HasMany(p => p.HomePlayers)
+                e.Property(p => p.MatchNumber).ValueGeneratedOnAdd();
+
+                e.HasMany(p => p.AllPlayers)
                 .WithOne();
 
-                e.Navigation(p => p.HomePlayers).AutoInclude();
+                e.Navigation(p => p.AllPlayers).AutoInclude();
 
-                e.HasMany(p => p.AwayPlayers)
-                .WithOne();
-
-                e.Navigation(p => p.AwayPlayers).AutoInclude();
-
-                e.Ignore(p => p.AllPlayers);
+                e.Ignore(p => p.HomePlayers);
+                e.Ignore(p => p.AwayPlayers);
 
                 e.OwnsOne(p => p.Score);
             });

@@ -32,6 +32,7 @@ namespace ApacBreachersRanked.Modules
                 };
                 await _mediator.Send(command);
                 await RespondAsync("You have joined the queue");
+                await DeleteOriginalResponseAsync();
             }
             catch (Exception e)
             {

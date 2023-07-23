@@ -13,18 +13,25 @@ namespace ApacBreachersRanked.Domain.Entities
     }
     public class MatchEntity : BaseEntity
     {
+        public int MatchNumber { get; set; }
         public MatchStatus Status { get; private set; } = MatchStatus.PendingConfirmation;
-        public IList<MatchPlayer> HomePlayers { get; private set; } = null!;
-        public IList<MatchPlayer> AwayPlayers { get; private set; } = null!;
-        public IEnumerable<MatchPlayer> AllPlayers => HomePlayers.Concat(AwayPlayers);
+        public IEnumerable<MatchPlayer> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
+        public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
+        public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
         public MatchScore? Score { get; private set; } = null!;
 
         private MatchEntity() { }
         internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
         {
             matchQueue.SetMatch(this);
-            HomePlayers = home.Select(x => new MatchPlayer(x)).ToList();
-            AwayPlayers = away.Select(x => new MatchPlayer(x)).ToList();
+            foreach(IUser homePlayer in  home)
+            {
+                AllPlayers.Add(new MatchPlayer(homePlayer, MatchSide.Home));
+            }
+            foreach (IUser awayPlayer in away)
+            {
+                AllPlayers.Add(new MatchPlayer(awayPlayer, MatchSide.Away));
+            }
             QueueDomainEvent(new MatchCreatedEvent() { MatchId = Id });
         }
     }
@@ -33,12 +40,14 @@ namespace ApacBreachersRanked.Domain.Entities
     {
         public IUserId UserId { get; set; }
         public string Name { get; set; }
+        public MatchSide Side { get; set; }
 
         private MatchPlayer() { }
-        public MatchPlayer(IUser user)
+        public MatchPlayer(IUser user, MatchSide side)
         {
             UserId = user.UserId;
             Name = user.Name;
+            Side = side;
         }
 
     }
@@ -54,5 +63,11 @@ namespace ApacBreachersRanked.Domain.Entities
         PendingConfirmation,
         Confirmed,
         Completed
+    }
+
+    public enum MatchSide
+    {
+        Home,
+        Away
     }
 }

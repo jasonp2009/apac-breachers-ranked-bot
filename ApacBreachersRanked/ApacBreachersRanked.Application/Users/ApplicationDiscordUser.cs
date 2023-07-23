@@ -28,6 +28,18 @@ namespace ApacBreachersRanked.Application.Users
         }
     }
 
+    public static class IUserIdExtensions
+    {
+        public static ulong GetDiscordId(this IUserId userId)
+        {
+            if (userId is ApplicationDiscordUserId discordUserId)
+            {
+                return discordUserId.Id;
+            }
+            return 0;
+        }
+    }
+
     public class ApplicationDiscordUserIdValueConvertor : ValueConverter<IUserId, ulong>
     {
         public ApplicationDiscordUserIdValueConvertor() : base(
