@@ -11,5 +11,6 @@ namespace ApacBreachersRanked.Application.Config
         public static string Key = nameof(BreachersDiscordOptions);
         public ulong GuildId { get; init; }
         public ulong ReadyUpChannelId { get; init; }
+        public ulong MatchChannelId { get; init; }
     }
 }

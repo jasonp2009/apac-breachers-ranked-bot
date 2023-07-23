@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.MatchQueue;
+using ApacBreachersRanked.Application.MatchQueue.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using MediatR;
@@ -38,6 +39,21 @@ namespace ApacBreachersRanked.Modules
                 throw;
             }
             
+        }
+
+        [SlashCommand("forcematch", "Force a match to start")]
+        [RequireRole("Developers")]
+        public async Task ForceMatchAsync()
+        {
+            try
+            {
+                await _mediator.Send(new ForceMatchCommand());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

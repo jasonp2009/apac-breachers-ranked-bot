@@ -1,5 +1,5 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
-using ApacBreachersRanked.Application.MatchQueue;
+using ApacBreachersRanked.Application.MatchQueue.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Entities;
 using ApacBreachersRanked.Infrastructure.Config;
@@ -10,20 +10,14 @@ using System.Reflection;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal class MatchQueueDbContext : BaseDbContext, IMatchQueueDbContext
+    internal partial class BreachersDbContext : IDbContext
     {
-        public MatchQueueDbContext(
-            IPublisher notificationHandler,
-            IOptions<RdsOptions> options)
-        : base(notificationHandler, options)
-        {
-        }
 
         public DbSet<MatchQueueEntity> MatchQueue => Set<MatchQueueEntity>();
         public DbSet<MatchQueueUser> MatchQueueUsers => Set<MatchQueueUser>();
         public DbSet<MatchQueueMessage> MatchQueueMessages => Set<MatchQueueMessage>();
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -32,6 +26,11 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 e.HasMany(x => x.Users)
                 .WithOne();
                 e.Navigation(x => x.Users).AutoInclude();
+
+                e.HasOne(x => x.Match)
+                .WithOne()
+                .IsRequired(false)
+                .HasForeignKey<MatchQueueEntity>("MatchId");
             });
 
             modelBuilder.Entity<MatchQueueUser>(e =>
@@ -41,10 +40,9 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
             modelBuilder.Entity<MatchQueueMessage>(e =>
             {
-                e.HasKey(p => p.MatchQueueId);
                 e.HasOne(p => p.MatchQueue)
                 .WithOne()
-                .HasForeignKey<MatchQueueMessage>(x => x.MatchQueueId);
+                .HasForeignKey<MatchQueueMessage>("MatchQueueId");
             });
         }
     }

@@ -13,7 +13,7 @@ namespace ApacBreachersRanked.Infrastructure
         {
             services.Configure<RdsOptions>(options => configuration.GetSection(RdsOptions.Key).Bind(options));
 
-            services.AddScoped<IMatchQueueDbContext, MatchQueueDbContext>();
+            services.AddScoped<IDbContext, BreachersDbContext>();
 
             return services;
         }

@@ -4,7 +4,7 @@ using ApacBreachersRanked.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApacBreachersRanked.Application.MatchQueue
+namespace ApacBreachersRanked.Application.MatchQueue.Commands
 {
     public class AddUserToQueueCommand : IRequest<Unit>
     {
@@ -15,28 +15,28 @@ namespace ApacBreachersRanked.Application.MatchQueue
     public class AddUserToQueueCommandHandler : IRequestHandler<AddUserToQueueCommand, Unit>
     {
         private readonly IMediator _mediator;
-        private readonly IMatchQueueDbContext _matchQueueDbContext;
+        private readonly IDbContext _dbContext;
 
-        public AddUserToQueueCommandHandler(IMediator mediator, IMatchQueueDbContext matchQueueDbContext)
+        public AddUserToQueueCommandHandler(IMediator mediator, IDbContext dbContext)
         {
             _mediator = mediator;
-            _matchQueueDbContext = matchQueueDbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<Unit> Handle(AddUserToQueueCommand request, CancellationToken cancellationToken)
         {
             ApplicationDiscordUser user = await _mediator.Send(new GetDiscordUserQuery() { DiscordUserId = request.DiscordUserId }, cancellationToken);
-            MatchQueueEntity? currentQueue = await _matchQueueDbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
+            MatchQueueEntity? currentQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
 
             if (currentQueue == null)
             {
                 currentQueue = new();
-                await _matchQueueDbContext.MatchQueue.AddAsync(currentQueue);
+                await _dbContext.MatchQueue.AddAsync(currentQueue);
             }
 
             currentQueue.AddUserToQueue(user, DateTime.UtcNow + TimeSpan.FromMinutes(request.TimeoutMins));
 
-            await _matchQueueDbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

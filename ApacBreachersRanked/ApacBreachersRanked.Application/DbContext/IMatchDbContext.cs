@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Application.MatchQueue.Models;
+﻿using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,8 +11,7 @@ namespace ApacBreachersRanked.Application.DbContext
 {
     public partial interface IDbContext
     {
-        DbSet<MatchQueueEntity> MatchQueue { get; }
-        DbSet<MatchQueueUser> MatchQueueUsers { get; }
-        DbSet<MatchQueueMessage> MatchQueueMessages { get; }
+        public DbSet<MatchEntity> Matches { get; }
+        public DbSet<MatchThreads> MatchThreads { get; }
     }
 }

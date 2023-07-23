@@ -9,11 +9,11 @@ using System.Reflection;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal abstract class BaseDbContext : DbContext
+    internal partial class BreachersDbContext : DbContext
     {
         protected readonly IPublisher _notificationHandler;
         private readonly RdsOptions _options;
-        public BaseDbContext(
+        public BreachersDbContext(
             IPublisher notificationHandler,
             IOptions<RdsOptions> options)
         {
@@ -30,28 +30,38 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            IEnumerable<Type> entityTypes = Assembly.GetAssembly(typeof(BaseEntity)).GetTypes().Where(t => t.IsSubclassOf(typeof(BaseEntity)));
+            
+            IEnumerable<Type> entityTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(t => t.IsSubclassOf(typeof(BaseEntity)));
             foreach (Type entityType in entityTypes)
             {
                 modelBuilder.Entity(entityType).Ignore(nameof(BaseEntity.DomainEvents));
             }
+            OnModelCreatingMatchQueue(modelBuilder);
+            OnModelCreatingMatch(modelBuilder);
         }
+
+        partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder);
+        partial void OnModelCreatingMatch(ModelBuilder modelBuilder);
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            List<IDomainEvent> events = ChangeTracker.Entries<BaseEntity>()
-                .Select(x => x.Entity.DomainEvents)
-                .SelectMany(x => x)
-                .ToList();
+            List<BaseEntity> entities = ChangeTracker.Entries<BaseEntity>().Select(x => x.Entity).ToList();
+
+            List<IDomainEvent> events = entities.SelectMany(x => x.DomainEvents).ToList();
 
             int result = await base.SaveChangesAsync();
+
+            foreach (var entity in entities)
+            {
+                entity.DomainEvents.Clear();
+            }
 
             await HandleEvents(events, cancellationToken);
 
             return result;
         }
 
-        protected virtual Task HandleEvents(List<IDomainEvent> events, CancellationToken cancellationToken)
+        protected virtual Task HandleEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
             => Task.WhenAll(events.Select(domainEvent => _notificationHandler.Publish(domainEvent, cancellationToken)));
 
     }

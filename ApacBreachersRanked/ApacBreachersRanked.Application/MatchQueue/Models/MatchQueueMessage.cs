@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApacBreachersRanked.Application.MatchQueue
+namespace ApacBreachersRanked.Application.MatchQueue.Models
 {
-    public class MatchQueueMessage
+    public class MatchQueueMessage : BaseEntity
     {
-        public Guid MatchQueueId { get; set; }
         public MatchQueueEntity MatchQueue { get; set; } = null!;
         public ulong DiscordMessageId { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

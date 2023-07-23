@@ -10,9 +10,10 @@ namespace ApacBreachersRanked.Domain.Entities
     public interface IDomainEvent : INotification
     {
     }
+
     public abstract class BaseEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public IList<IDomainEvent> DomainEvents { get; set; } = new List<IDomainEvent>();
         public void QueueDomainEvent(IDomainEvent domainEvent)
         {
