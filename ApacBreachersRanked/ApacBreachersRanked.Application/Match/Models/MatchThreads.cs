@@ -1,10 +1,5 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Domain.Match.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Application.Match.Models
 {
@@ -12,6 +7,7 @@ namespace ApacBreachersRanked.Application.Match.Models
     {
         public MatchEntity Match { get; set; }
         public ulong MatchThreadId { get; set; }
+        public ulong MatchThreadWelcomeMessageId { get; set; }
         public ulong HomeThreadId { get; set; }
         public ulong AwayThreadId { get; set; }
 

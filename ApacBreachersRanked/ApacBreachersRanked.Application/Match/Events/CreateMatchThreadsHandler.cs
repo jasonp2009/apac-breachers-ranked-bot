@@ -4,6 +4,7 @@ using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Events;
+using ApacBreachersRanked.Application.Match.Extensions;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -44,9 +45,15 @@ namespace ApacBreachersRanked.Application.Match.Events
         {
             MatchThreads matchThreads = new(match);
             ITextChannel matchChannel = await _discordClient.GetChannelAsync(_breachersDiscordOptions.MatchChannelId) as ITextChannel;
-            var matchThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", GenerateMatchEmbed(match), match.AllPlayers);
-            var homeThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}: Home", "@here", GenerateHomeEmbed(match), match.HomePlayers);
-            var awayThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}: Away", "@here", GenerateAwayEmbed(match), match.AwayPlayers);
+            (IThreadChannel matchThread, IUserMessage message) = await CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", match.GenerateMatchEmbed(), match.AllPlayers);
+
+            matchThreads.MatchThreadId = matchThread.Id;
+            matchThreads.MatchThreadWelcomeMessageId = message.Id;
+            return matchThreads;
+
+            /*
+            var homeThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}: Home", "@here", match.GenerateHomeEmbed(), match.HomePlayers);
+            var awayThreadTask = CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}: Away", "@here", match.GenerateAwayEmbed(), match.AwayPlayers);
 
             await Task.WhenAll(matchThreadTask, homeThreadTask, awayThreadTask);
 
@@ -54,16 +61,16 @@ namespace ApacBreachersRanked.Application.Match.Events
             matchThreads.HomeThreadId = homeThreadTask.Result.Id;
             matchThreads.AwayThreadId = awayThreadTask.Result.Id;
             return matchThreads;
+            */
         }
 
-        private async Task<IThreadChannel> CreateThreadWithPlayers(ITextChannel matchChannel, string threadName, string welcomeMessage, Embed embed, IEnumerable<MatchPlayer> players)
+        private async Task<(IThreadChannel thread, IUserMessage message)> CreateThreadWithPlayers(ITextChannel matchChannel, string threadName, string welcomeMessage, Embed embed, IEnumerable<MatchPlayer> players)
         {
             IThreadChannel thread = await matchChannel.CreateThreadAsync(threadName, ThreadType.PrivateThread, ThreadArchiveDuration.OneDay);
             await Task.WhenAll(
                 players.Select(player => InviteUserToThread(thread, player)));
-
-            await thread.SendMessageAsync(welcomeMessage, embed: embed);
-            return thread;
+            IUserMessage message = await thread.SendMessageAsync(welcomeMessage, embed: embed);
+            return (thread, message);
         }
 
         private async Task InviteUserToThread(IThreadChannel threadChannel, MatchPlayer user)
@@ -76,44 +83,6 @@ namespace ApacBreachersRanked.Application.Match.Events
                     await threadChannel.AddUserAsync(guildUser);
                 }
             }
-        }
-
-        private Embed GenerateMatchEmbed(MatchEntity match)
-        {
-            EmbedBuilder eb = new();
-            eb.WithTitle("Welcome to the match");
-            eb.WithDescription(
-                $"The teams are:{Environment.NewLine}" +
-                $"Home:{Environment.NewLine}" +
-                string.Join(Environment.NewLine, match.HomePlayers.Select(homePlayer => $"    <@{homePlayer.UserId.GetDiscordId()}>")) +
-                $"{Environment.NewLine}vs{Environment.NewLine}" +
-                string.Join(Environment.NewLine, match.AwayPlayers.Select(awayPlayer => $"    <@{awayPlayer.UserId.GetDiscordId()}>"))
-            );
-            return eb.Build();
-        }
-
-        private Embed GenerateHomeEmbed(MatchEntity match)
-        {
-            EmbedBuilder eb = new();
-            eb.WithTitle("Welcome to the match Home team");
-            eb.WithDescription(
-                $"This is a thread for just your team{Environment.NewLine}" +
-                $"You team is:{Environment.NewLine}" +
-                string.Join(Environment.NewLine, match.HomePlayers.Select(homePlayer => $"    <@{homePlayer.UserId.GetDiscordId()}>"))
-            );
-            return eb.Build();
-        }
-
-        private Embed GenerateAwayEmbed(MatchEntity match)
-        {
-            EmbedBuilder eb = new();
-            eb.WithTitle("Welcome to the match Away team");
-            eb.WithDescription(
-                $"This is a thread for just your team{Environment.NewLine}" +
-                $"You team is:{Environment.NewLine}" +
-                string.Join(Environment.NewLine, match.AwayPlayers.Select(awayPlayer => $"    <@{awayPlayer.UserId.GetDiscordId()}>"))
-            );
-            return eb.Build();
         }
     }
 }

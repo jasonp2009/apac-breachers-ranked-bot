@@ -1,16 +1,16 @@
-﻿using ApacBreachersRanked.Application.Config;
+﻿using ApacBreachersRanked.Application.Common.Mediator;
+using ApacBreachersRanked.Application.Config;
 using Discord;
-using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace ApacBreachersRanked.Application.Users
 {
-    public class GetDiscordUserQuery : IRequest<ApplicationDiscordUser>
+    public class GetDiscordUserQuery : IQuery<ApplicationDiscordUser>
     {
         public ulong DiscordUserId { get; set; }
     }
 
-    public class GetDiscordUserQueryHandler : IRequestHandler<GetDiscordUserQuery, ApplicationDiscordUser>
+    public class GetDiscordUserQueryHandler : IQueryHandler<GetDiscordUserQuery, ApplicationDiscordUser>
     {
         private readonly IDiscordClient _discordClient;
         private readonly BreachersDiscordOptions _breachersDiscordOptions;

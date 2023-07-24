@@ -37,6 +37,11 @@ namespace ApacBreachersRanked.Application.Users
             }
             return 0;
         }
+
+        public static IUserId ToIUserId(this ulong discordUserId)
+        {
+            return new ApplicationDiscordUserId(discordUserId);
+        }
     }
 
     public class ApplicationDiscordUserIdValueConvertor : ValueConverter<IUserId, ulong>

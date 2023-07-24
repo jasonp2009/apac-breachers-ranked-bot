@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.DbContext;
+﻿using ApacBreachersRanked.Application.Common.Mediator;
+using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
@@ -6,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Commands
 {
-    public class AddUserToQueueCommand : IRequest<Unit>
+    public class AddUserToQueueCommand : ICommand
     {
         public ulong DiscordUserId { get; set; }
         public int TimeoutMins { get; set; }
     }
 
-    public class AddUserToQueueCommandHandler : IRequestHandler<AddUserToQueueCommand, Unit>
+    public class AddUserToQueueCommandHandler : ICommandHandler<AddUserToQueueCommand>
     {
         private readonly IMediator _mediator;
         private readonly IDbContext _dbContext;

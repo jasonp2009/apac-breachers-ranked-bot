@@ -1,23 +1,15 @@
-﻿using ApacBreachersRanked.Application.MatchQueue;
-using ApacBreachersRanked.Application.MatchQueue.Commands;
+﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
 using Discord.Interactions;
-using Discord.WebSocket;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Modules
 {
-    public class MatchQueueModule : InteractionModuleBase<SocketInteractionContext>
+    public class MatchQueueModule : BaseModule
     {
-        private readonly IMediator _mediator;
 
         public MatchQueueModule(IMediator mediator)
+            : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [SlashCommand("joinqueue", "Join the ranked queue")]

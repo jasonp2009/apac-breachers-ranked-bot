@@ -4,6 +4,7 @@
     {
         PendingConfirmation,
         Confirmed,
-        Completed
+        Completed,
+        Cancelled
     }
 }

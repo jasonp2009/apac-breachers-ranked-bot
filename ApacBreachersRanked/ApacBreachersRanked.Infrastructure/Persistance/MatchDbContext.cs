@@ -30,7 +30,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 e.Property(p => p.MatchNumber).ValueGeneratedOnAdd();
 
                 e.HasMany(p => p.AllPlayers)
-                .WithOne();
+                .WithOne(p => p.Match);
 
                 e.Navigation(p => p.AllPlayers).AutoInclude();
 
@@ -42,6 +42,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
             modelBuilder.Entity<MatchPlayer>(e =>
             {
+                e.Navigation(p => p.Match).AutoInclude();
                 e.Property(p => p.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
             });
 

@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.DbContext;
+﻿using ApacBreachersRanked.Application.Common.Mediator;
+using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using MediatR;
@@ -6,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Commands
 {
-    public class ForceMatchCommand : IRequest<Unit>
+    public class ForceMatchCommand : ICommand
     {
     }
 
-    public class ForceMatchCommandHandler : IRequestHandler<ForceMatchCommand, Unit>
+    public class ForceMatchCommandHandler : ICommandHandler<ForceMatchCommand>
     {
         private readonly IDbContext _dbContext;
 
