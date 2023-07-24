@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      dotnet: 6.0
+  pre_build:
+    commands:
+      - dotnet restore ApacBreachersRanked
+  build:
+    commands:
+      - dotnet build ApacBreachersRanked -c Release --no-restore
+  post_build:
+    commands:
+      - dotnet test ApacBreachersRanked -c Release --no-restore --no-build --logger trx --results-directory testresults
+      - dotnet publish ApacBreachersRanked/ApacBreachersRanked/ApacBreachersRanked.csproj -o app/ApacBreachersRankedBot -c Release --no-restore --no-build
+reports:
+  ZooperAPITests:
+    file-format: VisualStudioTrx
+    files:
+      - testresults/**/*
+artifacts:
+  files:
+    - app/**/*
+    - scripts/**/*
+    - appspec.yml
