@@ -1,16 +1,5 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ApacBreachersRanked.Domain.Entities
+﻿namespace ApacBreachersRanked.Domain.Common
 {
-    public interface IDomainEvent : INotification
-    {
-    }
-
     public abstract class BaseEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();

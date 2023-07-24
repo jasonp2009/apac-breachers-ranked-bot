@@ -1,7 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain;
-using ApacBreachersRanked.Domain.Interfaces;
+using ApacBreachersRanked.Domain.User.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;

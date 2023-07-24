@@ -1,16 +1,17 @@
-﻿using ApacBreachersRanked.Domain.Interfaces;
+﻿using ApacBreachersRanked.Domain.Common;
+using ApacBreachersRanked.Domain.Match.Enums;
+using ApacBreachersRanked.Domain.Match.Events;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.User.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApacBreachersRanked.Domain.Entities
+namespace ApacBreachersRanked.Domain.Match.Entities
 {
-    public class MatchCreatedEvent : IDomainEvent
-    {
-        public Guid MatchId { get; set; }
-    }
+
     public class MatchEntity : BaseEntity
     {
         public int MatchNumber { get; set; }
@@ -24,7 +25,7 @@ namespace ApacBreachersRanked.Domain.Entities
         internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
         {
             matchQueue.SetMatch(this);
-            foreach(IUser homePlayer in  home)
+            foreach (IUser homePlayer in home)
             {
                 AllPlayers.Add(new MatchPlayer(homePlayer, MatchSide.Home));
             }
@@ -34,40 +35,5 @@ namespace ApacBreachersRanked.Domain.Entities
             }
             QueueDomainEvent(new MatchCreatedEvent() { MatchId = Id });
         }
-    }
-
-    public class MatchPlayer : BaseEntity, IUser
-    {
-        public IUserId UserId { get; set; }
-        public string Name { get; set; }
-        public MatchSide Side { get; set; }
-
-        private MatchPlayer() { }
-        public MatchPlayer(IUser user, MatchSide side)
-        {
-            UserId = user.UserId;
-            Name = user.Name;
-            Side = side;
-        }
-
-    }
-
-    public class MatchScore
-    {
-        public int Home { get; set; }
-        public int Away { get; set; }
-    }
-
-    public enum MatchStatus
-    {
-        PendingConfirmation,
-        Confirmed,
-        Completed
-    }
-
-    public enum MatchSide
-    {
-        Home,
-        Away
     }
 }

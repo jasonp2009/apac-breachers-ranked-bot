@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApacBreachersRanked.Domain.Constants
+namespace ApacBreachersRanked.Domain.Match.Constants
 {
     public static class MatchConstants
     {

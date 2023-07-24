@@ -1,18 +1,13 @@
 ﻿using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Models;
-using ApacBreachersRanked.Domain.Entities;
-using ApacBreachersRanked.Domain.Interfaces;
+using ApacBreachersRanked.Domain.Match.Events;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.User.Interfaces;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Events
 {

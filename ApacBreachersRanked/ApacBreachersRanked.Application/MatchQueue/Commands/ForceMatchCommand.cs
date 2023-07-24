@@ -1,13 +1,8 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
-using ApacBreachersRanked.Domain.Entities;
-using Discord.Net;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Commands
 {

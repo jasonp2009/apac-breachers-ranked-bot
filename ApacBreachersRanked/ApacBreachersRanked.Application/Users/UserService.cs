@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Domain.Interfaces;
+﻿using ApacBreachersRanked.Domain.User.Interfaces;
 using MediatR;
 using System;
 using System.Collections.Generic;

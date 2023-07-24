@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Users;
-using ApacBreachersRanked.Domain.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

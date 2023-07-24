@@ -1,14 +1,11 @@
-﻿using ApacBreachersRanked.Domain.Constants;
-using ApacBreachersRanked.Domain.Entities;
-using ApacBreachersRanked.Domain.Helpers;
-using ApacBreachersRanked.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ApacBreachersRanked.Domain.Helpers;
+using ApacBreachersRanked.Domain.Match.Constants;
+using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.Match.Interfaces;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.User.Interfaces;
 
-namespace ApacBreachersRanked.Domain.Services
+namespace ApacBreachersRanked.Domain.Match.Services
 {
     internal class MatchService : IMatchService
     {
@@ -43,12 +40,13 @@ namespace ApacBreachersRanked.Domain.Services
 
             bool selectHome = true;
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 if (selectHome)
                 {
                     home.Add(user);
-                } else
+                }
+                else
                 {
                     away.Add(user);
                 }

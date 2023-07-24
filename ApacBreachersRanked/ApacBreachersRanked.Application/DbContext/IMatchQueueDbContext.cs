@@ -1,5 +1,5 @@
 ﻿using ApacBreachersRanked.Application.MatchQueue.Models;
-using ApacBreachersRanked.Domain.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

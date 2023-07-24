@@ -1,7 +1,8 @@
 ﻿using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Models;
-using ApacBreachersRanked.Domain.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Events;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

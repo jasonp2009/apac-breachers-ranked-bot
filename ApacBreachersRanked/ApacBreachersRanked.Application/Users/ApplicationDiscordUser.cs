@@ -1,5 +1,4 @@
-﻿
-using ApacBreachersRanked.Domain.Interfaces;
+﻿using ApacBreachersRanked.Domain.User.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ApacBreachersRanked.Application.Users

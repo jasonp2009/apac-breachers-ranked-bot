@@ -2,16 +2,12 @@
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Application.Users;
-using ApacBreachersRanked.Domain.Entities;
+using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.Match.Events;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Application.Match.Events
 {

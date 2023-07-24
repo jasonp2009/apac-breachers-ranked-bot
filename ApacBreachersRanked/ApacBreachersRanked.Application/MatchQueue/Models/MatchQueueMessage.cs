@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Domain.Entities;
+﻿using ApacBreachersRanked.Domain.Common;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

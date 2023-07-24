@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Domain.Entities;
+﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Infrastructure.Config;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

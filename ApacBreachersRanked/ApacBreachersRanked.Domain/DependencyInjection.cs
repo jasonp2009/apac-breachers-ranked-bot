@@ -1,5 +1,5 @@
-﻿using ApacBreachersRanked.Domain.Interfaces;
-using ApacBreachersRanked.Domain.Services;
+﻿using ApacBreachersRanked.Domain.Match.Interfaces;
+using ApacBreachersRanked.Domain.Match.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
