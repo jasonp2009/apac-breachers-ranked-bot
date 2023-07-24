@@ -1,0 +1,13 @@
+version: 0.0
+os: windows
+files:
+  - source: app\ApacBreachersRankedBot
+    destination: C:\inetpub\ApacBreachersRanked
+file_exists_behavior: OVERWRITE
+hooks:
+  ApplicationStop:
+    - location: .\scripts\ApplicationStop.bat
+      timeout: 600
+  ApplicationStart:
+    - location: .\scripts\ApplicationStart.bat
+      timeout: 300
