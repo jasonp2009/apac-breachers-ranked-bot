@@ -15,32 +15,19 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("joinqueue", "Join the ranked queue")]
         public async Task JoinQueueAsync(int timeoutMins = 60)
         {
-            try
+            AddUserToQueueCommand command = new AddUserToQueueCommand()
             {
-                await DeferAsync();
-                AddUserToQueueCommand command = new AddUserToQueueCommand()
-                {
-                    DiscordUserId = Context.User.Id,
-                    TimeoutMins = timeoutMins
-                };
-                await _mediator.Send(command);
-                await DeleteOriginalResponseAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-            
+                DiscordUserId = Context.User.Id,
+                TimeoutMins = timeoutMins
+            };
+            await _mediator.Send(command);
         }
 
         [SlashCommand("forcematch", "Force a match to start")]
         [RequireRole("Developers")]
         public async Task ForceMatchAsync()
         {
-            await DeferAsync();
             await _mediator.Send(new ForceMatchCommand());
-            await DeleteOriginalResponseAsync();
         }
     }
 }

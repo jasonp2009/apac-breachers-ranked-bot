@@ -11,5 +11,15 @@ namespace ApacBreachersRanked.Modules
         {
             _mediator = mediator;
         }
+
+        public override async Task BeforeExecuteAsync(ICommandInfo command)
+        {
+            await DeferAsync();
+        }
+
+        public override async Task AfterExecuteAsync(ICommandInfo command)
+        {
+            await DeleteOriginalResponseAsync();
+        }
     }
 }

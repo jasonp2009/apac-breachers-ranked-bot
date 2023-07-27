@@ -3,6 +3,7 @@ using ApacBreachersRanked.TypeConverters;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
@@ -46,16 +47,13 @@ namespace Example.Services
             {
                 var context = new SocketInteractionContext(_discord, interaction);
                 var result = await _interactions.ExecuteCommandAsync(context, _services);
-
-                if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
             }
-            catch (Exception ex)
+            catch
             {
                 if (interaction.Type == InteractionType.ApplicationCommand)
                 {
-                    await interaction.GetOriginalResponseAsync()
-                        .ContinueWith(msg => msg.Result.DeleteAsync());
+                    await await interaction.GetOriginalResponseAsync()
+                        .ContinueWith(async msg => await msg.Result.DeleteAsync());
                 }
             }
         }

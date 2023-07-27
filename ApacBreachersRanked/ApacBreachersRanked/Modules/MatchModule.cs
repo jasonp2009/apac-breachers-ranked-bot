@@ -15,21 +15,10 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("confirm", "Confirm you are ready to play in the match")]
         public async Task Confirm()
         {
-            try
+            await _mediator.Send(new PlayerConfirmMatchCommand
             {
-                await DeferAsync();
-                await _mediator.Send(new PlayerConfirmMatchCommand
-                {
-                    DiscordUserId = Context.User.Id
-                });
-                await DeleteOriginalResponseAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-            
+                DiscordUserId = Context.User.Id
+            });
         }
 
         [SlashCommand("enterscore", "Enter scores for match")]
@@ -38,24 +27,13 @@ namespace ApacBreachersRanked.Modules
             [Summary("Home"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int home,
             [Summary("Away"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int away)
         {
-            try
+            await _mediator.Send(new EnterMatchScoreCommand
             {
-                await DeferAsync();
-                await _mediator.Send(new EnterMatchScoreCommand
-                {
-                    MatchThreadId = Context.Channel.Id,
-                    Map = map,
-                    Home = home,
-                    Away = away
-                });
-                await DeleteOriginalResponseAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-            
+                MatchThreadId = Context.Channel.Id,
+                Map = map,
+                Home = home,
+                Away = away
+            });
         }
     }
 }
