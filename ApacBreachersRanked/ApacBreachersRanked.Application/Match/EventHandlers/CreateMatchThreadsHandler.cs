@@ -45,7 +45,7 @@ namespace ApacBreachersRanked.Application.Match.Events
         {
             MatchThreads matchThreads = new(match);
             ITextChannel matchChannel = await _discordClient.GetChannelAsync(_breachersDiscordOptions.MatchChannelId) as ITextChannel;
-            (IThreadChannel matchThread, IUserMessage message) = await CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", match.GenerateMatchEmbed(), match.AllPlayers);
+            (IThreadChannel matchThread, IUserMessage message) = await CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", match.GenerateMatchWelcomeEmbed(), match.AllPlayers);
 
             matchThreads.MatchThreadId = matchThread.Id;
             matchThreads.MatchThreadWelcomeMessageId = message.Id;

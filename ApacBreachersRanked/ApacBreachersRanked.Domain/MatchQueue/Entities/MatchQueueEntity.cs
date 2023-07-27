@@ -22,11 +22,11 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             }
             MatchQueueUser matchQueueUser = new(user, expiryUtc);
             Users.Add(matchQueueUser);
+            QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });
             if (Users.Count >= MatchConstants.MaxCapacity)
             {
                 QueueDomainEvent(new MatchQueueCapacityReachedEvent { MatchQueueId = Id });
             }
-            QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });
         }
 
         public void CloseQueue()

@@ -1,12 +1,8 @@
 ﻿using ApacBreachersRanked.Application.Match.Commands;
-using ApacBreachersRanked.Domain.Match.Events;
+using ApacBreachersRanked.AutoCompleteHandlers;
+using ApacBreachersRanked.Domain.Match.Enums;
 using Discord.Interactions;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Modules
 {
@@ -19,11 +15,47 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("confirm", "Confirm you are ready to play in the match")]
         public async Task Confirm()
         {
-            await _mediator.Send(new PlayerConfirmMatchCommand
+            try
             {
-                DiscordUserId = Context.User.Id
-            });
-            await RespondAsync();
+                await DeferAsync();
+                await _mediator.Send(new PlayerConfirmMatchCommand
+                {
+                    DiscordUserId = Context.User.Id
+                });
+                await DeleteOriginalResponseAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
+        }
+
+        [SlashCommand("enterscore", "Enter scores for match")]
+        public async Task EnterScores(
+            [Summary("Map")] Map map,
+            [Summary("Home"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int home,
+            [Summary("Away"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int away)
+        {
+            try
+            {
+                await DeferAsync();
+                await _mediator.Send(new EnterMatchScoreCommand
+                {
+                    MatchThreadId = Context.Channel.Id,
+                    Map = map,
+                    Home = home,
+                    Away = away
+                });
+                await DeleteOriginalResponseAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
     }
 }

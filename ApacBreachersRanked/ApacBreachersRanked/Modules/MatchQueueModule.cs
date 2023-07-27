@@ -17,18 +17,18 @@ namespace ApacBreachersRanked.Modules
         {
             try
             {
+                await DeferAsync();
                 AddUserToQueueCommand command = new AddUserToQueueCommand()
                 {
                     DiscordUserId = Context.User.Id,
                     TimeoutMins = timeoutMins
                 };
                 await _mediator.Send(command);
-                await RespondAsync("You have joined the queue");
                 await DeleteOriginalResponseAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+
                 throw;
             }
             
@@ -38,15 +38,9 @@ namespace ApacBreachersRanked.Modules
         [RequireRole("Developers")]
         public async Task ForceMatchAsync()
         {
-            try
-            {
-                await _mediator.Send(new ForceMatchCommand());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await DeferAsync();
+            await _mediator.Send(new ForceMatchCommand());
+            await DeleteOriginalResponseAsync();
         }
     }
 }

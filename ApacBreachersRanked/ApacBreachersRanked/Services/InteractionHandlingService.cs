@@ -1,4 +1,6 @@
-﻿using Discord;
+﻿using ApacBreachersRanked.Domain.Match.Enums;
+using ApacBreachersRanked.TypeConverters;
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +29,8 @@ namespace Example.Services
             _discord.Ready += () => _interactions.RegisterCommandsGloballyAsync(true);
             _discord.InteractionCreated += OnInteractionAsync;
 
+            _interactions.AddTypeConverter<Map>(new EnumConverter<Map>());
+
             await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
@@ -46,7 +50,7 @@ namespace Example.Services
                 if (!result.IsSuccess)
                     await context.Channel.SendMessageAsync(result.ToString());
             }
-            catch
+            catch (Exception ex)
             {
                 if (interaction.Type == InteractionType.ApplicationCommand)
                 {

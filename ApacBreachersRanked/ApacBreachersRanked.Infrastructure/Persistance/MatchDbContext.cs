@@ -19,6 +19,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         public DbSet<MatchEntity> Matches => Set<MatchEntity>();
         public DbSet<MatchPlayer> MatchPlayers => Set<MatchPlayer>();
+        public DbSet<MatchMap> MatchMaps => Set<MatchMap>();
         public DbSet<MatchThreads> MatchThreads => Set<MatchThreads>();
 
         partial void OnModelCreatingMatch(ModelBuilder modelBuilder)
@@ -36,8 +37,12 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
                 e.Ignore(p => p.HomePlayers);
                 e.Ignore(p => p.AwayPlayers);
+                e.Ignore(p => p.HostPlayer);
 
-                e.OwnsOne(p => p.Score);
+                e.OwnsMany(p => p.Maps)
+                .OwnsOne(p => p.Score);
+
+                e.Navigation(p => p.Maps).AutoInclude();
             });
 
             modelBuilder.Entity<MatchPlayer>(e =>

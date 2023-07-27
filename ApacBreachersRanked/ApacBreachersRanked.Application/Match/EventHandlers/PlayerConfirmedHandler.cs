@@ -32,7 +32,7 @@ namespace ApacBreachersRanked.Application.Match.Events
                 IMessage message = await threadChannel.GetMessageAsync(matchThreads.MatchThreadWelcomeMessageId);
                 if (message is IUserMessage userMessage)
                 {
-                    await userMessage.ModifyAsync(msg => msg.Embed = match.GenerateMatchEmbed());
+                    await userMessage.ModifyAsync(msg => msg.Embed = match.GenerateMatchWelcomeEmbed());
                 }
             }
         }

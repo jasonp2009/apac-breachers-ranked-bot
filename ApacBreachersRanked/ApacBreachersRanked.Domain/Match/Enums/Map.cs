@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApacBreachersRanked.Domain.Match.Constants
+namespace ApacBreachersRanked.Domain.Match.Enums
 {
-    public static class MatchConstants
+    public enum Map
     {
-        public static int MaxCapacity = 1;
+        Factory,
+        Skyscraper,
+        Hideout
     }
 }
