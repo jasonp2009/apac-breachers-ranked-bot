@@ -117,7 +117,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             return sb.ToString();
         }
 
-        private static string GetUserMention(this Domain.User.Interfaces.IUser user)
+        public static string GetUserMention(this Domain.User.Interfaces.IUser user)
             => $"<@{user.UserId.GetDiscordId()}>";
 
         private static void AddScoreFields(this EmbedBuilder eb, MatchScore score)

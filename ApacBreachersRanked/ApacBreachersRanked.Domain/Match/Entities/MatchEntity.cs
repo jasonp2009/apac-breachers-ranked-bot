@@ -17,6 +17,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
         public MatchPlayer? HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
         public MatchScore? Score { get; private set; } = null;
+        public string? CancellationReason { get; private set; }
         private MatchEntity() { }
         internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
         {
@@ -47,10 +48,18 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             Status = MatchStatus.Confirmed;
         }
 
+        public void CancelMatch(string reason)
+        {
+            Status = MatchStatus.Cancelled;
+            CancellationReason = reason;
+            QueueDomainEvent(new MatchCancelledEvent { MatchId = Id });
+        }
+
         public void SetScore(MatchScore score)
         {
             if (Score == null)
             {
+                Status = MatchStatus.Completed;
                 Score = score;
                 QueueDomainEvent(new MatchScoreSetEvent { MatchId = Id });
             }

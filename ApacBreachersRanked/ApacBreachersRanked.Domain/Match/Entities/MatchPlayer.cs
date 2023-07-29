@@ -31,6 +31,12 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             }
         }
 
+        public void Reject()
+        {
+            Confirmed = false;
+            Match.CancelMatch($"{Name} rejected the match");
+        }
+
         public void SetPlayerAsHost()
         {
             IsHost = true;

@@ -12,13 +12,15 @@ namespace ApacBreachersRanked.Modules
         {
         }
 
-        [SlashCommand("confirm", "Confirm you are ready to play in the match")]
-        public async Task Confirm()
+        [ComponentInteraction("pending-match-*")]
+        public async Task RespondMatch(string response)
         {
-            await _mediator.Send(new PlayerConfirmMatchCommand
+            await _mediator.Send(new PlayerRespondMatchCommand
             {
-                DiscordUserId = Context.User.Id
+                DiscordUserId = Context.User.Id,
+                IsAccepted = response == "confirm"
             });
+
         }
 
         [SlashCommand("enterscore", "Enter scores for match")]
@@ -37,7 +39,7 @@ namespace ApacBreachersRanked.Modules
         }
 
         [ComponentInteraction("pending-score-*")]
-        public async Task ConfirmScore(string response)
+        public async Task RespondScore(string response)
         {
             if (Context.Interaction is Discord.WebSocket.SocketMessageComponent interaction)
             {

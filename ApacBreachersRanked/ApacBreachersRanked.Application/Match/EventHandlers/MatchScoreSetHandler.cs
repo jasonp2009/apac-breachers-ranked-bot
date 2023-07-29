@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Match.Extensions;
+using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Events;
 using Discord;
@@ -25,10 +26,16 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         public async Task Handle(MatchScoreSetEvent notification, CancellationToken cancellationToken)
         {
             MatchEntity match = await _dbContext.Matches.AsNoTracking().SingleAsync(x => x.Id == notification.MatchId, cancellationToken);
+            MatchThreads matchThreads = await _dbContext.MatchThreads.AsNoTracking().SingleAsync(x => x.Match.Id ==  notification.MatchId, cancellationToken);
 
             if (await _discordClient.GetChannelAsync(_options.MatchResultsChannelId) is IMessageChannel channel)
             {
                 await channel.SendMessageAsync(embed: match.GenerateMatchResultEmbed());
+            }
+
+            if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel threadChannel)
+            {
+                await threadChannel.ModifyAsync(chnl => chnl.Archived = true);
             }
         }
     }

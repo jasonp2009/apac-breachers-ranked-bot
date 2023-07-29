@@ -27,9 +27,14 @@ namespace ApacBreachersRanked.Application.Match.Events
 
             MatchThreads matchThreads = await _dbContext.MatchThreads.FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
 
-            if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is not IThreadChannel channel) return;
-
-            await channel.SendMessageAsync(embed: match.GenerateMatchConfirmedEmbed());
+            if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel channel)
+            {
+                if (await channel.GetMessageAsync(matchThreads.MatchThreadWelcomeMessageId) is IUserMessage message)
+                {
+                    await message.ModifyAsync(msg => msg.Components = new ComponentBuilder().Build());
+                }
+                await channel.SendMessageAsync(embed: match.GenerateMatchConfirmedEmbed());
+            }
 
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
