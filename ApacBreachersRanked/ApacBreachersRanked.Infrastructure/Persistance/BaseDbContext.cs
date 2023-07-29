@@ -61,8 +61,12 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             return result;
         }
 
-        protected virtual Task HandleEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
-            => Task.WhenAll(events.Select(domainEvent => _notificationHandler.Publish(domainEvent, cancellationToken)));
-
+        protected virtual async Task HandleEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
+        {
+            foreach (IDomainEvent domainEvent in events)
+            {
+                await _notificationHandler.Publish(domainEvent, cancellationToken);
+            }
+        }
     }
 }

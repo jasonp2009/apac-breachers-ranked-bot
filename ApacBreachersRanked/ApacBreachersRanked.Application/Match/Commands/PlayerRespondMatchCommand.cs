@@ -7,21 +7,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.Match.Commands
 {
-    public class PlayerConfirmMatchCommand : ICommand
+    public class PlayerRespondMatchCommand : ICommand
     {
         public ulong DiscordUserId { get; set; }
+        public bool IsAccepted { get; set; }
     }
 
-    public class PlayerConfirmMatchCommandHandler : ICommandHandler<PlayerConfirmMatchCommand>
+    public class PlayerConfirmMatchCommandHandler : ICommandHandler<PlayerRespondMatchCommand>
     {
         private readonly IDbContext _dbContext;
         public PlayerConfirmMatchCommandHandler(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<Unit> Handle(PlayerConfirmMatchCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(PlayerRespondMatchCommand request, CancellationToken cancellationToken)
         {
-
             MatchPlayer? matchPlayer = await _dbContext.MatchPlayers
                 .FirstOrDefaultAsync(mp =>
                     mp.Match.Status == Domain.Match.Enums.MatchStatus.PendingConfirmation &&
@@ -30,7 +30,13 @@ namespace ApacBreachersRanked.Application.Match.Commands
 
             if (matchPlayer == null) return Unit.Value;
 
-            matchPlayer.Confirm();
+            if (request.IsAccepted)
+            {
+                matchPlayer.Confirm();
+            } else
+            {
+                matchPlayer.Reject();
+            }
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }

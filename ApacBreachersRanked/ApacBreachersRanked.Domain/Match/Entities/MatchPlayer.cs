@@ -12,6 +12,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public string Name { get; private set; }
         public MatchSide Side { get; private set; }
         public bool Confirmed { get; private set; } = false;
+        public bool IsHost { get; private set; } = false;
         private MatchPlayer() { }
         public MatchPlayer(IUser user, MatchSide side)
         {
@@ -28,6 +29,17 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             {
                 QueueDomainEvent(new AllPlayersConfirmedEvent { MatchId = Match.Id });
             }
+        }
+
+        public void Reject()
+        {
+            Confirmed = false;
+            Match.CancelMatch($"{Name} rejected the match");
+        }
+
+        public void SetPlayerAsHost()
+        {
+            IsHost = true;
         }
     }
 }

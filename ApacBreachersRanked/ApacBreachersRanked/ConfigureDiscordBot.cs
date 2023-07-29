@@ -18,6 +18,12 @@ namespace ApacBreachersRanked
             services.AddSingleton<DiscordSocketClient>();
             services.AddSingleton<IDiscordClient>(x => x.GetRequiredService<DiscordSocketClient>());
 
+            services.AddSingleton(new InteractionServiceConfig
+            {
+                AutoServiceScopes = true,
+                DefaultRunMode = RunMode.Sync,
+                ThrowOnError = true
+            });
             services.AddSingleton<InteractionService>();
             services.AddHostedService<InteractionHandlingService>();
             services.AddHostedService<DiscordStartupService>();

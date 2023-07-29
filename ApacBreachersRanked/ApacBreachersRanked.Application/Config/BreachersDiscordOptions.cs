@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ApacBreachersRanked.Application.Config
+﻿namespace ApacBreachersRanked.Application.Config
 {
     public class BreachersDiscordOptions
     {
@@ -12,5 +6,6 @@ namespace ApacBreachersRanked.Application.Config
         public ulong GuildId { get; init; }
         public ulong ReadyUpChannelId { get; init; }
         public ulong MatchChannelId { get; init; }
+        public ulong MatchResultsChannelId { get; init; }
     }
 }

@@ -19,7 +19,9 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         public DbSet<MatchEntity> Matches => Set<MatchEntity>();
         public DbSet<MatchPlayer> MatchPlayers => Set<MatchPlayer>();
+        public DbSet<MapScore> MatchMaps => Set<MapScore>();
         public DbSet<MatchThreads> MatchThreads => Set<MatchThreads>();
+        public DbSet<PendingMatchScore> PendingMatchScores => Set<PendingMatchScore>();
 
         partial void OnModelCreatingMatch(ModelBuilder modelBuilder)
         {
@@ -36,8 +38,21 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
                 e.Ignore(p => p.HomePlayers);
                 e.Ignore(p => p.AwayPlayers);
+                e.Ignore(p => p.HostPlayer);
 
-                e.OwnsOne(p => p.Score);
+                e.OwnsOne(p => p.Score, score =>
+                {
+                    score.OwnsMany(p => p.Maps, map =>
+                    {
+                        map.Ignore(p => p.Outcome);
+                    });
+                    score.Ignore(p => p.RoundScore);
+                    score.Ignore(p => p.MapScore);
+                    score.Ignore(p => p.Outcome);
+                    score.ToTable("MatchScores");
+                });
+
+                e.Navigation(p => p.Score).AutoInclude();
             });
 
             modelBuilder.Entity<MatchPlayer>(e =>
@@ -51,6 +66,29 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 e.HasOne(x => x.Match)
                 .WithOne()
                 .HasForeignKey<MatchThreads>("MatchId");
+            });
+
+            modelBuilder.Entity<PendingMatchScore>(e =>
+            {
+                e.HasOne(p => p.Match)
+                .WithMany()
+                .HasForeignKey(p => p.MatchId);
+
+                e.OwnsOne(p => p.Score, score =>
+                {
+                    score.OwnsMany(p => p.Maps, map =>
+                    {
+                        map.Ignore(p => p.Outcome);
+                    });
+                    score.Ignore(p => p.RoundScore);
+                    score.Ignore(p => p.MapScore);
+                    score.Ignore(p => p.Outcome);
+                });
+
+                e.OwnsMany(p => p.Players, player =>
+                {
+                    player.Property(p => p.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
+                });
             });
         }
     }
