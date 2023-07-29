@@ -47,6 +47,10 @@ namespace Example.Services
             {
                 var context = new SocketInteractionContext(_discord, interaction);
                 var result = await _interactions.ExecuteCommandAsync(context, _services);
+                if (!result.IsSuccess)
+                {
+                    Console.WriteLine(result.ErrorReason);
+                }
             }
             catch
             {

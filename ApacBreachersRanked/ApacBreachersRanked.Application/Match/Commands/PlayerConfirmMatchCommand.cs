@@ -21,7 +21,6 @@ namespace ApacBreachersRanked.Application.Match.Commands
         }
         public async Task<Unit> Handle(PlayerConfirmMatchCommand request, CancellationToken cancellationToken)
         {
-
             MatchPlayer? matchPlayer = await _dbContext.MatchPlayers
                 .FirstOrDefaultAsync(mp =>
                     mp.Match.Status == Domain.Match.Enums.MatchStatus.PendingConfirmation &&

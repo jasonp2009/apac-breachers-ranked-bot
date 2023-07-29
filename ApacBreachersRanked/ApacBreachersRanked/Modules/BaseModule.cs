@@ -19,7 +19,10 @@ namespace ApacBreachersRanked.Modules
 
         public override async Task AfterExecuteAsync(ICommandInfo command)
         {
-            await DeleteOriginalResponseAsync();
+            if (Context.Interaction.Type == Discord.InteractionType.ApplicationCommand)
+            {
+                await DeleteOriginalResponseAsync();
+            }
         }
     }
 }

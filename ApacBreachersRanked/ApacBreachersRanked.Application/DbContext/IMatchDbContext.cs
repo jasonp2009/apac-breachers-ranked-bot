@@ -13,7 +13,7 @@ namespace ApacBreachersRanked.Application.DbContext
     {
         public DbSet<MatchEntity> Matches { get; }
         public DbSet<MatchPlayer> MatchPlayers { get; }
-        public DbSet<MatchMap> MatchMaps { get; }
+        public DbSet<PendingMatchScore> PendingMatchScores { get; }
         public DbSet<MatchThreads> MatchThreads { get; }
     }
 }

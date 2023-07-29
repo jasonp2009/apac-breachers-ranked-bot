@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
 using MediatR;
@@ -33,10 +34,12 @@ namespace ApacBreachersRanked.Application.Match.Commands
                 .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new InvalidOperationException("Unable to find match");
 
-            match.SetScore(new List<MatchMap>
-            {
-                new MatchMap(request.Map, new MatchScore(request.Home, request.Away))
-            });
+            MatchScore score = new();
+            score.Maps.Add(new MapScore(request.Map, request.Home, request.Away));
+
+            PendingMatchScore pendingMatchScore = new(match, score);
+
+            _dbContext.PendingMatchScores.Add(pendingMatchScore);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Unit.Value;

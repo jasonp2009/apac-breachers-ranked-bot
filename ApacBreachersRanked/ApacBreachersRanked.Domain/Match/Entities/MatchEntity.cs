@@ -16,8 +16,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
         public MatchPlayer? HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
-        public IList<MatchMap> Maps { get; private set; } = new List<MatchMap>();
-        public bool IsScoresConfirmed { get; private set; } = false;
+        public MatchScore? Score { get; private set; } = null;
         private MatchEntity() { }
         internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
         {
@@ -48,14 +47,13 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             Status = MatchStatus.Confirmed;
         }
 
-        public void SetScore(IEnumerable<MatchMap> matchScores)
+        public void SetScore(MatchScore score)
         {
-            Maps = matchScores.ToList();
-        }
-
-        public void ConfirmScores()
-        {
-            IsScoresConfirmed = true;
+            if (Score == null)
+            {
+                Score = score;
+                QueueDomainEvent(new MatchScoreSetEvent { MatchId = Id });
+            }
         }
     }
 }

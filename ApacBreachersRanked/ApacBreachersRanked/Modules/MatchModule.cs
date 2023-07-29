@@ -35,5 +35,19 @@ namespace ApacBreachersRanked.Modules
                 Away = away
             });
         }
+
+        [ComponentInteraction("pending-score-*")]
+        public async Task ConfirmScore(string response)
+        {
+            if (Context.Interaction is Discord.WebSocket.SocketMessageComponent interaction)
+            {
+                await _mediator.Send(new PlayerRespondScoreCommand
+                {
+                    IsConfirm = response == "confirm",
+                    PendingScoreMessageId = interaction.Message.Id,
+                    UserId = interaction.User.Id
+                });
+            }
+        }
     }
 }
