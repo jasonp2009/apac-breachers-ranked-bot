@@ -9,7 +9,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
     {
         public MatchEntity Match { get; private set; }
         public IUserId UserId { get; private set; }
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         public MatchSide Side { get; private set; }
         public bool Confirmed { get; private set; } = false;
         public bool IsHost { get; private set; } = false;
