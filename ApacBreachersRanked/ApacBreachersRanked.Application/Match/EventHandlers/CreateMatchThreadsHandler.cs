@@ -45,7 +45,10 @@ namespace ApacBreachersRanked.Application.Match.Events
         {
             MatchThreads matchThreads = new(match);
             ITextChannel matchChannel = await _discordClient.GetChannelAsync(_breachersDiscordOptions.MatchChannelId) as ITextChannel;
-            (IThreadChannel matchThread, IUserMessage message) = await CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", match.GenerateMatchEmbed(), match.AllPlayers);
+            ComponentBuilder cb = new();
+            cb.WithButton("Confirm", "pending-match-confirm", style: ButtonStyle.Success);
+            cb.WithButton("Reject", "pending-match-reject", style: ButtonStyle.Danger);
+            (IThreadChannel matchThread, IUserMessage message) = await CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", match.GenerateMatchWelcomeEmbed(), cb.Build(), match.AllPlayers);
 
             matchThreads.MatchThreadId = matchThread.Id;
             matchThreads.MatchThreadWelcomeMessageId = message.Id;
@@ -64,12 +67,18 @@ namespace ApacBreachersRanked.Application.Match.Events
             */
         }
 
-        private async Task<(IThreadChannel thread, IUserMessage message)> CreateThreadWithPlayers(ITextChannel matchChannel, string threadName, string welcomeMessage, Embed embed, IEnumerable<MatchPlayer> players)
+        private async Task<(IThreadChannel thread, IUserMessage message)> CreateThreadWithPlayers(
+            ITextChannel matchChannel,
+            string threadName,
+            string welcomeMessage,
+            Embed embed,
+            MessageComponent components,
+            IEnumerable<MatchPlayer> players)
         {
             IThreadChannel thread = await matchChannel.CreateThreadAsync(threadName, ThreadType.PrivateThread, ThreadArchiveDuration.OneDay);
             await Task.WhenAll(
                 players.Select(player => InviteUserToThread(thread, player)));
-            IUserMessage message = await thread.SendMessageAsync(welcomeMessage, embed: embed);
+            IUserMessage message = await thread.SendMessageAsync(welcomeMessage, embed: embed, components: components);
             return (thread, message);
         }
 

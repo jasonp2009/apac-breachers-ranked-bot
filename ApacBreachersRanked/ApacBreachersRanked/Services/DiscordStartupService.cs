@@ -16,7 +16,6 @@ namespace ApacBreachersRanked.Services
         {
             _discord = discord;
             _config = config.Value;
-
             discord.Log += Log;
         }
 

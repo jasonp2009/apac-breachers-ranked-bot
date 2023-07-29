@@ -14,7 +14,6 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
     {
 
         public DbSet<MatchQueueEntity> MatchQueue => Set<MatchQueueEntity>();
-        public DbSet<MatchQueueUser> MatchQueueUsers => Set<MatchQueueUser>();
         public DbSet<MatchQueueMessage> MatchQueueMessages => Set<MatchQueueMessage>();
 
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder)
@@ -23,19 +22,17 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
             modelBuilder.Entity<MatchQueueEntity>(e =>
             {
-                e.HasMany(x => x.Users)
-                .WithOne();
+                e.OwnsMany(x => x.Users, users =>
+                {
+                    users.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
+                });
+
                 e.Navigation(x => x.Users).AutoInclude();
 
                 e.HasOne(x => x.Match)
                 .WithOne()
                 .IsRequired(false)
                 .HasForeignKey<MatchQueueEntity>("MatchId");
-            });
-
-            modelBuilder.Entity<MatchQueueUser>(e =>
-            {
-                e.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
             });
 
             modelBuilder.Entity<MatchQueueMessage>(e =>

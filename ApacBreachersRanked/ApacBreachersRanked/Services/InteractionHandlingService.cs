@@ -1,6 +1,11 @@
-﻿using Discord;
+﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
+using ApacBreachersRanked.Domain.Match.Enums;
+using ApacBreachersRanked.TypeConverters;
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
@@ -26,6 +31,9 @@ namespace Example.Services
         {
             _discord.Ready += () => _interactions.RegisterCommandsGloballyAsync(true);
             _discord.InteractionCreated += OnInteractionAsync;
+            _discord.Ready += OnReadyAsync;
+
+            _interactions.AddTypeConverter<Map>(new EnumConverter<Map>());
 
             await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
@@ -42,18 +50,37 @@ namespace Example.Services
             {
                 var context = new SocketInteractionContext(_discord, interaction);
                 var result = await _interactions.ExecuteCommandAsync(context, _services);
-
                 if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
+                {
+                    Console.WriteLine(result.ErrorReason);
+                }
             }
             catch
             {
                 if (interaction.Type == InteractionType.ApplicationCommand)
                 {
-                    await interaction.GetOriginalResponseAsync()
-                        .ContinueWith(msg => msg.Result.DeleteAsync());
+                    await await interaction.GetOriginalResponseAsync()
+                        .ContinueWith(async msg => await msg.Result.DeleteAsync());
                 }
             }
+        }
+
+        private async Task OnReadyAsync()
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    IMediator mediator = _services.GetRequiredService<IMediator>();
+                    await mediator.Send(new InitialiseQueueCommand());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
+                }
+                
+            });
         }
     }
 }

@@ -12,7 +12,6 @@ namespace ApacBreachersRanked.Application.DbContext
     public partial interface IDbContext
     {
         DbSet<MatchQueueEntity> MatchQueue { get; }
-        DbSet<MatchQueueUser> MatchQueueUsers { get; }
         DbSet<MatchQueueMessage> MatchQueueMessages { get; }
     }
 }
