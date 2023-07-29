@@ -2,6 +2,6 @@
 {
     public static class MatchConstants
     {
-        public static int MaxCapacity = 1;
+        public static int MaxCapacity = 10;
     }
 }

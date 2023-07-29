@@ -3,7 +3,7 @@ using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.MatchQueue.Entities
 {
-    public class MatchQueueUser : BaseEntity, IUser
+    public class MatchQueueUser : IUser
     {
         public IUserId UserId { get; private set; } = null!;
         public string Name { get; private set; } = null!;

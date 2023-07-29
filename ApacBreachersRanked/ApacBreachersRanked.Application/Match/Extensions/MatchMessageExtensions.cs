@@ -20,7 +20,6 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             eb.WithDescription("The match will begin once all players have confirmed");
             eb.AddTeamField("Home", match.HomePlayers, true);
             eb.AddTeamField("Away", match.AwayPlayers, true);
-            eb.WithFooter("Please type /confirm to confirm you are ready to play the match");
             return eb.Build();
         }
 

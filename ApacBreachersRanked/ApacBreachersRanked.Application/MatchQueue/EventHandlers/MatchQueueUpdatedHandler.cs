@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.Match.Extensions;
 using ApacBreachersRanked.Application.MatchQueue.Models;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
@@ -18,7 +19,6 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         public MatchQueueUpdatedHandler(
             IDbContext dbContext,
             IDiscordClient discordClient,
-            IMediator mediator,
             IOptions<BreachersDiscordOptions> breachersDiscordOptions)
         {
             _dbContext = dbContext;
@@ -52,7 +52,11 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             }
             else
             {
-                IUserMessage message = await readyUpChannel.SendMessageAsync(embed: embed);
+                ComponentBuilder cb = new();
+                cb.WithButton("Join", "match-queue-join", style: ButtonStyle.Success);
+                cb.WithButton("Leave", "match-queue-leave", style: ButtonStyle.Danger);
+
+                IUserMessage message = await readyUpChannel.SendMessageAsync(embed: embed, components: cb.Build());
                 matchQueueMessage = new()
                 {
                     MatchQueue = matchQueue,
@@ -67,7 +71,12 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.WithTitle("APAC Breachers Ranked Queue");
-            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(user => user.Name)));
+            string description = string.Join(Environment.NewLine, users.Select(user => user.GetUserMention()));
+            if (string.IsNullOrEmpty(description))
+            {
+                description = "No players in queue";
+            }
+            embedBuilder.WithDescription(description);
             return embedBuilder.Build();
         }
     }
