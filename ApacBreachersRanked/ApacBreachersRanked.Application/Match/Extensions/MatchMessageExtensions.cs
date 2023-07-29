@@ -58,6 +58,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
                 $"Away has choice of side{Environment.NewLine}");
             eb.AddTeamField("Home", match.HomePlayers, false, true);
             eb.AddTeamField("Away", match.AwayPlayers, false, true);
+            eb.WithFooter("Once you have completed the match you can enter the score with /enterscore");
             return eb.Build();
         }
 
