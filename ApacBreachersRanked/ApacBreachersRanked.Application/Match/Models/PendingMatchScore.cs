@@ -50,7 +50,7 @@ namespace ApacBreachersRanked.Application.Match.Models
     public class PendingMatchScorePlayer : IUser
     {
         public IUserId UserId { get; set; } = null!;
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
         public MatchSide Side { get; set; }
         public bool Confirmed { get; set; } = false;
     }

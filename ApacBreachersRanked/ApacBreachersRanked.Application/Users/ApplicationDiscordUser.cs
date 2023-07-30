@@ -69,7 +69,7 @@ namespace ApacBreachersRanked.Application.Users
     {
         private Discord.IUser _discordUser;
         public IUserId UserId => new ApplicationDiscordUserId(_discordUser.Id);
-        public string Name => _discordUser.GlobalName;
+        public string? Name => _discordUser.GlobalName;
 
         public ApplicationDiscordUser(Discord.IUser discordUser)
         {
