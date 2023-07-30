@@ -1,18 +1,36 @@
 # apac-breachers-ranked-bot
 
-A development version of the bot is setup and running in this server: https://discord.gg/TjxMW4em
+## Tools
 
-DM me (jasonp2009) for the bot token, discord automatically resets the token if I commit it to this repo.
+Visual Studio 2022 (Community Edition): https://visualstudio.microsoft.com/
 
-If you make any changes which affect the database schema you will have to either delete all tables in the database with
+Github Desktop: https://desktop.github.com/
 
-EXEC sp_MSforeachtable @command1 = "DROP TABLE ?"
+SQL Server Management Studio: https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16
 
-Run it a few times until there are no errors. On restart of the bot, EFCore will rebuild the tables/schemas.
+## Getting setup
 
-You will need to run it from SSMS which can be downloaded here: https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16
+A development version of the bot is setup in this server: https://discord.gg/TjxMW4em
 
-Login credentials can be found under ApacBreachersRanked\ApacBreachersRanked\appsettings.Development.json
-This will only give you access to the dev db btw, not the one that is used by the bot in the BETA server.
+All the appsettings.Development.json config points to the above server/bot/dev database.
 
-Or manually update the schema to match your changes.
+The only thing you'll need is the bot token, DM me (jasonp2009) for this. Discord automatically resets the token if I commit it to this repo.
+
+## Contributing
+
+Create a new branch off the develop branch.
+
+Make any changes you'd like, test it out on the dev version of the bot.
+
+Raise a pull request to the develop branch and I will review it.
+
+## Architecture
+
+The code follows clean architecture/domain-driven design concepts.
+
+The solution is broken into 4 projects:
+
+ - Domain: Has the responsibilities of being a breachers ranked system. Is not aware of discord or that it is a discord bot.
+ - Application: Has the responsibilities of interfacing with the domain and orchestrating commands, events, etc. Is aware of discord, but not know that it is a bot.
+ - Bot (ApacBreachersRanked project): Has the responsibility of mapping bot commands, components interactions, etc. to the application layer. In a traditional API application, this would be the API layer with all the controllers. Modules are the discord bot version of controllers.
+ - Infrastructure: Has the responsibility of implementing the infrastructure dependencies of the Domain/Application layer (defined in those layers as interfaces). At the moment the only infrastructure dependency is the database, but there may be more in the future (eg if I decide to decouple event/INotification handling into a separate consumer application so the bot is more responsive to interactions).
