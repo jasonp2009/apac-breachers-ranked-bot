@@ -8,6 +8,7 @@ using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Events
 {
@@ -71,12 +72,10 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.WithTitle("APAC Breachers Ranked Queue");
-            string description = string.Join(Environment.NewLine, users.Select(user => user.GetUserMention()));
-            if (string.IsNullOrEmpty(description))
-            {
-                description = "No players in queue";
-            }
-            embedBuilder.WithDescription(description);
+            StringBuilder sb = new();
+            sb.AppendLine(string.Join(Environment.NewLine, users.Select(user => user.GetUserMention())));
+            sb.AppendLine($"{users.Count}/10 players in queue");
+            embedBuilder.WithDescription(sb.ToString());
             return embedBuilder.Build();
         }
     }
