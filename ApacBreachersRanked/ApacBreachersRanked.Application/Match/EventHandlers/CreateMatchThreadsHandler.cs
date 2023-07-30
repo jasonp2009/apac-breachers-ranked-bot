@@ -48,7 +48,14 @@ namespace ApacBreachersRanked.Application.Match.Events
             ComponentBuilder cb = new();
             cb.WithButton("Confirm", "pending-match-confirm", style: ButtonStyle.Success);
             cb.WithButton("Reject", "pending-match-reject", style: ButtonStyle.Danger);
-            (IThreadChannel matchThread, IUserMessage message) = await CreateThreadWithPlayers(matchChannel, $"Match #{match.MatchNumber}", "@here", match.GenerateMatchWelcomeEmbed(), cb.Build(), match.AllPlayers);
+            (IThreadChannel matchThread, IUserMessage message) =
+                await CreateThreadWithPlayers(
+                    matchChannel,
+                    $"Match #{match.MatchNumber}",
+                    string.Join(" ", match.AllPlayers.Select(player => player.GetUserMention())),
+                    match.GenerateMatchWelcomeEmbed(),
+                    cb.Build(),
+                    match.AllPlayers);
 
             matchThreads.MatchThreadId = matchThread.Id;
             matchThreads.MatchThreadWelcomeMessageId = message.Id;
