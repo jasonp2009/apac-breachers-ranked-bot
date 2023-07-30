@@ -78,7 +78,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             eb.WithTitle($"Match #{match.MatchNumber}");
             eb.AddScoreFields(match.Score!);
             eb.AddTeamField("Home", match.HomePlayers);
-            eb.AddTeamField("Away", match.HomePlayers);
+            eb.AddTeamField("Away", match.AwayPlayers);
             return eb.Build();
         }
 
