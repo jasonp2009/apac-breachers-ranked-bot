@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.Match.Models;
+﻿using ApacBreachersRanked.Application.Common.Extensions;
+using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Entities;
@@ -17,7 +18,8 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         {
             EmbedBuilder eb = new();
             eb.WithTitle("Welcome to the match");
-            eb.WithDescription("The match will begin once all players have confirmed");
+            eb.WithDescription($"The match will begin once all players have confirmed{Environment.NewLine}" +
+                               $"The match will auto-cancel <t:{match.AutoCancelDateUtc.ToEpoch()}:R> if all players have not confirmed");
             eb.AddTeamField("Home", match.HomePlayers, true);
             eb.AddTeamField("Away", match.AwayPlayers, true);
             return eb.Build();

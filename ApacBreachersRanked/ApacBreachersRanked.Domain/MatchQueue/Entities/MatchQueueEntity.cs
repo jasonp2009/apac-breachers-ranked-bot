@@ -15,25 +15,38 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
 
         public void AddUserToQueue(IUser user, DateTime expiryUtc)
         {
-            MatchQueueUser? existingUser = Users.FirstOrDefault(x => x.UserId.Equals(user.UserId));
+            MatchQueueUser? matchQueueUser = Users.FirstOrDefault(x => x.UserId.Equals(user.UserId));
+            if (matchQueueUser != null)
+            {
+                matchQueueUser.UpdateExpiry(expiryUtc);
+            } else
+            {
+                matchQueueUser = new(user, expiryUtc);
+                Users.Add(matchQueueUser);
+                if (Users.Count >= MatchConstants.MaxCapacity)
+                {
+                    QueueDomainEvent(new MatchQueueCapacityReachedEvent { MatchQueueId = Id });
+                }
+            }
+            QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });
+            QueueDomainEvent(new MatchQueueUserExpiredEvent { ScheduledForUtc = expiryUtc, MatchQueueUserId = matchQueueUser.UserId });
+        }
+
+        public void RemoveUserFromQueue(IUserId userId)
+        {
+            MatchQueueUser? existingUser = Users.FirstOrDefault(x => x.UserId.Equals(userId));
             if (existingUser != null)
             {
-                existingUser.UpdateExpiry(expiryUtc);
+                Users.Remove(existingUser);
+                QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });
                 return;
-            }
-            MatchQueueUser matchQueueUser = new(user, expiryUtc);
-            Users.Add(matchQueueUser);
-            QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });
-            if (Users.Count >= MatchConstants.MaxCapacity)
-            {
-                QueueDomainEvent(new MatchQueueCapacityReachedEvent { MatchQueueId = Id });
             }
         }
 
-        public void RemoveUserFromQueue(IUser user)
+        public void ExpireUser(IUserId userId)
         {
-            MatchQueueUser? existingUser = Users.FirstOrDefault(x => x.UserId.Equals(user.UserId));
-            if (existingUser != null)
+            MatchQueueUser? existingUser = Users.FirstOrDefault(x => x.UserId.Equals(userId));
+            if (existingUser != null && existingUser.ExpiryUtc <= DateTime.UtcNow)
             {
                 Users.Remove(existingUser);
                 QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });

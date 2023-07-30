@@ -1,7 +1,9 @@
-﻿using ApacBreachersRanked.Application.Config;
+﻿using ApacBreachersRanked.Application.Common.Extensions;
+using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Match.Extensions;
 using ApacBreachersRanked.Application.MatchQueue.Models;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using Discord;
@@ -34,6 +36,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             {
                 return;
             }
+            int inProgressMatches = await _dbContext.Matches.CountAsync(match => match.Status == MatchStatus.PendingConfirmation || match.Status == MatchStatus.Confirmed, cancellationToken);
             Task<MatchQueueMessage?> matchQueueMessageTask = _dbContext.MatchQueueMessages.FirstOrDefaultAsync(x => x.MatchQueue.Id == notification.MatchQueueId, cancellationToken);
             Task<IChannel> readyUpChannelTask = _discordClient.GetChannelAsync(_breachersDiscordOptions.ReadyUpChannelId);
 
@@ -41,7 +44,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
                 matchQueueMessageTask,
                 readyUpChannelTask);
 
-            Embed embed = GetEmbed(matchQueue.Users);
+            Embed embed = GetEmbed(matchQueue.Users, inProgressMatches);
             MatchQueueMessage? matchQueueMessage = matchQueueMessageTask.Result;
             IMessageChannel readyUpChannel = readyUpChannelTask.Result as IMessageChannel;
 
@@ -68,14 +71,18 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             }
         }
 
-        private Embed GetEmbed(IList<MatchQueueUser> users)
+        private Embed GetEmbed(IList<MatchQueueUser> users, int inProgressMatches)
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.WithTitle("APAC Breachers Ranked Queue");
-            StringBuilder sb = new();
-            sb.AppendLine(string.Join(Environment.NewLine, users.Select(user => user.GetUserMention())));
-            sb.AppendLine($"{users.Count}/10 players in queue");
-            embedBuilder.WithDescription(sb.ToString());
+            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(user => user.GetUserMention() + $" until <t:{user.ExpiryUtc.ToEpoch()}:R>")));
+            StringBuilder footerBuilder = new();
+            footerBuilder.AppendLine($"{users.Count}/10 players in queue");
+            if (inProgressMatches != 0)
+            {
+                footerBuilder.AppendLine($"{inProgressMatches} match(s) in progress");
+            }
+            embedBuilder.WithFooter(footerBuilder.ToString());
             return embedBuilder.Build();
         }
     }
