@@ -19,7 +19,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             EmbedBuilder eb = new();
             eb.WithTitle("Welcome to the match");
             eb.WithDescription($"The match will begin once all players have confirmed{Environment.NewLine}" +
-                               $"The match will auto-cancel <t:{match.AutoCancelDateUtc.ToEpoch()}:R> if all players have not confirmed");
+                               $"The match will auto-cancel {match.AutoCancelDateUtc.ToDiscordRelativeEpoch()} if all players have not confirmed");
             eb.AddTeamField("Home", match.HomePlayers, true);
             eb.AddTeamField("Away", match.AwayPlayers, true);
             return eb.Build();

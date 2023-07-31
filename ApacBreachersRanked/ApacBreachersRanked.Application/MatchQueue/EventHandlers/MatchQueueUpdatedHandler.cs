@@ -75,7 +75,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.WithTitle("APAC Breachers Ranked Queue");
-            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(user => user.GetUserMention() + $" until <t:{user.ExpiryUtc.ToEpoch()}:R>")));
+            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(user => user.GetUserMention() + $" until {user.ExpiryUtc.ToDiscordRelativeEpoch()}")));
             StringBuilder footerBuilder = new();
             footerBuilder.AppendLine($"{users.Count}/10 players in queue");
             if (inProgressMatches != 0)
