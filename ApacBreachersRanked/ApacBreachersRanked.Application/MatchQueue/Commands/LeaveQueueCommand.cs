@@ -14,17 +14,14 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
 
     public class LeaveQueueCommandHandler : ICommandHandler<LeaveQueueCommand>
     {
-        private readonly IMediator _mediator;
         private readonly IDbContext _dbContext;
 
-        public LeaveQueueCommandHandler(IMediator mediator, IDbContext dbContext)
+        public LeaveQueueCommandHandler(IDbContext dbContext)
         {
-            _mediator = mediator;
             _dbContext = dbContext;
         }
         public async Task<Unit> Handle(LeaveQueueCommand request, CancellationToken cancellationToken)
         {
-            ApplicationDiscordUser user = await _mediator.Send(new GetDiscordUserQuery() { DiscordUserId = request.DiscordUserId }, cancellationToken);
             MatchQueueEntity? currentQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
 
             if (currentQueue == null)
@@ -32,7 +29,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
                 return Unit.Value;
             }
 
-            currentQueue.RemoveUserFromQueue(user);
+            currentQueue.RemoveUserFromQueue(request.DiscordUserId.ToIUserId());
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

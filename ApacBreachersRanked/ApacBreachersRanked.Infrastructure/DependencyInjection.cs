@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Infrastructure.Config;
 using ApacBreachersRanked.Infrastructure.Persistance;
+using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,13 @@ namespace ApacBreachersRanked.Infrastructure
         {
             services.Configure<RdsOptions>(options => configuration.GetSection(RdsOptions.Key).Bind(options));
 
+            services.AddScoped<BreachersDbContext>();
+
             services.AddScoped<IDbContext, BreachersDbContext>();
+
+            services.AddSingleton<ScheduledEventHandlingService>();
+
+            services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<ScheduledEventHandlingService>());
 
             return services;
         }

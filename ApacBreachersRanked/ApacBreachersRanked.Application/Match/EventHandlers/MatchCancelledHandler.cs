@@ -28,6 +28,10 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
             {
                 await channel.SendMessageAsync($"Cancelling match{Environment.NewLine}" +
                                                $"{match.CancellationReason}");
+                if (await channel.GetMessageAsync(matchThreads.MatchThreadWelcomeMessageId) is IUserMessage message)
+                {
+                    await message.ModifyAsync(msg => msg.Components = new ComponentBuilder().Build());
+                }
                 await channel.ModifyAsync(chnl => chnl.Archived = true);
             }
         }

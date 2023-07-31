@@ -29,8 +29,6 @@ namespace ApacBreachersRanked.Application.Match.Events
             {
                 MatchEntity match = await _matchService.CreateMatchFromQueue(matchQueue);
 
-
-
                 _dbContext.Matches.Add(match);
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }

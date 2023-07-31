@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Infrastructure.Config;
+using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,14 +12,17 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 {
     internal partial class BreachersDbContext : DbContext
     {
-        protected readonly IPublisher _notificationHandler;
+        private readonly IPublisher _notificationHandler;
+        private readonly ScheduledEventHandlingService _scheduledEventHandlerService;
         private readonly RdsOptions _options;
         public BreachersDbContext(
             IPublisher notificationHandler,
+            ScheduledEventHandlingService scheduledEventHandlingService,
             IOptions<RdsOptions> options)
         {
             
             _notificationHandler = notificationHandler;
+            _scheduledEventHandlerService = scheduledEventHandlingService;
             _options = options.Value;
             Database.EnsureCreated();
         }
@@ -38,10 +42,12 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             }
             OnModelCreatingMatchQueue(modelBuilder);
             OnModelCreatingMatch(modelBuilder);
+            OnModelCreatingScheduledEvent(modelBuilder);
         }
 
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder);
         partial void OnModelCreatingMatch(ModelBuilder modelBuilder);
+        partial void OnModelCreatingScheduledEvent(ModelBuilder modelBuilder);
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -65,7 +71,13 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
         {
             foreach (IDomainEvent domainEvent in events)
             {
-                await _notificationHandler.Publish(domainEvent, cancellationToken);
+                if (domainEvent is IScheduledEvent scheduledEvent)
+                {
+                    await _scheduledEventHandlerService.ScheduleEvent(scheduledEvent);
+                } else
+                {
+                    await _notificationHandler.Publish(domainEvent, cancellationToken);
+                }
             }
         }
     }
