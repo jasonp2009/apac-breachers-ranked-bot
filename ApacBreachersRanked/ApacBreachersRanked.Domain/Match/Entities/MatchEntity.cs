@@ -14,7 +14,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
     {
         public int MatchNumber { get; set; }
         public MatchStatus Status { get; private set; } = MatchStatus.PendingConfirmation;
-        public DateTime AutoCancelDateUtc { get; set; } = DateTime.UtcNow + TimeSpan.FromMinutes(MatchConstants.AutoCancelMins);
+        public DateTime AutoCancelDateUtc { get; init; } = DateTime.UtcNow + TimeSpan.FromMinutes(MatchConstants.AutoCancelMins);
         public IEnumerable<MatchPlayer> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
