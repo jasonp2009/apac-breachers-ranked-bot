@@ -71,9 +71,11 @@ namespace Example.Services
             {
                 try
                 {
-                    IServiceProvider scopedServices = _services.CreateScope().ServiceProvider;
-                    IMediator mediator = scopedServices.GetRequiredService<IMediator>();
-                    await mediator.Send(new InitialiseQueueCommand());
+                    using (IServiceScope scope = _services.CreateScope())
+                    {
+                        IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                        await mediator.Send(new InitialiseQueueCommand());
+                    }
                 }
                 catch (Exception ex)
                 {
