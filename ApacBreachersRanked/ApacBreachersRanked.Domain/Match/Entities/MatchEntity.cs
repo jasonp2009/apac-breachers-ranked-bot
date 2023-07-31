@@ -4,6 +4,7 @@ using ApacBreachersRanked.Domain.Match.Constants;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.Match.Events;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Events;
 using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.Match.Entities
@@ -56,6 +57,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             Status = MatchStatus.Cancelled;
             CancellationReason = reason;
             QueueDomainEvent(new MatchCancelledEvent { MatchId = Id });
+            QueueDomainEvent(new MatchQueueUpdatedEvent());
         }
 
         public void AutoCancel()

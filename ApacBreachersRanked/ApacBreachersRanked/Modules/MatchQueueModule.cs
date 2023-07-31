@@ -34,9 +34,18 @@ namespace ApacBreachersRanked.Modules
         }
 
         [SlashCommand("forcematch", "Force a match to start")]
+        [RequireRole("Moderators")]
         public async Task ForceMatchAsync()
         {
-            await _mediator.Send(new ForceMatchCommand());
+            try
+            {
+                await _mediator.Send(new ForceMatchCommand());
+            }
+            catch (InvalidOperationException ex)
+            {
+                await RespondAsync(ex.Message, ephemeral: true);
+            }
+            
         }
     }
 }

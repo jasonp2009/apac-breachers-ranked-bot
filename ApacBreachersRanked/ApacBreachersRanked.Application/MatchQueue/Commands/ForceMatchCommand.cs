@@ -25,6 +25,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
             if (matchQueue == null) return Unit.Value;
 
+            if (matchQueue.Users.Count < 6) throw new InvalidOperationException("There must be atleast 6 players to force match");
+
             matchQueue.QueueDomainEvent(new MatchQueueCapacityReachedEvent() { MatchQueueId = matchQueue.Id });
 
             await _dbContext.SaveChangesAsync(cancellationToken);
