@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.Match.Commands;
+using ApacBreachersRanked.Application.MMR.Commands;
 using ApacBreachersRanked.AutoCompleteHandlers;
 using ApacBreachersRanked.Domain.Match.Enums;
 using Discord.Interactions;
@@ -50,6 +51,12 @@ namespace ApacBreachersRanked.Modules
                     UserId = interaction.User.Id
                 });
             }
+        }
+
+        [SlashCommand("recalculatemmr", "recalc")]
+        public async Task RecalculateMMR()
+        {
+            await _mediator.Send(new RecalculateMMRCommand());
         }
     }
 }
