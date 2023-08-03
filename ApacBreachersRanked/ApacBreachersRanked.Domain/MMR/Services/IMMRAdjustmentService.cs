@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
-using EloCalculator;
+using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.MMR.Services
 {
@@ -12,46 +12,52 @@ namespace ApacBreachersRanked.Domain.MMR.Services
 
             List<MMRAdjustment> adjustments = new();
 
-            List<PlayerMMR> playerMMRs = await GetPlayerMMRsAsync(match, cancellationToken);
+            List<PlayerMMR> homePlayerMMRs = await GetPlayerMMRsAsync(match.HomePlayers, cancellationToken);
+            List<PlayerMMR> awayPlayerMMRs = await GetPlayerMMRsAsync(match.AwayPlayers, cancellationToken);
 
-            foreach(MatchPlayer matchPlayer in match.HomePlayers)
+            decimal homeTeamMMRAdjustment = CalculateTeamMMRAdjustment(match.Score, homePlayerMMRs, awayPlayerMMRs);
+
+            foreach (PlayerMMR player in homePlayerMMRs)
             {
                 adjustments.Add(new(
-                    matchPlayer.UserId,
-                    match.Score.Outcome == Match.Enums.ScoreOutcome.Home
-                    ? 10 :
-                    match.Score.Outcome == Match.Enums.ScoreOutcome.Away
-                    ? -10 : 0,
+                    player.UserId,
+                    CalculatePlayerMMRAdjustment(homeTeamMMRAdjustment, homePlayerMMRs, player),
                     match));
             }
 
-            foreach (MatchPlayer matchPlayer in match.AwayPlayers)
+            foreach (PlayerMMR player in awayPlayerMMRs)
             {
                 adjustments.Add(new(
-                    matchPlayer.UserId,
-                    match.Score.Outcome == Match.Enums.ScoreOutcome.Away
-                    ? 10 :
-                    match.Score.Outcome == Match.Enums.ScoreOutcome.Home
-                    ? -10 : 0,
+                    player.UserId,
+                    CalculatePlayerMMRAdjustment(-homeTeamMMRAdjustment, homePlayerMMRs, player),
                     match));
             }
 
-            ApplyAdjustmentsToPlayerMMRs(adjustments, playerMMRs);
+            List<PlayerMMR> allPlayerMMRs = new();
+            allPlayerMMRs.AddRange(homePlayerMMRs);
+            allPlayerMMRs.AddRange(awayPlayerMMRs);
+
+            ApplyAdjustmentsToPlayerMMRs(adjustments, allPlayerMMRs);
         }
 
-        public decimal CalculateTeamMMRAdjustment(MatchScore score, List<PlayerMMR> homePlayerMMRs, List<PlayerMMR> awayPlayerMMRs)
+        private decimal CalculateTeamMMRAdjustment(MatchScore score, List<PlayerMMR> homePlayerMMRs, List<PlayerMMR> awayPlayerMMRs)
         {
             decimal homeAvgMMR = homePlayerMMRs.Average(x => x.MMR);
             decimal awayAvgMMR = awayPlayerMMRs.Average(x => x.MMR);
 
             decimal expectedHome = 1 / (1 + Convert.ToDecimal(Math.Pow(10, (double)(awayAvgMMR - homeAvgMMR) / 400)));
 
-            decimal actualHome = (score.Maps.Sum(map => map.Home) - score.Maps.Sum(map => map.Away)) / 7;
+            int roundDiff = score.Maps.Sum(map => map.Home) - score.Maps.Sum(map => map.Away);
 
-            decimal adjustment = 20 * (actualHome - expectedHome);
+            decimal actualHome = (decimal)roundDiff / 14 + (decimal)0.5;
+
+            decimal adjustment = 20 * (homePlayerMMRs.Count + awayPlayerMMRs.Count)/2 * (actualHome - expectedHome);
 
             return adjustment;
         }
+
+        private decimal CalculatePlayerMMRAdjustment(decimal teamMMRAdjustment, List<PlayerMMR> teamMMRs, PlayerMMR playerMMR)
+            => (teamMMRAdjustment / teamMMRs.Count) * (playerMMR.MMR / teamMMRs.Average(x => x.MMR));
 
         private void ApplyAdjustmentsToPlayerMMRs(List<MMRAdjustment> adjustments, List<PlayerMMR> playerMMRs)
         {
@@ -65,6 +71,6 @@ namespace ApacBreachersRanked.Domain.MMR.Services
             }
         }
 
-        protected Task<List<PlayerMMR>> GetPlayerMMRsAsync(MatchEntity match, CancellationToken cancellationToken = default);
+        protected Task<List<PlayerMMR>> GetPlayerMMRsAsync(IEnumerable<IUser> users, CancellationToken cancellationToken = default);
     }
 }

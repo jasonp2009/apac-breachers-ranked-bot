@@ -24,18 +24,27 @@ namespace ApacBreachersRanked.Application.MMR.Commands
 
         public async Task<Unit> Handle(RecalculateMMRCommand request, CancellationToken cancellationToken)
         {
-            await _dbContext.ResetMMRAsync();
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            List<MatchEntity> matches = await _dbContext.Matches.OrderBy(x => x.MatchNumber).ToListAsync(cancellationToken);
-
-            foreach (MatchEntity match in matches)
+            try
             {
-                await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, cancellationToken);
+                await _dbContext.ResetMMRAsync();
                 await _dbContext.SaveChangesAsync(cancellationToken);
-            }
 
-            return Unit.Value;
+                List<MatchEntity> matches = await _dbContext.Matches.OrderBy(x => x.MatchNumber).ToListAsync(cancellationToken);
+
+                foreach (MatchEntity match in matches)
+                {
+                    await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, cancellationToken);
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                }
+
+                return Unit.Value;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            
         }
     }
 }
