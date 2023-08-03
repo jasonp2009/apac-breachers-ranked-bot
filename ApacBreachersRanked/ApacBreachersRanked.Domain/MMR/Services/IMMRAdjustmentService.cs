@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
+using EloCalculator;
 
 namespace ApacBreachersRanked.Domain.MMR.Services
 {
@@ -36,6 +37,20 @@ namespace ApacBreachersRanked.Domain.MMR.Services
             }
 
             ApplyAdjustmentsToPlayerMMRs(adjustments, playerMMRs);
+        }
+
+        public decimal CalculateTeamMMRAdjustment(MatchScore score, List<PlayerMMR> homePlayerMMRs, List<PlayerMMR> awayPlayerMMRs)
+        {
+            decimal homeAvgMMR = homePlayerMMRs.Average(x => x.MMR);
+            decimal awayAvgMMR = awayPlayerMMRs.Average(x => x.MMR);
+
+            decimal expectedHome = 1 / (1 + Convert.ToDecimal(Math.Pow(10, (double)(awayAvgMMR - homeAvgMMR) / 400)));
+
+            decimal actualHome = (score.Maps.Sum(map => map.Home) - score.Maps.Sum(map => map.Away)) / 7;
+
+            decimal adjustment = 20 * (actualHome - expectedHome);
+
+            return adjustment;
         }
 
         private void ApplyAdjustmentsToPlayerMMRs(List<MMRAdjustment> adjustments, List<PlayerMMR> playerMMRs)
