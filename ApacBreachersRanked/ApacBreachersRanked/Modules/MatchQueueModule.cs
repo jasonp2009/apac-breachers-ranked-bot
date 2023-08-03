@@ -34,7 +34,6 @@ namespace ApacBreachersRanked.Modules
         }
 
         [SlashCommand("forcematch", "Force a match to start")]
-        [RequireRole("Moderators")]
         public async Task ForceMatchAsync()
         {
             try
