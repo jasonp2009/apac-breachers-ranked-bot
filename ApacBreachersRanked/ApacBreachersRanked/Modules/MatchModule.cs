@@ -59,9 +59,18 @@ namespace ApacBreachersRanked.Modules
         [RequireOwner]
         public async Task RecalculateMMR()
         {
-            await DeferAsync();
-            await _mediator.Send(new RecalculateMMRCommand());
-            await DeleteOriginalResponseAsync();
+            await DeferAsync(ephemeral: true);
+            try
+            {
+                await _mediator.Send(new RecalculateMMRCommand());
+                await DeleteOriginalResponseAsync();
+            }
+            catch (Exception ex)
+            {
+                await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
+                throw;
+            }
+            
         }
     }
 }
