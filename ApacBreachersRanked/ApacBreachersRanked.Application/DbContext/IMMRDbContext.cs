@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Domain.MMR.Entities;
+﻿using ApacBreachersRanked.Application.MMR.Models;
+using ApacBreachersRanked.Domain.MMR.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.DbContext
@@ -7,6 +8,7 @@ namespace ApacBreachersRanked.Application.DbContext
     {
         public DbSet<PlayerMMR> PlayerMMRs { get; }
         public DbSet<MMRAdjustment> MMRAdjustments { get; }
+        public DbSet<LeaderBoardMessage> LeaderBoardMessages { get; }
 
         public Task ResetMMRAsync();
     }

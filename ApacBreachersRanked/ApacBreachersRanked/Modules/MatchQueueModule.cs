@@ -39,7 +39,9 @@ namespace ApacBreachersRanked.Modules
         {
             try
             {
+                await DeferAsync();
                 await _mediator.Send(new ForceMatchCommand());
+                await DeleteOriginalResponseAsync();
             }
             catch (InvalidOperationException ex)
             {

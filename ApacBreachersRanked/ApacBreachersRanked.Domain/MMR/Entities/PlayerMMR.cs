@@ -23,7 +23,7 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
         {
             MMR += adjustment.Adjustment;
             Adjustments.Add(adjustment);
-            QueueDomainEvent(new MMRAdjustedEvent { UserId = UserId });
+            QueueDomainEvent(new PlayerMMRAdjustedEvent { UserId = UserId });
         }
     }
 }

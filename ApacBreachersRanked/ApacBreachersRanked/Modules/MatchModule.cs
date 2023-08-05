@@ -30,6 +30,7 @@ namespace ApacBreachersRanked.Modules
             [Summary("Home"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int home,
             [Summary("Away"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int away)
         {
+            await DeferAsync();
             await _mediator.Send(new EnterMatchScoreCommand
             {
                 MatchThreadId = Context.Channel.Id,
@@ -37,6 +38,7 @@ namespace ApacBreachersRanked.Modules
                 Home = home,
                 Away = away
             });
+            await DeleteOriginalResponseAsync();
         }
 
         [ComponentInteraction("pending-score-*")]
@@ -56,7 +58,9 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("recalculatemmr", "recalc")]
         public async Task RecalculateMMR()
         {
+            await DeferAsync();
             await _mediator.Send(new RecalculateMMRCommand());
+            await DeleteOriginalResponseAsync();
         }
     }
 }

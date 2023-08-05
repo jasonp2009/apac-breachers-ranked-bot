@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.MMR.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
     {
         public DbSet<PlayerMMR> PlayerMMRs => Set<PlayerMMR>();
         public DbSet<MMRAdjustment> MMRAdjustments => Set<MMRAdjustment>();
+        public DbSet<LeaderBoardMessage> LeaderBoardMessages => Set<LeaderBoardMessage>();
 
         public async Task ResetMMRAsync()
         {
@@ -22,16 +24,10 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
             modelBuilder.Entity<PlayerMMR>(e =>
             {
-                e.HasAlternateKey(x => x.UserId);
-
                 e.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
 
                 e.OwnsMany(x => x.Adjustments, adjustment =>
                 {
-                    adjustment.WithOwner()
-                    .HasPrincipalKey(x => x.UserId)
-                    .HasForeignKey(x => x.UserId);
-
                     adjustment.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
 
                     adjustment.HasOne(x => x.Match);
