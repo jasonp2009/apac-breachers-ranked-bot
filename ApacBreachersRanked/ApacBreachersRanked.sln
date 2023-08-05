@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked", "ApacBreachersRanked\ApacBreachersRanked.csproj", "{472FA17F-6969-4DEC-BBB2-789526714338}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked", "ApacBreachersRanked\ApacBreachersRanked.csproj", "{472FA17F-6969-4DEC-BBB2-789526714338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Domain", "ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj", "{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Domain", "ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj", "{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Application", "ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj", "{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Application", "ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj", "{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Infrastructure", "ApacBreachersRanked.Infrastructure\ApacBreachersRanked.Infrastructure.csproj", "{762B4400-BDAC-4BD9-8300-86E9D1F0A113}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Infrastructure", "ApacBreachersRanked.Infrastructure\ApacBreachersRanked.Infrastructure.csproj", "{762B4400-BDAC-4BD9-8300-86E9D1F0A113}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMM.Tester", "MMM.Tester\MMM.Tester.csproj", "{1B3C20FD-249E-4F26-9176-B4BC3F9AE740}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B3C20FD-249E-4F26-9176-B4BC3F9AE740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B3C20FD-249E-4F26-9176-B4BC3F9AE740}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B3C20FD-249E-4F26-9176-B4BC3F9AE740}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B3C20FD-249E-4F26-9176-B4BC3F9AE740}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -22,7 +22,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public MatchScore? Score { get; private set; } = null;
         public string? CancellationReason { get; private set; }
         private MatchEntity() { }
-        internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
+        public MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
         {
             matchQueue.SetMatch(this);
             foreach (IUser homePlayer in home)

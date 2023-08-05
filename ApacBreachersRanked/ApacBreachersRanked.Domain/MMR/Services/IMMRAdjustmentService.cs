@@ -6,6 +6,7 @@ namespace ApacBreachersRanked.Domain.MMR.Services
 {
     public interface IMMRAdjustmentService
     {
+        protected MMRConfig _config { get; }
         public async Task CalculateAdjustmentsAsync(MatchEntity match, CancellationToken cancellationToken = default)
         {
             if (match?.Score == null) return;
@@ -40,7 +41,7 @@ namespace ApacBreachersRanked.Domain.MMR.Services
             ApplyAdjustmentsToPlayerMMRs(adjustments, allPlayerMMRs);
         }
 
-        private decimal CalculateTeamMMRAdjustment(MatchScore score, List<PlayerMMR> homePlayerMMRs, List<PlayerMMR> awayPlayerMMRs)
+        public decimal CalculateTeamMMRAdjustment(MatchScore score, List<PlayerMMR> homePlayerMMRs, List<PlayerMMR> awayPlayerMMRs)
         {
             decimal homeAvgMMR = homePlayerMMRs.Average(x => x.MMR);
             decimal awayAvgMMR = awayPlayerMMRs.Average(x => x.MMR);
@@ -49,9 +50,15 @@ namespace ApacBreachersRanked.Domain.MMR.Services
 
             int roundDiff = score.Maps.Sum(map => map.Home) - score.Maps.Sum(map => map.Away);
 
-            decimal actualHome = (decimal)roundDiff / 14 + (decimal)0.5;
+            decimal actualHomeRound = (decimal)roundDiff / 14 + (decimal)0.5;
 
-            decimal adjustment = 20 * (homePlayerMMRs.Count + awayPlayerMMRs.Count)/2 * (actualHome - expectedHome);
+            decimal actualHomeMap = score.Outcome == Match.Enums.ScoreOutcome.Home ? 1
+                : score.Outcome == Match.Enums.ScoreOutcome.Away ? 0
+                : 0.5M;
+
+            decimal actualHome = actualHomeRound * _config.RoundWeighting + actualHomeMap * _config.MapWeighting;
+
+            decimal adjustment = _config.KFactor * (homePlayerMMRs.Count + awayPlayerMMRs.Count)/2 * (actualHome - expectedHome);
 
             return adjustment;
         }
