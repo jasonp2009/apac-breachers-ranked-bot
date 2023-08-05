@@ -1,6 +1,5 @@
 ﻿using ApacBreachersRanked.Application.Common.Extensions;
 using ApacBreachersRanked.Application.Match.Models;
-using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
@@ -96,7 +95,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         private static string GetPlayerMetion(this MatchPlayer player, bool withConfirmation = false, bool withHost = false)
         {
             StringBuilder sb = new();
-            sb.Append(GetUserMention(player));
+            sb.Append(player.GetUserMention());
             if (withConfirmation) sb.Append(player.Confirmed ? ConfirmedEmoji : PendingConfirmationEmoji);
             if (withHost && player.IsHost) sb.Append(HostEmoji);
             return sb.ToString();
@@ -114,13 +113,10 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         private static string GetPlayerMetion(this PendingMatchScorePlayer player)
         {
             StringBuilder sb = new();
-            sb.Append(GetUserMention(player));
+            sb.Append(player.GetUserMention());
             sb.Append(player.Confirmed ? ConfirmedEmoji : PendingConfirmationEmoji);
             return sb.ToString();
         }
-
-        public static string GetUserMention(this Domain.User.Interfaces.IUser user)
-            => $"<@{user.UserId.GetDiscordId()}>";
 
         private static void AddScoreFields(this EmbedBuilder eb, MatchScore score)
         {
