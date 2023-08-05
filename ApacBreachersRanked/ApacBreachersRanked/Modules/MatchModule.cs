@@ -21,7 +21,7 @@ namespace ApacBreachersRanked.Modules
                 DiscordUserId = Context.User.Id,
                 IsAccepted = response == "confirm"
             });
-
+            await DeferAsync();
         }
 
         [SlashCommand("enterscore", "Enter scores for match")]
@@ -53,6 +53,7 @@ namespace ApacBreachersRanked.Modules
                     UserId = interaction.User.Id
                 });
             }
+            await DeferAsync();
         }
 
         [SlashCommand("recalculatemmr", "recalc")]
@@ -70,7 +71,6 @@ namespace ApacBreachersRanked.Modules
                 await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
                 throw;
             }
-            
         }
     }
 }

@@ -31,6 +31,7 @@ namespace ApacBreachersRanked.Modules
                 };
                 await _mediator.Send(command);
             }
+            await DeferAsync();
         }
 
         [SlashCommand("forcematch", "Force a match to start")]
