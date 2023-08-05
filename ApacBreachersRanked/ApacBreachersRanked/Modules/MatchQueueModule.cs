@@ -39,13 +39,14 @@ namespace ApacBreachersRanked.Modules
         {
             try
             {
+                await DeferAsync(ephemeral: true);
                 await _mediator.Send(new ForceMatchCommand());
+                await DeleteOriginalResponseAsync();
             }
             catch (InvalidOperationException ex)
             {
-                await RespondAsync(ex.Message, ephemeral: true);
+                await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
             }
-            
         }
     }
 }

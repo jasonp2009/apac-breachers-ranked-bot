@@ -9,6 +9,7 @@ using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using ApacBreachersRanked.Application.Common.Extensions;
 
 namespace ApacBreachersRanked.Application.Match.Events
 {

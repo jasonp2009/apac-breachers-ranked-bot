@@ -34,10 +34,11 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             using (IServiceScope scope = _services.CreateScope())
             {
                 BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
-                
 
                 List<ScheduledEvent> events = await dbContext.ScheduledEvents.Where(x => x.ScheduledForUtc <= DateTime.UtcNow).ToListAsync();
-                
+
+                if (events.Count == 0) return;
+
                 foreach (var scheduledEvent in events)
                 {
                     if (scheduledEvent.ScheduledForUtc <= DateTime.UtcNow)
@@ -70,19 +71,19 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             }
         }
 
-        public async Task ScheduleEvent(IScheduledEvent scheduledEvent)
+        public async void ScheduleEvent(IDomainEvent domainEvent)
         {
             using (IServiceScope scope = _services.CreateScope())
             {
-                try
+                if (domainEvent is IScheduledEvent scheduledEvent)
                 {
                     BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
                     await dbContext.AddAsync(new ScheduledEvent(scheduledEvent));
                     await dbContext.SaveChangesAsync();
-                }
-                catch (Exception ex)
+                } else
                 {
-                    Console.WriteLine(ex);
+                    IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    await mediator.Publish(domainEvent);
                 }
             }
         }
