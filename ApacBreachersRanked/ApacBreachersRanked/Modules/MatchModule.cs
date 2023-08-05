@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.Match.Commands;
+using ApacBreachersRanked.Application.MMR.Commands;
 using ApacBreachersRanked.AutoCompleteHandlers;
 using ApacBreachersRanked.Domain.Match.Enums;
 using Discord.Interactions;
@@ -20,7 +21,7 @@ namespace ApacBreachersRanked.Modules
                 DiscordUserId = Context.User.Id,
                 IsAccepted = response == "confirm"
             });
-
+            await DeferAsync();
         }
 
         [SlashCommand("enterscore", "Enter scores for match")]
@@ -29,6 +30,7 @@ namespace ApacBreachersRanked.Modules
             [Summary("Home"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int home,
             [Summary("Away"), Autocomplete(typeof(ScoreAutoCompleteHandler))] int away)
         {
+            await DeferAsync();
             await _mediator.Send(new EnterMatchScoreCommand
             {
                 MatchThreadId = Context.Channel.Id,
@@ -36,6 +38,7 @@ namespace ApacBreachersRanked.Modules
                 Home = home,
                 Away = away
             });
+            await DeleteOriginalResponseAsync();
         }
 
         [ComponentInteraction("pending-score-*")]
@@ -49,6 +52,24 @@ namespace ApacBreachersRanked.Modules
                     PendingScoreMessageId = interaction.Message.Id,
                     UserId = interaction.User.Id
                 });
+            }
+            await DeferAsync();
+        }
+
+        [SlashCommand("recalculatemmr", "recalc")]
+        [RequireOwner]
+        public async Task RecalculateMMR()
+        {
+            await DeferAsync(ephemeral: true);
+            try
+            {
+                await _mediator.Send(new RecalculateMMRCommand());
+                await DeleteOriginalResponseAsync();
+            }
+            catch (Exception ex)
+            {
+                await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
+                throw;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Domain.Match.Enums;
+using ApacBreachersRanked.Domain.MMR.Events;
 using ApacBreachersRanked.TypeConverters;
 using Discord;
 using Discord.Interactions;
@@ -75,6 +76,7 @@ namespace Example.Services
                     {
                         IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                         await mediator.Send(new InitialiseQueueCommand());
+                        await mediator.Publish(new MatchMMRCalculatedEvent());
                     }
                 }
                 catch (Exception ex)

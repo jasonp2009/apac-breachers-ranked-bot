@@ -6,6 +6,7 @@ using ApacBreachersRanked.Application.MatchQueue.Models;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
+using ApacBreachersRanked.Domain.User.Interfaces;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
                 readyUpChannelTask);
 
             Embed embed = GetEmbed(matchQueue.Users, inProgressMatches);
+            string pings = matchQueue.Users.Count >= 4 ? $"<@&{_breachersDiscordOptions.PingRoleId}>" : "";
             MatchQueueMessage? matchQueueMessage = matchQueueMessageTask.Result;
             IMessageChannel readyUpChannel = readyUpChannelTask.Result as IMessageChannel;
 
@@ -61,7 +63,11 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             if (matchQueueMessage != null)
             {
                 IUserMessage message = await readyUpChannel.GetMessageAsync(matchQueueMessage.DiscordMessageId) as IUserMessage;
-                await message.ModifyAsync(msg => msg.Embed = embed);
+                await message.ModifyAsync(msg =>
+                {
+                    msg.Embed = embed;
+                    msg.Content = pings;
+                });
             }
             else
             {
@@ -69,7 +75,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
                 cb.WithButton("Join", "match-queue-join", style: ButtonStyle.Success);
                 cb.WithButton("Leave", "match-queue-leave", style: ButtonStyle.Danger);
 
-                IUserMessage message = await readyUpChannel.SendMessageAsync(embed: embed, components: cb.Build());
+                IUserMessage message = await readyUpChannel.SendMessageAsync(text: pings, embed: embed, components: cb.Build());
                 matchQueueMessage = new()
                 {
                     MatchQueue = matchQueue,
