@@ -56,6 +56,7 @@ namespace ApacBreachersRanked.Modules
         }
 
         [SlashCommand("recalculatemmr", "recalc")]
+        [RequireOwner]
         public async Task RecalculateMMR()
         {
             await DeferAsync();

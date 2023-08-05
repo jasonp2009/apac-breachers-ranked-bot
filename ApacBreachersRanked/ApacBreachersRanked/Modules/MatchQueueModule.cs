@@ -47,7 +47,6 @@ namespace ApacBreachersRanked.Modules
             {
                 await RespondAsync(ex.Message, ephemeral: true);
             }
-            
         }
     }
 }
