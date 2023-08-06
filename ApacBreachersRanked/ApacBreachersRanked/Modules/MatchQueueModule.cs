@@ -42,10 +42,11 @@ namespace ApacBreachersRanked.Modules
             {
                 await DeferAsync(ephemeral: true);
                 await _mediator.Send(new ForceMatchCommand());
-                await DeleteOriginalResponseAsync();
+                await Context.Interaction.FollowupAsync("Match forced", ephemeral: true);
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
             }
         }
