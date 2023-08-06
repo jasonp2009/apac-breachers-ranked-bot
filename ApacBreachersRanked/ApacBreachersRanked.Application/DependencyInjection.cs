@@ -18,7 +18,7 @@ namespace ApacBreachersRanked.Application
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMediatR(cfg => {
-                cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
                 cfg.NotificationPublisherType = typeof(ForeachAwaitPublisher);
             });

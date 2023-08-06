@@ -16,6 +16,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
         private readonly ILogger<MatchQueueListenerService> _logger;
         private CancellationToken _stoppingToken;
 
+        private bool IsForceStartEnabled = false;
 
         public MatchQueueListenerService(IServiceProvider services, ILogger<MatchQueueListenerService> logger)
         {
@@ -45,16 +46,26 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 
                 try
                 {
-                    if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MaxCapacity))
+                    if (IsForceStartEnabled)
                     {
-                        await mediator.Send(new CreateMatchCommand(), _stoppingToken);
-                    }
+                        if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MinCapacity))
+                        {
+                            await mediator.Send(new CreateMatchCommand(), _stoppingToken);
+                        }
+                        IsForceStartEnabled = false;
+                    } else
+                    {
+                        if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MaxCapacity))
+                        {
+                            await mediator.Send(new CreateMatchCommand(), _stoppingToken);
+                        }
+                    } 
+                    
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "An error occured when attempting to create a match");
                 }
-                
             }
         }
 
@@ -68,6 +79,11 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
         public void Dispose()
         {
             _timer?.Dispose();
+        }
+
+        public void ForceStart()
+        {
+            IsForceStartEnabled = true;
         }
     }
 }

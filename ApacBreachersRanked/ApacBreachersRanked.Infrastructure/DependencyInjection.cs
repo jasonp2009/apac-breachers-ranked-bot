@@ -5,7 +5,6 @@ using ApacBreachersRanked.Infrastructure.Persistance;
 using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace ApacBreachersRanked.Infrastructure
 {
