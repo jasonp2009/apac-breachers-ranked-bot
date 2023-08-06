@@ -51,6 +51,8 @@ namespace Example.Services
 
         private async Task OnInteractionAsync(SocketInteraction interaction)
         {
+            _logger.BeginScope("User {UserName}:({UserId}) performing {InteractionType}",
+                interaction.User.Username, interaction.User.Id, interaction.Type);
             try
             {
                 var context = new SocketInteractionContext(_discord, interaction);
