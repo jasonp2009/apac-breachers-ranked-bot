@@ -64,7 +64,7 @@ namespace ApacBreachersRanked.Modules
             try
             {
                 await _mediator.Send(new RecalculateMMRCommand());
-                await DeleteOriginalResponseAsync();
+                await Context.Interaction.FollowupAsync("MMR Recalculated", ephemeral: true);
             }
             catch (Exception ex)
             {

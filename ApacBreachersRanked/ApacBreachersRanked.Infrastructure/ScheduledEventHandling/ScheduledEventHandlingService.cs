@@ -52,9 +52,9 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
 
                             dbContext.ScheduledEvents.Remove(scheduledEvent);
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-
+                            Console.WriteLine(ex.Message);
                         }
                     }
                 }
@@ -66,26 +66,45 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
         {
             using (IServiceScope scope = _services.CreateScope())
             {
-                IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                await mediator.Publish(scheduledEvent, default);
+                try
+                {
+                    IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    await mediator.Publish(scheduledEvent, default);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 
         public async void ScheduleEvent(IDomainEvent domainEvent)
         {
-            using (IServiceScope scope = _services.CreateScope())
+            _ = Task.Run(async () =>
             {
-                if (domainEvent is IScheduledEvent scheduledEvent)
+                using (IServiceScope scope = _services.CreateScope())
                 {
-                    BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
-                    await dbContext.AddAsync(new ScheduledEvent(scheduledEvent));
-                    await dbContext.SaveChangesAsync();
-                } else
-                {
-                    IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                    await mediator.Publish(domainEvent);
+                    try
+                    {
+                        if (domainEvent is IScheduledEvent scheduledEvent)
+                        {
+                            BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
+                            await dbContext.AddAsync(new ScheduledEvent(scheduledEvent));
+                            await dbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                            await mediator.Publish(domainEvent);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
                 }
-            }
+            });
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
