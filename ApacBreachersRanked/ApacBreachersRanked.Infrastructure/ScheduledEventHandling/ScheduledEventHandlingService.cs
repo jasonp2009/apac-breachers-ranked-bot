@@ -13,10 +13,12 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
     {
         private Timer? _timer = null;
         private readonly IServiceProvider _services;
+        private readonly ILogger<ScheduledEventHandlingService> _logger;
 
-        public ScheduledEventHandlingService(IServiceProvider services)
+        public ScheduledEventHandlingService(IServiceProvider services, ILogger<ScheduledEventHandlingService> logger)
         {
             _services = services;
+            _logger = logger;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -34,7 +36,6 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
         {
             using (IServiceScope scope = _services.CreateScope())
             {
-                ILogger<ScheduledEventHandlingService> logger = scope.ServiceProvider.GetRequiredService<ILogger<ScheduledEventHandlingService>>();
                 BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
 
                 List<ScheduledEvent> events = await dbContext.ScheduledEvents.Where(x => x.ScheduledForUtc <= DateTime.UtcNow).ToListAsync();
@@ -56,7 +57,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
                         }
                         catch (Exception ex)
                         {
-                            logger.LogError(ex, "An exception occurred when trying to DoWorkAsync()");
+                            _logger.LogError(ex, "An exception occurred when trying to DoWorkAsync()");
                         }
                     }
                 }
@@ -68,7 +69,6 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
         {
             using (IServiceScope scope = _services.CreateScope())
             {
-                ILogger<ScheduledEventHandlingService> logger = scope.ServiceProvider.GetRequiredService<ILogger<ScheduledEventHandlingService>>();
                 try
                 {
                     IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
@@ -76,7 +76,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "An exception occurent when trying to HandleEvent()");
+                    _logger.LogError(ex, "An exception occurent when trying to HandleEvent()");
                 }
             }
         }
@@ -87,7 +87,6 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             {
                 using (IServiceScope scope = _services.CreateScope())
                 {
-                    ILogger<ScheduledEventHandlingService> logger = scope.ServiceProvider.GetRequiredService<ILogger<ScheduledEventHandlingService>>();
                     try
                     {
                         if (domainEvent is IScheduledEvent scheduledEvent)
@@ -104,7 +103,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, "An exception occurent when trying to ScheduleEvent()");
+                        _logger.LogError(ex, "An exception occurent when trying to ScheduleEvent()");
                     }
 
                 }

@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.DbContext;
+﻿using ApacBreachersRanked.Application.Common.Mediator;
+using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Interfaces;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
@@ -7,27 +8,31 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace ApacBreachersRanked.Application.Match.Events
+namespace ApacBreachersRanked.Application.Match.Commands
 {
-    public class CreateMatchHandler : INotificationHandler<MatchQueueCapacityReachedEvent>
+    public class CreateMatchCommand : ICommand
+    {
+
+    }
+    public class CreateMatchCommandHandler : ICommandHandler<CreateMatchCommand>
     {
         private readonly IDbContext _dbContext;
         private readonly IMatchService _matchService;
-        private readonly ILogger<CreateMatchHandler> _logger;
-        public CreateMatchHandler(
+        private readonly ILogger<CreateMatchCommandHandler> _logger;
+        public CreateMatchCommandHandler(
             IDbContext dbContext,
             IMatchService matchService,
-            ILogger<CreateMatchHandler> logger)
+            ILogger<CreateMatchCommandHandler> logger)
         {
             _dbContext = dbContext;
             _matchService = matchService;
             _logger = logger;
         }
 
-        public async Task Handle(MatchQueueCapacityReachedEvent notification, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateMatchCommand notification, CancellationToken cancellationToken)
         {
-            MatchQueueEntity? matchQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.Id == notification.MatchQueueId, cancellationToken);
-            if (matchQueue == null || !matchQueue.IsOpen) return;
+            MatchQueueEntity? matchQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
+            if (matchQueue == null || !matchQueue.IsOpen) return Unit.Value;
 
             try
             {
@@ -39,8 +44,8 @@ namespace ApacBreachersRanked.Application.Match.Events
             catch (Exception e)
             {
                 _logger.LogError(e, "An exception occurred when trying to create a match");
-                return;
             }
+            return Unit.Value;
         }
     }
 }

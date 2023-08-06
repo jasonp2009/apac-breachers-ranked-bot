@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Infrastructure.Config;
+using ApacBreachersRanked.Infrastructure.MatchQueueListener;
 using ApacBreachersRanked.Infrastructure.Persistance;
 using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,10 @@ namespace ApacBreachersRanked.Infrastructure
             services.AddSingleton<ScheduledEventHandlingService>();
 
             services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<ScheduledEventHandlingService>());
+
+            services.AddSingleton<MatchQueueListenerService>();
+
+            services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<MatchQueueListenerService>());
 
             return services;
         }
