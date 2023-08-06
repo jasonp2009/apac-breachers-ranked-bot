@@ -31,13 +31,19 @@ namespace ApacBreachersRanked.Application.Stats.Queries
         {
             IUser user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
 
+            List<MatchPlayer> matchPlayers = await _dbContext.MatchPlayers
+                .Include(x => x.Match)
+                .Where(x => x.Match.Status == MatchStatus.Completed && x.UserId.Equals(user.UserId))
+                .ToListAsync(cancellationToken);
+
             PlayerMMR playerMMR = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(user.UserId), cancellationToken)
                 ?? new(user);
 
             BasicMatchPlayerStats matchStats = new();
 
-            foreach (MatchEntity match in _dbContext.Matches.Where(match => match.AllPlayers.Any(player => player.UserId.Equals(user.UserId)) && match.Status == MatchStatus.Completed))
+            foreach (MatchPlayer matchPlayer in matchPlayers)
             {
+                MatchEntity match = matchPlayer.Match;
                 if (match.Score != null)
                 {
                     matchStats.Played++;
@@ -46,8 +52,8 @@ namespace ApacBreachersRanked.Application.Stats.Queries
                         matchStats.Drew++;
                     } else
                     {
-                        if (match.Score.Outcome == ScoreOutcome.Home &&
-                            match.HomePlayers.Any(player => player.UserId.Equals(user.UserId)))
+                        if ((match.Score.Outcome == ScoreOutcome.Home && matchPlayer.Side == MatchSide.Home) ||
+                            (match.Score.Outcome == ScoreOutcome.Away && matchPlayer.Side == MatchSide.Away))
                         {
                             matchStats.Won++;
                         } else
