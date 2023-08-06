@@ -4,6 +4,7 @@ using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.MMR.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Application.MMR.Commands
 {
@@ -15,11 +16,13 @@ namespace ApacBreachersRanked.Application.MMR.Commands
     {
         private readonly IDbContext _dbContext;
         private readonly IMMRAdjustmentService _mmrAdjustmentService;
+        private readonly ILogger<RecalculateMMRCommand> _logger;
 
-        public RecalculateMMRCommandHandler(IDbContext dbContext, IMMRAdjustmentService mmrAdjustmentService)
+        public RecalculateMMRCommandHandler(IDbContext dbContext, IMMRAdjustmentService mmrAdjustmentService, ILogger<RecalculateMMRCommand> logger)
         {
             _dbContext = dbContext;
             _mmrAdjustmentService = mmrAdjustmentService;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(RecalculateMMRCommand request, CancellationToken cancellationToken)
@@ -41,7 +44,7 @@ namespace ApacBreachersRanked.Application.MMR.Commands
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, "An exception occurred when trying to recalculate MMR");
                 throw;
             }
             
