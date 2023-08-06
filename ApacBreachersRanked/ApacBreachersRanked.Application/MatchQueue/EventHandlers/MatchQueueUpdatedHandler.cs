@@ -59,15 +59,24 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             MatchQueueMessage? matchQueueMessage = matchQueueMessageTask.Result;
             IMessageChannel readyUpChannel = readyUpChannelTask.Result as IMessageChannel;
 
-
-            if (matchQueueMessage != null)
+            if (matchQueueMessage?.DiscordMessageId != null && matchQueueMessage?.DiscordMessageId != 0)
             {
-                IUserMessage message = await readyUpChannel.GetMessageAsync(matchQueueMessage.DiscordMessageId) as IUserMessage;
-                await message.ModifyAsync(msg =>
+                try
                 {
-                    msg.Embed = embed;
-                    msg.Content = pings;
-                });
+                    if (await readyUpChannel.GetMessageAsync(matchQueueMessage.DiscordMessageId) is IUserMessage message)
+                    {
+                        await message.ModifyAsync(msg =>
+                        {
+                            msg.Embed = embed;
+                            msg.Content = pings;
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Message deleted");
+                    return;
+                }
             }
             else
             {
