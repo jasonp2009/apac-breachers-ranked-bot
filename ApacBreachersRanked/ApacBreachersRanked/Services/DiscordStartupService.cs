@@ -11,12 +11,14 @@ namespace ApacBreachersRanked.Services
     {
         private readonly DiscordSocketClient _discord;
         private readonly DiscordOptions _config;
+        private readonly ILogger<DiscordStartupService> _logger;
 
-        public DiscordStartupService(DiscordSocketClient discord, IOptions<DiscordOptions> config)
+        public DiscordStartupService(DiscordSocketClient discord, IOptions<DiscordOptions> config, ILogger<DiscordStartupService> logger)
         {
             _discord = discord;
             _config = config.Value;
             discord.Log += Log;
+            _logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -33,7 +35,39 @@ namespace ApacBreachersRanked.Services
 
         private async Task Log(Discord.LogMessage msg)
         {
-            Console.WriteLine(msg.ToString());
+            switch (msg.Severity.ToString())
+            {
+                case "Critical":
+                    {
+                        _logger.LogCritical(msg.Exception, msg.ToString());
+                        break;
+                    }
+                case "Warning":
+                    {
+                        _logger.LogWarning(msg.Exception, msg.ToString());
+                        break;
+                    }
+                case "Info":
+                    {
+                        _logger.LogInformation(msg.ToString());
+                        break;
+                    }
+                case "Verbose":
+                    {
+                        _logger.LogInformation(msg.ToString());
+                        break;
+                    }
+                case "Debug":
+                    {
+                        _logger.LogDebug(msg.ToString());
+                        break;
+                    }
+                case "Error":
+                    {
+                        _logger.LogError(msg.Exception, msg.ToString());
+                        break;
+                    }
+            }
         }
     }
 }

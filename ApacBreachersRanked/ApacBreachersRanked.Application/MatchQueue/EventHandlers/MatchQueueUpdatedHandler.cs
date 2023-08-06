@@ -10,6 +10,7 @@ using ApacBreachersRanked.Domain.User.Interfaces;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 
@@ -20,14 +21,17 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         private readonly IDbContext _dbContext;
         private readonly IDiscordClient _discordClient;
         private readonly BreachersDiscordOptions _breachersDiscordOptions;
+        private readonly ILogger<MatchQueueUpdatedHandler> _logger;
         public MatchQueueUpdatedHandler(
             IDbContext dbContext,
             IDiscordClient discordClient,
-            IOptions<BreachersDiscordOptions> breachersDiscordOptions)
+            IOptions<BreachersDiscordOptions> breachersDiscordOptions,
+            ILogger<MatchQueueUpdatedHandler> logger)
         {
             _dbContext = dbContext;
             _discordClient = discordClient;
             _breachersDiscordOptions = breachersDiscordOptions.Value;
+            _logger = logger;
         }
         public async Task Handle(MatchQueueUpdatedEvent notification, CancellationToken cancellationToken)
         {
@@ -74,7 +78,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Message deleted");
+                    _logger.LogWarning(ex, "An exception occurred when trying to get the queue message, it may have been deleted");
                     return;
                 }
             }

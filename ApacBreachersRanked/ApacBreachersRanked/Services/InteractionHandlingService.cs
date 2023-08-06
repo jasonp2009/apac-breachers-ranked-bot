@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace Example.Services
@@ -17,15 +18,18 @@ namespace Example.Services
         private readonly DiscordSocketClient _discord;
         private readonly InteractionService _interactions;
         private readonly IServiceProvider _services;
+        private readonly ILogger<InteractionHandlingService> _logger;
 
         public InteractionHandlingService(
             DiscordSocketClient discord,
             InteractionService interactions,
-            IServiceProvider services)
+            IServiceProvider services,
+            ILogger<InteractionHandlingService> logger)
         {
             _discord = discord;
             _interactions = interactions;
             _services = services;
+            _logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -53,7 +57,7 @@ namespace Example.Services
                 var result = await _interactions.ExecuteCommandAsync(context, _services);
                 if (!result.IsSuccess)
                 {
-                    Console.WriteLine(result.ErrorReason);
+                    _logger.LogWarning(result.ErrorReason);
                 }
             }
             catch
@@ -81,10 +85,9 @@ namespace Example.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    _logger.LogCritical(ex, "An exception occured when processing on ready tasks");
                     throw;
                 }
-                
             });
         }
     }

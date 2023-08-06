@@ -5,6 +5,7 @@ using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Application.Match.Events
 {
@@ -12,12 +13,15 @@ namespace ApacBreachersRanked.Application.Match.Events
     {
         private readonly IDbContext _dbContext;
         private readonly IMatchService _matchService;
+        private readonly ILogger<CreateMatchHandler> _logger;
         public CreateMatchHandler(
             IDbContext dbContext,
-            IMatchService matchService)
+            IMatchService matchService,
+            ILogger<CreateMatchHandler> logger)
         {
             _dbContext = dbContext;
             _matchService = matchService;
+            _logger = logger;
         }
 
         public async Task Handle(MatchQueueCapacityReachedEvent notification, CancellationToken cancellationToken)
@@ -34,7 +38,7 @@ namespace ApacBreachersRanked.Application.Match.Events
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                _logger.LogError(e, "An exception occurred when trying to create a match");
                 return;
             }
         }

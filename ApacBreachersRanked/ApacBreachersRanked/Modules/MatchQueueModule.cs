@@ -1,15 +1,17 @@
 ﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
 using Discord.Interactions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Modules
 {
     public class MatchQueueModule : BaseModule
     {
-
-        public MatchQueueModule(IMediator mediator)
+        private readonly ILogger<MatchQueueModule> _logger;
+        public MatchQueueModule(IMediator mediator, ILogger<MatchQueueModule> logger)
             : base(mediator)
         {
+            _logger = logger;
         }
 
         [ComponentInteraction("match-queue-*")]
@@ -46,7 +48,7 @@ namespace ApacBreachersRanked.Modules
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, "An exception occur when trying to force match");
                 await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
             }
         }
