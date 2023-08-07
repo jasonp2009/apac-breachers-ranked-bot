@@ -11,7 +11,7 @@ namespace ApacBreachersRanked.Application.Stats.Extensions
             EmbedBuilder eb = new();
             eb.WithTitle($"{stats.User.Name}'s stats");
             StringBuilder sb = new();
-            sb.AppendLine($"MMR: {stats.MMR.ToString("0.##")}");
+            sb.AppendLine($"MMR: {stats.MMR.ToString("0")}");
             sb.AppendLine($"Matches Played: {stats.Match.Played}");
             sb.AppendLine($"Matches Won: {stats.Match.Won}");
             sb.AppendLine($"Matches Drew: {stats.Match.Drew}");

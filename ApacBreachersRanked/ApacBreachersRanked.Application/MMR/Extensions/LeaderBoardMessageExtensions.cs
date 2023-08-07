@@ -15,7 +15,7 @@ namespace ApacBreachersRanked.Application.MMR.Extensions
             int position = 1;
             foreach (PlayerMMR playerMMR in playerMMRs)
             {
-                sb.AppendLine($"{position}) {playerMMR.GetUserMention()}: {playerMMR.MMR}");
+                sb.AppendLine($"{position}) {playerMMR.GetUserMention()}: {playerMMR.MMR.ToString("0")}");
                 position++;
             }
             eb.WithDescription(sb.ToString());
