@@ -35,7 +35,10 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel threadChannel)
             {
-                await threadChannel.ModifyAsync(chnl => chnl.Archived = true);
+                await threadChannel.ModifyAsync(chnl => {
+                    chnl.Archived = true;
+                    chnl.Locked = true;
+                });
             }
         }
     }
