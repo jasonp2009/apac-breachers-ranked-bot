@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked", "ApacBreachersRanked\ApacBreachersRanked.csproj", "{472FA17F-6969-4DEC-BBB2-789526714338}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked", "ApacBreachersRanked\ApacBreachersRanked.csproj", "{472FA17F-6969-4DEC-BBB2-789526714338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Domain", "ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj", "{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Domain", "ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj", "{35C492C4-2192-4E0B-9660-CAC0B9EF26EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Application", "ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj", "{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Application", "ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj", "{19DA2432-3657-4EFB-9B19-10B4AB05CCF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Infrastructure", "ApacBreachersRanked.Infrastructure\ApacBreachersRanked.Infrastructure.csproj", "{762B4400-BDAC-4BD9-8300-86E9D1F0A113}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Infrastructure", "ApacBreachersRanked.Infrastructure\ApacBreachersRanked.Infrastructure.csproj", "{762B4400-BDAC-4BD9-8300-86E9D1F0A113}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1470104E-DE4C-42D5-9EF0-D31BD7125D66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApacBreachersRanked.Domain.Tests", "Tests\ApacBreachersRanked.Domain.Tests\ApacBreachersRanked.Domain.Tests.csproj", "{0738A209-0136-4628-9D87-18F74261FD34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,16 @@ Global
 		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{762B4400-BDAC-4BD9-8300-86E9D1F0A113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0738A209-0136-4628-9D87-18F74261FD34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0738A209-0136-4628-9D87-18F74261FD34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0738A209-0136-4628-9D87-18F74261FD34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0738A209-0136-4628-9D87-18F74261FD34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0738A209-0136-4628-9D87-18F74261FD34} = {1470104E-DE4C-42D5-9EF0-D31BD7125D66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D69C36-BFB3-4AAD-9DBB-E9E0D6DD90BD}

@@ -13,10 +13,11 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
 
         private PlayerMMR() { }
 
-        public PlayerMMR(IUser user)
+        public PlayerMMR(IUser user, decimal? mmr = null)
         {
             UserId = user.UserId;
             Name = user.Name;
+            MMR = mmr ?? default;
         }
 
         public void ApplyAdjustment(MMRAdjustment adjustment)

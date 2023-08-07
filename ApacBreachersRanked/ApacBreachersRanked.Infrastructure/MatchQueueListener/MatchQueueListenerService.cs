@@ -31,7 +31,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                 async _ => await DoWorkAsync(),
                 null,
                 TimeSpan.Zero,
-                TimeSpan.FromSeconds(30));
+                TimeSpan.FromSeconds(15));
 
             return Task.CompletedTask;
         }

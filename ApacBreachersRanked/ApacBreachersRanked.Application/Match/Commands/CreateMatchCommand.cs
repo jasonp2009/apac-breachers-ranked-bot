@@ -1,9 +1,8 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Domain.Match.Entities;
-using ApacBreachersRanked.Domain.Match.Interfaces;
+using ApacBreachersRanked.Domain.Match.Services;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
-using ApacBreachersRanked.Domain.MatchQueue.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -36,7 +35,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
 
             try
             {
-                MatchEntity match = await _matchService.CreateMatchFromQueue(matchQueue);
+                MatchEntity match = await _matchService.CreateMatchFromQueue(matchQueue, cancellationToken);
 
                 _dbContext.Matches.Add(match);
                 await _dbContext.SaveChangesAsync(cancellationToken);
