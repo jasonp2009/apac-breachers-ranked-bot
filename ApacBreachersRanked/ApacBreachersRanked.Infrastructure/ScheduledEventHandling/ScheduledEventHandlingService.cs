@@ -26,7 +26,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             _timer = new Timer(
                 async _ => await DoWorkAsync(),
                 null,
-                TimeSpan.Zero,
+                TimeSpan.FromSeconds(10),
                 TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;

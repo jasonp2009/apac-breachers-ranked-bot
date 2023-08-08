@@ -30,8 +30,8 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
             _timer = new Timer(
                 async _ => await DoWorkAsync(),
                 null,
-                TimeSpan.Zero,
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(30),
+                TimeSpan.FromSeconds(30));
 
             return Task.CompletedTask;
         }
