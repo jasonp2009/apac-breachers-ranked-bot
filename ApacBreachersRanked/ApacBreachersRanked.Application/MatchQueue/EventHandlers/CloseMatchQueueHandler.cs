@@ -42,6 +42,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
             if (matchQueue == null) return;
 
+            // TODO: Add check for if the new queue was already created.
             CreateNewQueueWithRemainingPlayers(matchQueue);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -63,7 +64,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
             await _dbContext.MatchQueue.AddAsync(newMatchQueue);
         }
-
+        
         private async Task DeleteOldQueueMessage(MatchQueueEntity matchQueue, CancellationToken cancellationToken)
         {
             MatchQueueMessage? matchQueueMessage = await _dbContext.MatchQueueMessages.FirstOrDefaultAsync(x => x.MatchQueue == matchQueue, cancellationToken);
