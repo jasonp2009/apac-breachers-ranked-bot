@@ -18,6 +18,8 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         }
         public async Task Handle(PendingScoreConfirmedEvent notification, CancellationToken cancellationToken)
         {
+            // Rework this method, possibly move some db update operations to the PlayerMatchScoreRespondCommand.
+            // Try and make this handler only update messages.
             PendingMatchScore pendingMatchScore = await _dbContext.PendingMatchScores
                 .Include(x => x.Match)
                 .SingleAsync(x => x.Id == notification.PendingMatchScoreId, cancellationToken);
