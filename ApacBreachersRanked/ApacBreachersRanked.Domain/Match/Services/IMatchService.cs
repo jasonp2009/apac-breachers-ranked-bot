@@ -46,7 +46,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
         {
             (List<PlayerMMR>, List<PlayerMMR>) bestPartition = (new List<PlayerMMR>(), new List<PlayerMMR>());
             int bestDiff = int.MaxValue;
-            PartitionPlayerMMRList(playerMMRs, new List<PlayerMMR>(), new List<PlayerMMR>(), 0, 0, 0, ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(playerMMRs, new List<PlayerMMR>(), new List<PlayerMMR>(), 0, 0, 0, Math.Min(5,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff);
 
             return bestPartition;
         }
@@ -58,10 +58,11 @@ namespace ApacBreachersRanked.Domain.Match.Services
             int mmr1,
             int mmr2,
             int index,
+            int minTeamSize,
             ref (List<PlayerMMR>, List<PlayerMMR>) bestPartition,
             ref int bestDiff)
         {
-            if (list1.Count >= 1 && list1.Count <= 5 && list2.Count >= 1 && list2.Count <= 5)
+            if (list1.Count >= minTeamSize && list1.Count <= 5 && list2.Count >= minTeamSize && list2.Count <= 5)
             {
                 int diff = Math.Abs(mmr1 - mmr2);
                 if (diff < bestDiff)
@@ -75,11 +76,11 @@ namespace ApacBreachersRanked.Domain.Match.Services
 
             PlayerMMR player = remainingPlayers[index];
             list1.Add(player);
-            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1 + (int)player.MMR, mmr2, index + 1, ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1 + (int)player.MMR, mmr2, index + 1, minTeamSize, ref bestPartition, ref bestDiff);
             list1.RemoveAt(list1.Count - 1);
 
             list2.Add(player);
-            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1, mmr2 + (int)player.MMR, index + 1, ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1, mmr2 + (int)player.MMR, index + 1, minTeamSize, ref bestPartition, ref bestDiff);
             list2.RemoveAt(list2.Count - 1);
         }
 
