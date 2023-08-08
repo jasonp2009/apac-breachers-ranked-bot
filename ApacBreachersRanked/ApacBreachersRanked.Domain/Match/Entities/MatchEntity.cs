@@ -24,7 +24,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         private MatchEntity() { }
         internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
         {
-            matchQueue.SetMatch(this);
+            matchQueue.CloseQueueAndSetMatch(this);
             foreach (IUser homePlayer in home)
             {
                 AllPlayers.Add(new MatchPlayer(homePlayer, MatchSide.Home));

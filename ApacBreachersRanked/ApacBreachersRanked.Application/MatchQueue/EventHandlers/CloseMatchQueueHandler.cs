@@ -14,7 +14,7 @@ using System.Threading;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Events
 {
-    public class CloseMatchQueueHandler : INotificationHandler<MatchCreatedEvent>
+    public class CloseMatchQueueHandler : INotificationHandler<MatchQueueClosedEvent>
     {
         private readonly IDbContext _dbContext;
         private readonly IDiscordClient _discordClient;
@@ -33,34 +33,34 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             _breachersDiscordOptions = breachersDiscordOptions.Value;
         }
 
-        public async Task Handle(MatchCreatedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(MatchQueueClosedEvent notification, CancellationToken cancellationToken)
         {
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
                 .Include(x => x.Match)
                 .Include(x => x.Users)
-                .FirstOrDefaultAsync(x => x.Match != null && x.Match.Id == notification.MatchId, cancellationToken);
-            if (matchQueue?.Match == null) return;
-            matchQueue.CloseQueue();
+                .FirstOrDefaultAsync(x => x.Id == notification.MatchQueueId, cancellationToken);
+
+            if (matchQueue == null) return;
 
             CreateNewQueueWithRemainingPlayers(matchQueue);
 
-            await DeleteOldQueueMessage(matchQueue, cancellationToken);
-
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            await DeleteOldQueueMessage(matchQueue, cancellationToken);
         }
 
         private async void CreateNewQueueWithRemainingPlayers(MatchQueueEntity matchQueue)
         {
-            List<IUserId> matchPlayerIds = matchQueue.Match!.AllPlayers.Select(matchPlayer => matchPlayer.UserId).ToList();
+            List<IUserId> matchPlayerIds = new();
+            if (matchQueue.Match != null)
+            {
+                matchPlayerIds = matchQueue.Match.AllPlayers.Select(matchPlayer => matchPlayer.UserId).ToList();
+            }
 
             List<MatchQueueUser> remainingUsers = matchQueue.Users.Where(matchQueueUser => !matchPlayerIds.Any(x => x.Equals(matchQueueUser.UserId))).ToList();
 
-            MatchQueueEntity newMatchQueue = new();
-            newMatchQueue.QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = newMatchQueue.Id });
-            foreach (MatchQueueUser remainingUser in remainingUsers)
-            {
-                newMatchQueue.AddUserToQueue(remainingUser, remainingUser.ExpiryUtc);
-            }
+            MatchQueueEntity newMatchQueue = MatchQueueEntity.CreateNewQueueFromUsers(remainingUsers);
+
             await _dbContext.MatchQueue.AddAsync(newMatchQueue);
         }
 

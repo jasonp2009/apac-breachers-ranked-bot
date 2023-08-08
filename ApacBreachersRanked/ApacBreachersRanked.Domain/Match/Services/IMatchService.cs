@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Domain.Helpers;
+using ApacBreachersRanked.Domain.Match.Constants;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
@@ -46,7 +47,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
         {
             (List<PlayerMMR>, List<PlayerMMR>) bestPartition = (new List<PlayerMMR>(), new List<PlayerMMR>());
             int bestDiff = int.MaxValue;
-            PartitionPlayerMMRList(playerMMRs, new List<PlayerMMR>(), new List<PlayerMMR>(), 0, 0, 0, Math.Min(5,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(playerMMRs, new List<PlayerMMR>(), new List<PlayerMMR>(), 0, 0, 0, Math.Min(MatchConstants.MaxTeamSize,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff);
 
             return bestPartition;
         }
@@ -62,7 +63,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
             ref (List<PlayerMMR>, List<PlayerMMR>) bestPartition,
             ref int bestDiff)
         {
-            if (list1.Count >= minTeamSize && list1.Count <= 5 && list2.Count >= minTeamSize && list2.Count <= 5)
+            if (list1.Count >= minTeamSize && list1.Count <= MatchConstants.MaxTeamSize && list2.Count >= minTeamSize && list2.Count <= MatchConstants.MaxTeamSize)
             {
                 int diff = Math.Abs(mmr1 - mmr2);
                 if (diff < bestDiff)
@@ -72,7 +73,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
                 }
             }
 
-            if (index >= remainingPlayers.Count || list1.Count > 5 || list2.Count > 5) return;
+            if (index >= remainingPlayers.Count || list1.Count > MatchConstants.MaxTeamSize || list2.Count > MatchConstants.MaxTeamSize) return;
 
             PlayerMMR player = remainingPlayers[index];
             list1.Add(player);

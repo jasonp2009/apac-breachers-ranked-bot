@@ -12,7 +12,16 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
         public IList<MatchQueueUser> Users { get; private set; } = new List<MatchQueueUser>();
         public MatchEntity? Match { get; private set; }
 
-
+        public static MatchQueueEntity CreateNewQueueFromUsers(IEnumerable<MatchQueueUser> users)
+        {
+            MatchQueueEntity newQueue = new();
+            foreach(MatchQueueUser user in users)
+            {
+                newQueue.Users.Add(new MatchQueueUser(user, user.ExpiryUtc));
+            }
+            newQueue.QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = newQueue.Id });
+            return newQueue;
+        }
         public void AddUserToQueue(IUser user, DateTime expiryUtc)
         {
             MatchQueueUser? matchQueueUser = Users.FirstOrDefault(x => x.UserId.Equals(user.UserId));
@@ -54,14 +63,11 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             }
         }
 
-        public void CloseQueue()
-        {
-            IsOpen = false;
-        }
-
-        public void SetMatch(MatchEntity match)
+        public void CloseQueueAndSetMatch(MatchEntity match)
         {
             Match = match;
+            IsOpen = false;
+            QueueDomainEvent(new MatchQueueClosedEvent { MatchQueueId = Id });
         }
     }
 }
