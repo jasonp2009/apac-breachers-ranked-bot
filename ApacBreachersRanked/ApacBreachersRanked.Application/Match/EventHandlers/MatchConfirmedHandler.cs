@@ -23,6 +23,9 @@ namespace ApacBreachersRanked.Application.Match.Events
         {
             MatchEntity match = await _dbContext.Matches.FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
 
+            // TODO: Move db update operations somewhere else, possibly in the player confirm match command.
+            // Change event to MatchConfirmedEvent, domain should worry about confirming the match once all
+            // players have confirmed.
             match.ConfirmMatch();
 
             MatchThreads matchThreads = await _dbContext.MatchThreads.FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
