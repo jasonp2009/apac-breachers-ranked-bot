@@ -16,28 +16,28 @@ namespace ApacBreachersRanked.Domain.Match.Services
 
             List<PlayerMMR> playerMMRs = await GetPlayerMMRsAsync(users, cancellationToken);
 
-            (List<IUser> home, List<IUser> away) = AllocateTeams(playerMMRs);
+            (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs);
 
-            return new MatchEntity(matchQueue, home, away);
+            return new MatchEntity(matchQueue, home.Select(x => x as IUser).ToList(), away.Select(x => x as IUser).ToList(), home.Average(x => x.MMR), away.Average(x => x.MMR));
         }
 
-        public (List<IUser> Home, List<IUser> Away) AllocateTeams(List<PlayerMMR> playerMMRs)
+        public (List<PlayerMMR> Home, List<PlayerMMR> Away) AllocateTeams(List<PlayerMMR> playerMMRs)
         {
             playerMMRs = playerMMRs.OrderByDescending(x => x.MMR).ToList();
 
             (List<PlayerMMR> firstList, List<PlayerMMR> secondList) = DividePlayerMMRList(playerMMRs);
 
-            List<IUser> Home, Away;
+            List<PlayerMMR> Home, Away;
 
             if (RandomExtensions.RandomNumber(0,1) == 1)
             {
-                Home = firstList.Select(player => player as IUser).ToList();
-                Away = secondList.Select(player => player as IUser).ToList();
+                Home = firstList;
+                Away = secondList;
             }
             else
             {
-                Away = firstList.Select(player => player as IUser).ToList();
-                Home = secondList.Select(player => player as IUser).ToList();
+                Away = firstList;
+                Home = secondList;
             }
             return (Home,Away);
         }

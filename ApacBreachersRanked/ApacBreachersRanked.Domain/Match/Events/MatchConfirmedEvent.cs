@@ -2,7 +2,7 @@
 
 namespace ApacBreachersRanked.Domain.Match.Events
 {
-    public class AllPlayersConfirmedEvent : IDomainEvent
+    public class MatchConfirmedEvent : IDomainEvent
     {
         public Guid MatchId { get; set; }
     }
