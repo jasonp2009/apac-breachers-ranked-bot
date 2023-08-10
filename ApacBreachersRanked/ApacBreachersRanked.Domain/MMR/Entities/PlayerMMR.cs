@@ -17,7 +17,7 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
         {
             UserId = user.UserId;
             Name = user.Name;
-            MMR = mmr ?? 1000;
+            MMR = mmr ?? default;
         }
 
         public void ApplyAdjustment(MMRAdjustment adjustment)

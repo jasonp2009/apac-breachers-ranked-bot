@@ -4,7 +4,6 @@ using ApacBreachersRanked.Application.Match.Models;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Application.Match.EventHandlers
 {
@@ -12,13 +11,11 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
     {
         private readonly IDiscordClient _discordClient;
         private readonly IDbContext _dbContext;
-        private readonly ILogger<PendingScoreUpdatedHandler> _logger;
 
-        public PendingScoreUpdatedHandler(IDiscordClient discordClient, IDbContext dbContext, ILogger<PendingScoreUpdatedHandler> logger)
+        public PendingScoreUpdatedHandler(IDiscordClient discordClient, IDbContext dbContext)
         {
             _discordClient = discordClient;
             _dbContext = dbContext;
-            _logger = logger;
         }
 
         public async Task Handle(PendingScoreUpdatedEvent notification, CancellationToken cancellationToken)
@@ -42,21 +39,10 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
                     
                 } else
                 {
-                    try
+                    if (await channel.GetMessageAsync(pendingMatchScore.MessageId) is IUserMessage message)
                     {
-                        if (await channel.GetMessageAsync(pendingMatchScore.MessageId) is IUserMessage message)
-                        {
-                            await message.ModifyAsync(msg => msg.Embed = pendingMatchScore.GeneratePendingMatchScoreEmbed());
-                        }
+                        await message.ModifyAsync(msg => msg.Embed = pendingMatchScore.GeneratePendingMatchScoreEmbed());
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex,
-                            "An error occurred when trying to update the pending score message {PendingScoreMessageId} for pending match score {PendingMatchScoreId}. It may have been deleted.",
-                            pendingMatchScore.MessageId,
-                            notification.PendingMatchScoreId);
-                    }
-                    
                 }
             }
         }

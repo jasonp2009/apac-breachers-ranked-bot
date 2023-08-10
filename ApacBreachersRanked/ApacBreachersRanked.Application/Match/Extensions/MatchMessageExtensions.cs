@@ -19,8 +19,8 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             eb.WithTitle("Welcome to the match");
             eb.WithDescription($"The match will begin once all players have confirmed{Environment.NewLine}" +
                                $"The match will auto-cancel {match.AutoCancelDateUtc.ToDiscordRelativeEpoch()} if all players have not confirmed");
-            eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, true);
-            eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers, true);
+            eb.AddTeamField("Home", match.HomePlayers, true);
+            eb.AddTeamField("Away", match.AwayPlayers, true);
             return eb.Build();
         }
 
@@ -57,8 +57,8 @@ namespace ApacBreachersRanked.Application.Match.Extensions
                 $"PW: {RandomExtensions.RandomNumber(10, 99)}{Environment.NewLine}" +
                 $"Home has choice of map{Environment.NewLine}" +
                 $"Away has choice of side{Environment.NewLine}");
-            eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, false, true);
-            eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers, false, true);
+            eb.AddTeamField("Home", match.HomePlayers, false, true);
+            eb.AddTeamField("Away", match.AwayPlayers, false, true);
             eb.WithFooter("Once you have completed the match you can enter the score with /enterscore");
             return eb.Build();
         }
@@ -78,8 +78,8 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             EmbedBuilder eb = new();
             eb.WithTitle($"Match #{match.MatchNumber}");
             eb.AddScoreFields(match.Score!);
-            eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers);
-            eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers);
+            eb.AddTeamField("Home", match.HomePlayers);
+            eb.AddTeamField("Away", match.AwayPlayers);
             return eb.Build();
         }
 

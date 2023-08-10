@@ -27,7 +27,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             QueueDomainEvent(new PlayerConfirmedEvent { MatchId = Match.Id, MatchPlayerId = Id });
             if (Match.AllPlayers.All(player => player.Confirmed))
             {
-                Match.ConfirmMatch();
+                QueueDomainEvent(new AllPlayersConfirmedEvent { MatchId = Match.Id });
             }
         }
 

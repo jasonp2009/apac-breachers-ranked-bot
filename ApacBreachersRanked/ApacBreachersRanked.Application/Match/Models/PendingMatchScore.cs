@@ -40,7 +40,7 @@ namespace ApacBreachersRanked.Application.Match.Models
             if (player == null) return;
             player.Confirmed = confirmationStatus;
             QueueDomainEvent(new PendingScoreUpdatedEvent { PendingMatchScoreId = Id });
-            if (Players.Count(player => player.Confirmed) >= Math.Round((decimal)(Players.Count + 1)/2, MidpointRounding.ToPositiveInfinity))
+            if (Players.Count(player => player.Confirmed) >= Math.Round((decimal)(Players.Count + 1)/2))
             {
                 QueueDomainEvent(new PendingScoreConfirmedEvent { PendingMatchScoreId = Id });
             }

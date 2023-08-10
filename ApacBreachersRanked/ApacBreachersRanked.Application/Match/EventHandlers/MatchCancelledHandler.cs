@@ -32,10 +32,7 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
                 {
                     await message.ModifyAsync(msg => msg.Components = new ComponentBuilder().Build());
                 }
-                await channel.ModifyAsync(chnl => {
-                    chnl.Archived = true;
-                    chnl.Locked = true;
-                });
+                await channel.ModifyAsync(chnl => chnl.Archived = true);
             }
         }
     }

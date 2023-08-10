@@ -6,25 +6,24 @@ using ApacBreachersRanked.Domain.Match.Events;
 using Discord;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Application.Match.Events
 {
-    public class MatchConfirmedHandler : INotificationHandler<MatchConfirmedEvent>
+    public class MatchConfirmedHandler : INotificationHandler<AllPlayersConfirmedEvent>
     {
         private readonly IDiscordClient _discordClient;
         private readonly IDbContext _dbContext;
-        private readonly ILogger<MatchConfirmedHandler> _logger;
-        public MatchConfirmedHandler(IDiscordClient discordClient, IDbContext dbContext, ILogger<MatchConfirmedHandler> logger)
+        public MatchConfirmedHandler(IDiscordClient discordClient, IDbContext dbContext)
         {
             _discordClient = discordClient;
             _dbContext = dbContext;
-            _logger = logger;
         }
 
-        public async Task Handle(MatchConfirmedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(AllPlayersConfirmedEvent notification, CancellationToken cancellationToken)
         {
             MatchEntity match = await _dbContext.Matches.FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
+
+            match.ConfirmMatch();
 
             MatchThreads matchThreads = await _dbContext.MatchThreads.FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
 
@@ -32,18 +31,7 @@ namespace ApacBreachersRanked.Application.Match.Events
             {
                 if (await channel.GetMessageAsync(matchThreads.MatchThreadWelcomeMessageId) is IUserMessage message)
                 {
-                    try
-                    {
-                        await message.ModifyAsync(msg => {
-                            msg.Components = new ComponentBuilder().Build();
-                            msg.Embed = match.GenerateMatchWelcomeEmbed();
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "An error occurred when trying to update the match welcome message for match {MatchId}", notification.MatchId);
-                    }
-                    
+                    await message.ModifyAsync(msg => msg.Components = new ComponentBuilder().Build());
                 }
                 await channel.SendMessageAsync(embed: match.GenerateMatchConfirmedEmbed());
             }

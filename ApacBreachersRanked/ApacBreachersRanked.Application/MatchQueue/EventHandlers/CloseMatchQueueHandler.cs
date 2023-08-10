@@ -35,8 +35,6 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
         public async Task Handle(MatchQueueClosedEvent notification, CancellationToken cancellationToken)
         {
-            if (await _dbContext.MatchQueue.AnyAsync(x => x.IsOpen, cancellationToken)) return;
-
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
                 .Include(x => x.Match)
                 .Include(x => x.Users)
@@ -65,7 +63,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
             await _dbContext.MatchQueue.AddAsync(newMatchQueue);
         }
-        
+
         private async Task DeleteOldQueueMessage(MatchQueueEntity matchQueue, CancellationToken cancellationToken)
         {
             MatchQueueMessage? matchQueueMessage = await _dbContext.MatchQueueMessages.FirstOrDefaultAsync(x => x.MatchQueue == matchQueue, cancellationToken);
