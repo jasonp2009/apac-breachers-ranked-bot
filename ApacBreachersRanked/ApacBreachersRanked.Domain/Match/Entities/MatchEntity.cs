@@ -50,6 +50,8 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             AllPlayers.SelectRandom().SetPlayerAsHost();
 
             Status = MatchStatus.Confirmed;
+            
+            QueueDomainEvent(new MatchConfirmedEvent { MatchId = Id });
         }
 
         public void CancelMatch(string reason)

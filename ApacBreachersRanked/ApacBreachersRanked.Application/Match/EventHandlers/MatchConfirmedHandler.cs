@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.Match.Events
 {
-    public class MatchConfirmedHandler : INotificationHandler<AllPlayersConfirmedEvent>
+    public class MatchConfirmedHandler : INotificationHandler<MatchConfirmedEvent>
     {
         private readonly IDiscordClient _discordClient;
         private readonly IDbContext _dbContext;
@@ -19,14 +19,9 @@ namespace ApacBreachersRanked.Application.Match.Events
             _dbContext = dbContext;
         }
 
-        public async Task Handle(AllPlayersConfirmedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(MatchConfirmedEvent notification, CancellationToken cancellationToken)
         {
             MatchEntity match = await _dbContext.Matches.FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
-
-            // TODO: Move db update operations somewhere else, possibly in the player confirm match command.
-            // Change event to MatchConfirmedEvent, domain should worry about confirming the match once all
-            // players have confirmed.
-            match.ConfirmMatch();
 
             MatchThreads matchThreads = await _dbContext.MatchThreads.FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
 
