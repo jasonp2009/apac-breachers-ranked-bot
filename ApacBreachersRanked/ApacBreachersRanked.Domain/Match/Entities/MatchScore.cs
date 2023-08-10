@@ -13,5 +13,14 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             => MapScore.Home > MapScore.Away ? ScoreOutcome.Home
              : MapScore.Away > MapScore.Home ? ScoreOutcome.Away
                                              : ScoreOutcome.Draw;
+        public MatchScore CreateCopy()
+        {
+            MatchScore copy = new();
+            foreach (MapScore map in Maps)
+            {
+                copy.Maps.Add(new(map.Map, map.Home, map.Away));
+            }
+            return copy;
+        }
     }
 }

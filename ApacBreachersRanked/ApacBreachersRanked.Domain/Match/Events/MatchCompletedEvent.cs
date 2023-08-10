@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Domain.Match.Events
 {
-    public class MatchScoreSetEvent : IDomainEvent
+    public class MatchCompletedEvent : IDomainEvent
     {
         public Guid MatchId { get; set; }
     }
