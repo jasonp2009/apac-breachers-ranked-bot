@@ -16,13 +16,15 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public MatchStatus Status { get; private set; } = MatchStatus.PendingConfirmation;
         public DateTime AutoCancelDateUtc { get; init; } = DateTime.UtcNow + TimeSpan.FromMinutes(MatchConstants.AutoCancelMins);
         public IEnumerable<MatchPlayer> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
+        public decimal HomeMMR { get; private set; }
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
+        public decimal AwayMMR { get; private set; }
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
         public MatchPlayer? HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
         public MatchScore? Score { get; private set; } = null;
         public string? CancellationReason { get; private set; }
         private MatchEntity() { }
-        internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away)
+        internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away, decimal homeMMR, decimal awayMMR)
         {
             matchQueue.CloseQueueAndSetMatch(this);
             foreach (IUser homePlayer in home)
@@ -33,6 +35,8 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             {
                 AllPlayers.Add(new MatchPlayer(awayPlayer, MatchSide.Away));
             }
+            HomeMMR = homeMMR;
+            AwayMMR = awayMMR;
             QueueDomainEvent(new MatchCreatedEvent { MatchId = Id });
             QueueDomainEvent(new AutoCancelMatchEvent { ScheduledForUtc = AutoCancelDateUtc, MatchId = Id });
         }
@@ -77,8 +81,8 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             if (Score == null)
             {
                 Status = MatchStatus.Completed;
-                Score = score;
-                QueueDomainEvent(new MatchScoreSetEvent { MatchId = Id });
+                Score = score.CreateCopy();
+                QueueDomainEvent(new MatchCompletedEvent { MatchId = Id });
             }
         }
     }
