@@ -35,6 +35,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
         public async Task Handle(MatchQueueClosedEvent notification, CancellationToken cancellationToken)
         {
+            if (await _dbContext.MatchQueue.AnyAsync(x => x.IsOpen, cancellationToken)) return;
+
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
                 .Include(x => x.Match)
                 .Include(x => x.Users)
@@ -42,7 +44,6 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
             if (matchQueue == null) return;
 
-            // TODO: Add check for if the new queue was already created.
             CreateNewQueueWithRemainingPlayers(matchQueue);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
