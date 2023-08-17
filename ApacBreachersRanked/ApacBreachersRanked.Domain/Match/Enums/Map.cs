@@ -10,6 +10,7 @@ namespace ApacBreachersRanked.Domain.Match.Enums
     {
         Factory,
         Skyscraper,
-        Hideout
+        Hideout,
+        Ship
     }
 }
