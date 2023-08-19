@@ -1,5 +1,4 @@
-﻿using ApacBreachersRanked.Domain.Common;
-using ApacBreachersRanked.Domain.User.Interfaces;
+﻿using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.MatchQueue.Entities
 {
@@ -8,7 +7,7 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
         public IUserId UserId { get; private set; } = null!;
         public string? Name { get; private set; }
         public DateTime ExpiryUtc { get; private set; }
-
+        public bool VoteToForce { get; private set; } = false;
 
         internal MatchQueueUser()
         {
@@ -21,9 +20,14 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             ExpiryUtc = expiryUtc;
         }
 
-        public void UpdateExpiry(DateTime expiryUtc)
+        internal void UpdateExpiry(DateTime expiryUtc)
         {
             ExpiryUtc = expiryUtc;
+        }
+
+        internal void ToggleVoteToForce()
+        {
+            VoteToForce = !VoteToForce;
         }
     }
 }

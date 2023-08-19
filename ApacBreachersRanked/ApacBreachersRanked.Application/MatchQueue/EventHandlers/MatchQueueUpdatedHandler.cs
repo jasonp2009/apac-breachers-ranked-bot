@@ -87,6 +87,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
                 ComponentBuilder cb = new();
                 cb.WithButton("Join", "match-queue-join", style: ButtonStyle.Success);
                 cb.WithButton("Leave", "match-queue-leave", style: ButtonStyle.Danger);
+                cb.WithButton("Force", "match-queue-force", style: ButtonStyle.Primary);
 
                 IUserMessage message = await readyUpChannel.SendMessageAsync(text: pings, embed: embed, components: cb.Build());
                 matchQueueMessage = new()
@@ -103,7 +104,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.WithTitle("APAC Breachers Ranked Queue");
-            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(user => user.GetUserMention() + $" until {user.ExpiryUtc.ToDiscordRelativeEpoch()}")));
+            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(GetUserLine)));
             StringBuilder footerBuilder = new();
             footerBuilder.AppendLine($"{users.Count}/10 players in queue");
             if (inProgressMatches != 0)
@@ -112,6 +113,17 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             }
             embedBuilder.WithFooter(footerBuilder.ToString());
             return embedBuilder.Build();
+        }
+
+        private static string ForceEmoji = "\uD83D\uDD2B";
+
+        private string GetUserLine(MatchQueueUser user)
+        {
+            StringBuilder sb = new();
+            if (user.VoteToForce) sb.Append($"{ForceEmoji} ");
+            sb.Append(user.GetUserMention());
+            sb.Append($" until {user.ExpiryUtc.ToDiscordRelativeEpoch()}");
+            return sb.ToString();
         }
     }
 }
