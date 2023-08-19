@@ -32,12 +32,20 @@ namespace ApacBreachersRanked.Application.MMR.Commands
                 await _dbContext.ResetMMRAsync();
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
-                List<MatchEntity> matches = await _dbContext.Matches.OrderBy(x => x.MatchNumber).ToListAsync(cancellationToken);
+                List<MatchEntity> matches = await _dbContext.Matches
+                    .Where(x => x.Status == Domain.Match.Enums.MatchStatus.Completed)
+                    .OrderBy(x => x.MatchNumber)
+                    .ToListAsync(cancellationToken);
 
                 foreach (MatchEntity match in matches)
                 {
+                    foreach (MatchPlayer player in match.AllPlayers)
+                    {
+                        player.SetMMR((await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(player.UserId), cancellationToken))?.MMR ?? 1000);
+                    }
                     await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, cancellationToken);
                     await _dbContext.SaveChangesAsync(cancellationToken);
+                    await Task.Delay(5000);
                 }
 
                 return Unit.Value;

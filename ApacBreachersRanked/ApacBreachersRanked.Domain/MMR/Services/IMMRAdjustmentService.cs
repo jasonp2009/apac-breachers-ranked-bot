@@ -33,7 +33,7 @@ namespace ApacBreachersRanked.Domain.MMR.Services
             {
                 adjustments.Add(new(
                     player.UserId,
-                    CalculatePlayerMMRAdjustment(-homeTeamMMRAdjustment, homePlayerMMRs, player),
+                    CalculatePlayerMMRAdjustment(-homeTeamMMRAdjustment, awayPlayerMMRs, player),
                     match));
             }
 

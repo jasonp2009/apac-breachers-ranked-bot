@@ -26,12 +26,20 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             {
                 e.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
 
-                e.OwnsMany(x => x.Adjustments, adjustment =>
-                {
-                    adjustment.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
+                e.HasMany(x => x.Adjustments)
+                .WithOne()
+                .HasForeignKey("PlayerMMRId")
+                .HasPrincipalKey(x => x.Id);
+            });
 
-                    adjustment.HasOne(x => x.Match);
-                });
+            modelBuilder.Entity<MMRAdjustment>(e =>
+            {
+                e.Property<int>("Id")
+                .HasColumnType("int")
+                .ValueGeneratedOnAdd();
+                e.HasKey("Id");
+
+                e.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
             });
         }
     }
