@@ -51,7 +51,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, false, true);
             eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers, false, true);
             eb.WithFooter("Once you have completed the match you can enter the score with /enterscore");
-            eb.WithColor(Color.Green);
+            eb.WithColor(ConfirmedColour);
             return eb.Build();
         }
 
@@ -62,7 +62,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             eb.AddScoreFields(matchScore.Score);
             eb.AddTeamField("Home", matchScore.Players.Where(player => player.Side == MatchSide.Home));
             eb.AddTeamField("Away", matchScore.Players.Where(player => player.Side == MatchSide.Away));
-            eb.WithColor(Color.Red);
+            eb.WithColor(PendingColour);
             return eb.Build();
         }
 
