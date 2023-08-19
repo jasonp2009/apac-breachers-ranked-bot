@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.Match.Commands;
 using ApacBreachersRanked.Domain.Match.Constants;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Infrastructure.Persistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 {
-    public class MatchQueueListenerService : IHostedService, IDisposable
+    public class MatchQueueListenerService : BackgroundService
     {
-        private Timer? _timer = null;
+        private PeriodicTimer? _timer = null;
         private readonly IServiceProvider _services;
         private readonly ILogger<MatchQueueListenerService> _logger;
         private CancellationToken _stoppingToken;
@@ -24,16 +25,14 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
             _logger = logger;
         }
 
-        public Task StartAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _stoppingToken = stoppingToken;
-            _timer = new Timer(
-                async _ => await DoWorkAsync(),
-                null,
-                TimeSpan.FromSeconds(30),
-                TimeSpan.FromSeconds(30));
-
-            return Task.CompletedTask;
+            _timer = new(TimeSpan.FromSeconds(10));
+            while (await _timer.WaitForNextTickAsync(stoppingToken))
+            {
+                await DoWorkAsync();
+            }
         }
 
         private async Task DoWorkAsync()
@@ -46,7 +45,8 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 
                 try
                 {
-                    if (IsForceStartEnabled)
+                    MatchQueueEntity? currentQueue = await dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, _stoppingToken);
+                    if (IsForceStartEnabled || (currentQueue?.Users.All(x => x.VoteToForce) ?? false))
                     {
                         if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MinCapacity))
                         {
@@ -67,18 +67,6 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                     _logger.LogError(ex, "An error occured when attempting to create a match");
                 }
             }
-        }
-
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-            _timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
         }
 
         public void ForceStart()
