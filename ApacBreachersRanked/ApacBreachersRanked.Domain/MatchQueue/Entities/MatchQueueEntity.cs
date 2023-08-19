@@ -63,6 +63,17 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             }
         }
 
+        public void ToggleVoteToForce(IUserId userId)
+        {
+            MatchQueueUser? existingUser = Users.FirstOrDefault(user => user.UserId.Equals(userId));
+            if (existingUser != null)
+            {
+                existingUser.ToggleVoteToForce();
+                QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = Id });
+                return;
+            }
+        }
+
         public void CloseQueueAndSetMatch(MatchEntity match)
         {
             Match = match;

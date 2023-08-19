@@ -25,9 +25,16 @@ namespace ApacBreachersRanked.Modules
                     TimeoutMins = 60
                 };
                 await _mediator.Send(command);
-            } else
+            } else if (response == "leave")
             {
                 LeaveQueueCommand command = new LeaveQueueCommand()
+                {
+                    DiscordUserId = Context.User.Id
+                };
+                await _mediator.Send(command);
+            } else
+            {
+                VoteToForceCommand command = new VoteToForceCommand()
                 {
                     DiscordUserId = Context.User.Id
                 };

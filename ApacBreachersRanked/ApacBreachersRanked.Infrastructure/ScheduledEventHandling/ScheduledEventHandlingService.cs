@@ -1,5 +1,4 @@
-﻿using ApacBreachersRanked.Application.DbContext;
-using ApacBreachersRanked.Domain.Common;
+﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Infrastructure.Persistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
 {
-    internal class ScheduledEventHandlingService : IHostedService, IDisposable
+    internal class ScheduledEventHandlingService : BackgroundService
     {
-        private Timer? _timer = null;
+        private PeriodicTimer? _timer = null;
         private readonly IServiceProvider _services;
         private readonly ILogger<ScheduledEventHandlingService> _logger;
+        private CancellationToken _stoppingToken;
 
         public ScheduledEventHandlingService(IServiceProvider services, ILogger<ScheduledEventHandlingService> logger)
         {
@@ -21,15 +21,15 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             _logger = logger;
         }
 
-        public Task StartAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _timer = new Timer(
-                async _ => await DoWorkAsync(),
-                null,
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(10));
+            _timer = new (TimeSpan.FromSeconds(5));
+            _stoppingToken = stoppingToken;
 
-            return Task.CompletedTask;
+            while (await _timer.WaitForNextTickAsync(stoppingToken))
+            {
+                await DoWorkAsync();
+            }
         }
 
         private async Task DoWorkAsync()
@@ -38,7 +38,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             {
                 BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
 
-                List<ScheduledEvent> events = await dbContext.ScheduledEvents.Where(x => x.ScheduledForUtc <= DateTime.UtcNow).ToListAsync();
+                List<ScheduledEvent> events = await dbContext.ScheduledEvents.Where(x => x.ScheduledForUtc <= DateTime.UtcNow).ToListAsync(_stoppingToken);
 
                 if (events.Count == 0) return;
 
@@ -61,7 +61,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
                         }
                     }
                 }
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(_stoppingToken);
             }
         }
 
@@ -72,7 +72,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
                 try
                 {
                     IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                    await mediator.Publish(scheduledEvent, default);
+                    await mediator.Publish(scheduledEvent, _stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -81,7 +81,7 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
             }
         }
 
-        public async void ScheduleEvent(IDomainEvent domainEvent)
+        public void ScheduleEvent(IDomainEvent domainEvent)
         {
             _ = Task.Run(async () =>
             {
@@ -92,34 +92,21 @@ namespace ApacBreachersRanked.Infrastructure.ScheduledEventHandling
                         if (domainEvent is IScheduledEvent scheduledEvent)
                         {
                             BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
-                            await dbContext.AddAsync(new ScheduledEvent(scheduledEvent));
-                            await dbContext.SaveChangesAsync();
+                            await dbContext.AddAsync(new ScheduledEvent(scheduledEvent), _stoppingToken);
+                            await dbContext.SaveChangesAsync(_stoppingToken);
                         }
                         else
                         {
                             IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                            await mediator.Publish(domainEvent);
+                            await mediator.Publish(domainEvent, _stoppingToken);
                         }
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "An exception occurent when trying to ScheduleEvent()");
                     }
-
                 }
             });
-        }
-
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-            _timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
         }
     }
 }
