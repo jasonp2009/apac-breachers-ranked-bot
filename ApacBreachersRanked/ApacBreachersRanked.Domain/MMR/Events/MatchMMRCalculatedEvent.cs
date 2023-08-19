@@ -4,6 +4,6 @@ namespace ApacBreachersRanked.Domain.MMR.Events
 {
     public class MatchMMRCalculatedEvent : IDomainEvent
     {
-        public Guid? MatchId { get; set; }
+        public Guid MatchId { get; set; }
     }
 }

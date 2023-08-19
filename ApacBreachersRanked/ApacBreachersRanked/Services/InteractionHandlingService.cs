@@ -82,7 +82,6 @@ namespace Example.Services
                     {
                         IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                         await mediator.Send(new InitialiseQueueCommand());
-                        await mediator.Publish(new MatchMMRCalculatedEvent());
                     }
                 }
                 catch (Exception ex)

@@ -5,6 +5,7 @@ using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.Match.Events;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
+using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.Match.Entities
@@ -16,27 +17,25 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public MatchStatus Status { get; private set; } = MatchStatus.PendingConfirmation;
         public DateTime AutoCancelDateUtc { get; init; } = DateTime.UtcNow + TimeSpan.FromMinutes(MatchConstants.AutoCancelMins);
         public IEnumerable<MatchPlayer> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
-        public decimal HomeMMR { get; private set; }
+        public decimal HomeMMR => HomePlayers.Average(x => x.MMR);
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
-        public decimal AwayMMR { get; private set; }
+        public decimal AwayMMR => AwayPlayers.Average(x => x.MMR);
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
         public MatchPlayer? HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
         public MatchScore? Score { get; private set; } = null;
         public string? CancellationReason { get; private set; }
         private MatchEntity() { }
-        internal MatchEntity(MatchQueueEntity matchQueue, IList<IUser> home, IList<IUser> away, decimal homeMMR, decimal awayMMR)
+        internal MatchEntity(MatchQueueEntity matchQueue, IList<PlayerMMR> home, IList<PlayerMMR> away)
         {
             matchQueue.CloseQueueAndSetMatch(this);
-            foreach (IUser homePlayer in home)
+            foreach (PlayerMMR homePlayer in home)
             {
-                AllPlayers.Add(new MatchPlayer(homePlayer, MatchSide.Home));
+                AllPlayers.Add(new MatchPlayer(homePlayer, homePlayer.MMR, MatchSide.Home));
             }
-            foreach (IUser awayPlayer in away)
+            foreach (PlayerMMR awayPlayer in away)
             {
-                AllPlayers.Add(new MatchPlayer(awayPlayer, MatchSide.Away));
+                AllPlayers.Add(new MatchPlayer(awayPlayer, awayPlayer.MMR, MatchSide.Away));
             }
-            HomeMMR = homeMMR;
-            AwayMMR = awayMMR;
             QueueDomainEvent(new MatchCreatedEvent { MatchId = Id });
             QueueDomainEvent(new AutoCancelMatchEvent { ScheduledForUtc = AutoCancelDateUtc, MatchId = Id });
         }
