@@ -18,7 +18,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
 
             (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs);
 
-            return new MatchEntity(matchQueue, home.Select(x => x as IUser).ToList(), away.Select(x => x as IUser).ToList(), home.Average(x => x.MMR), away.Average(x => x.MMR));
+            return new MatchEntity(matchQueue, home, away);
         }
 
         public (List<PlayerMMR> Home, List<PlayerMMR> Away) AllocateTeams(List<PlayerMMR> playerMMRs)

@@ -2,6 +2,7 @@
 using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Infrastructure.Config;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,9 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 e.Navigation(p => p.AllPlayers).AutoInclude();
 
                 e.Ignore(p => p.HomePlayers);
+                e.Ignore(p => p.HomeMMR);
                 e.Ignore(p => p.AwayPlayers);
+                e.Ignore(p => p.AwayMMR);
                 e.Ignore(p => p.HostPlayer);
 
                 e.OwnsOne(p => p.Score, score =>
