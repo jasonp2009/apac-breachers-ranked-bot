@@ -66,7 +66,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             return eb.Build();
         }
 
-        public static Embed GenerateMatchResultEmbed(this MatchEntity match, IEnumerable<MMRAdjustment> mmrAdjustments)
+        public static Embed GenerateMatchResultEmbed(this MatchEntity match, IQueryable<MMRAdjustment> mmrAdjustments)
         {
             EmbedBuilder eb = new();
             eb.WithTitle($"Match #{match.MatchNumber}");
@@ -91,7 +91,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         private static void AddTeamField(this EmbedBuilder eb,
             string teamName, IEnumerable<MatchPlayer> players,
             bool withConfirmation = false, bool withHost = false,
-            bool withMMR = true, IEnumerable<MMRAdjustment>? mmrAdjustments = null)
+            bool withMMR = true, IQueryable<MMRAdjustment>? mmrAdjustments = null)
         {
             EmbedFieldBuilder efb = new();
             efb.WithName(teamName);

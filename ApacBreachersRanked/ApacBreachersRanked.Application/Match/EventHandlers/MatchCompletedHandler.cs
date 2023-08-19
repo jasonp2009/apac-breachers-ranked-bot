@@ -28,7 +28,7 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         {
             MatchEntity match = await _dbContext.Matches.AsNoTracking().SingleAsync(x => x.Id == notification.MatchId, cancellationToken);
             MatchThreads matchThreads = await _dbContext.MatchThreads.AsNoTracking().SingleAsync(x => x.Match.Id ==  notification.MatchId, cancellationToken);
-            IEnumerable<MMRAdjustment> mmrAdjustments = _dbContext.MMRAdjustments.AsNoTracking().Where(x => x.Match.Id == notification.MatchId);
+            IQueryable<MMRAdjustment> mmrAdjustments = _dbContext.MMRAdjustments.AsNoTracking().Where(x => x.Match.Id == notification.MatchId);
 
             if (await _discordClient.GetChannelAsync(_options.MatchResultsChannelId) is IMessageChannel matchResultsChannel)
             {
