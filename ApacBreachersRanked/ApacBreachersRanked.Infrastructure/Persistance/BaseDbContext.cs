@@ -38,12 +38,14 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             }
             OnModelCreatingMatchQueue(modelBuilder);
             OnModelCreatingMatch(modelBuilder);
+            OnModelCreatingMatchVote(modelBuilder);
             OnModelCreatingScheduledEvent(modelBuilder);
             OnModelCreatingMMR(modelBuilder);
         }
 
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder);
         partial void OnModelCreatingMatch(ModelBuilder modelBuilder);
+        partial void OnModelCreatingMatchVote(ModelBuilder modelBuilder);
         partial void OnModelCreatingScheduledEvent(ModelBuilder modelBuilder);
         partial void OnModelCreatingMMR(ModelBuilder modelBuilder);
 

@@ -2,16 +2,7 @@
 using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Match.Entities;
-using ApacBreachersRanked.Domain.MMR.Entities;
-using ApacBreachersRanked.Infrastructure.Config;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
@@ -26,8 +17,6 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         partial void OnModelCreatingMatch(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<MatchEntity>(e =>
             {
                 e.Property(p => p.MatchNumber).ValueGeneratedOnAdd();

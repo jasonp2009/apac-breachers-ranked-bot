@@ -1,5 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Common.Extensions;
 using ApacBreachersRanked.Application.Match.Models;
+using ApacBreachersRanked.Application.MatchVote.Enums;
+using ApacBreachersRanked.Application.MatchVote.Models;
 using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
@@ -18,8 +20,8 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         public static Color PendingColour = Color.Red;
         public static Color ConfirmedColour = Color.Green;
 
-        public static Color HomeWinColour = new Color(48, 95, 167);
-        public static Color AwayWinColour = new Color(192, 160, 51);
+        public static Color HomeColour = new Color(48, 95, 167);
+        public static Color AwayColour = new Color(192, 160, 51);
         public static Color DrawColour = Color.LightGrey;
         public static Embed GenerateMatchWelcomeEmbed(this MatchEntity match)
         {
@@ -39,17 +41,19 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             return eb.Build();
         }
 
-        public static Embed GenerateMatchConfirmedEmbed(this MatchEntity match)
+        public static Embed GenerateMatchConfirmedEmbed(this MatchEntity match, MatchVoteModel matchVote)
         {
             EmbedBuilder eb = new();
             eb.WithTitle("The match is confirmed");
-            eb.WithDescription(
-                $"{match.HostPlayer?.Name} is host{Environment.NewLine}" +
-                $"PW: {RandomExtensions.RandomNumber(10, 99)}{Environment.NewLine}" +
-                $"Home has choice of map{Environment.NewLine}" +
-                $"Away has choice of side{Environment.NewLine}");
-            eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, false, true);
-            eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers, false, true);
+            StringBuilder sb = new();
+            sb.AppendLine($"{match.HostPlayer?.Name} is host");
+            sb.AppendLine($"PW: {RandomExtensions.RandomNumber(10, 99)}");
+            sb.AppendLine($"Map is {matchVote.VotedMap}");
+            eb.WithDescription(sb.ToString());
+
+            eb.AddTeamField($"Home [{matchVote.VotedHomeSide}] ({match.HomeMMR.ToString("0")})", match.HomePlayers, false, true);
+            GameSide awaySide = matchVote.VotedHomeSide == GameSide.Enforcers ? GameSide.Revolters : GameSide.Enforcers;
+            eb.AddTeamField($"Away [{awaySide}] ({match.AwayMMR.ToString("0")})", match.AwayPlayers, false, true);
             eb.WithFooter("Once you have completed the match you can enter the score with /enterscore");
             eb.WithColor(ConfirmedColour);
             return eb.Build();
@@ -76,10 +80,10 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             switch(match.Score!.Outcome)
             {
                 case ScoreOutcome.Home:
-                    eb.WithColor(HomeWinColour);
+                    eb.WithColor(HomeColour);
                     break;
                 case ScoreOutcome.Away:
-                    eb.WithColor(AwayWinColour);
+                    eb.WithColor(AwayColour);
                     break;
                 case ScoreOutcome.Draw:
                     eb.WithColor(DrawColour);
