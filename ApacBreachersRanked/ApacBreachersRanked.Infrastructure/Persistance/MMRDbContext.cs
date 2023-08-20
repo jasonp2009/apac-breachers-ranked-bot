@@ -20,8 +20,6 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         partial void OnModelCreatingMMR(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<PlayerMMR>(e =>
             {
                 e.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());

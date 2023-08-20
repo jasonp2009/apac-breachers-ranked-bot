@@ -1,6 +1,8 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Match.Extensions;
 using ApacBreachersRanked.Application.Match.Models;
+using ApacBreachersRanked.Application.MatchVote.Events;
+using ApacBreachersRanked.Application.MatchVote.Models;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Events;
 using Discord;
@@ -10,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ApacBreachersRanked.Application.Match.Events
 {
-    public class MatchConfirmedHandler : INotificationHandler<MatchConfirmedEvent>
+    public class MatchConfirmedHandler : INotificationHandler<SideVoteCompletedEvent>
     {
         private readonly IDiscordClient _discordClient;
         private readonly IDbContext _dbContext;
@@ -22,11 +24,19 @@ namespace ApacBreachersRanked.Application.Match.Events
             _logger = logger;
         }
 
-        public async Task Handle(MatchConfirmedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(SideVoteCompletedEvent notification, CancellationToken cancellationToken)
         {
-            MatchEntity match = await _dbContext.Matches.FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
+            MatchEntity match = await _dbContext.Matches
+                .AsNoTracking()
+                .FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
 
-            MatchThreads matchThreads = await _dbContext.MatchThreads.FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
+            MatchVoteModel matchVote = await _dbContext.MatchVotes
+                .AsNoTracking()
+                .SingleAsync(x => x.MatchId ==  notification.MatchId, cancellationToken);
+
+            MatchThreads matchThreads = await _dbContext.MatchThreads
+                .AsNoTracking()
+                .FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel channel)
             {
@@ -45,10 +55,8 @@ namespace ApacBreachersRanked.Application.Match.Events
                     }
                     
                 }
-                await channel.SendMessageAsync(embed: match.GenerateMatchConfirmedEmbed());
+                await channel.SendMessageAsync(embed: match.GenerateMatchConfirmedEmbed(matchVote));
             }
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

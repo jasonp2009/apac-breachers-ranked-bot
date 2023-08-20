@@ -2,11 +2,7 @@
 using ApacBreachersRanked.Application.MatchQueue.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
-using ApacBreachersRanked.Infrastructure.Config;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System.Reflection;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
@@ -18,8 +14,6 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<MatchQueueEntity>(e =>
             {
                 e.OwnsMany(x => x.Users, users =>
