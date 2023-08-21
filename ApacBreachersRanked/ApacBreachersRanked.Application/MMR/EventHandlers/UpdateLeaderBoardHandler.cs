@@ -28,9 +28,9 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
         }
         public async Task Handle(MatchMMRCalculatedEvent notification, CancellationToken cancellationToken)
         {
-            List<PlayerMMR> top10Players = await _dbContext.PlayerMMRs
+            List<PlayerMMR> top50Players = await _dbContext.PlayerMMRs
                 .OrderByDescending(x => x.MMR)
-                .Take(10)
+                .Take(50)
                 .ToListAsync(cancellationToken);
 
             LeaderBoardMessage? leaderBoardMessage = await _dbContext.LeaderBoardMessages.FirstOrDefaultAsync(cancellationToken);
@@ -46,10 +46,10 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
                 if (leaderBoardMessage.LeaderBoardMessageId != 0 &&
                     await channel.GetMessageAsync(leaderBoardMessage.LeaderBoardMessageId) is IUserMessage message)
                 {
-                    await message.ModifyAsync(msg => msg.Embed = top10Players.GetLeaderBoardEmbed());
+                    await message.ModifyAsync(msg => msg.Embed = top50Players.GetLeaderBoardEmbed());
                 } else
                 {
-                    IUserMessage newMessage = await channel.SendMessageAsync(embed: top10Players.GetLeaderBoardEmbed());
+                    IUserMessage newMessage = await channel.SendMessageAsync(embed: top50Players.GetLeaderBoardEmbed());
                     leaderBoardMessage.LeaderBoardMessageId = newMessage.Id;
                     await _dbContext.SaveChangesAsync(cancellationToken);
                 }
