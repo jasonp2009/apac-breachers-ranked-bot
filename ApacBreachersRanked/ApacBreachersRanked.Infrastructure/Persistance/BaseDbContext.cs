@@ -4,6 +4,7 @@ using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Text.Json;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
@@ -70,10 +71,20 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         protected virtual async Task HandleEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
         {
+            List<int> scheduledHashes = new();
             foreach (IDomainEvent domainEvent in events)
             {
+                int eventHash = GetDomainEventHash(domainEvent);
+                if (scheduledHashes.Contains(eventHash)) continue;
+
+                scheduledHashes.Add(eventHash);
                 _scheduledEventHandlerService.ScheduleEvent(domainEvent);
             }
+        }
+
+        private int GetDomainEventHash(IDomainEvent domainEvent)
+        {
+            return HashCode.Combine(domainEvent.GetType().FullName, JsonSerializer.Serialize(domainEvent));
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.MatchQueue.Queries;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Commands
 {
@@ -27,13 +27,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         public async Task<Unit> Handle(JoinQueueCommand request, CancellationToken cancellationToken)
         {
             ApplicationDiscordUser user = await _mediator.Send(new GetDiscordUserQuery() { DiscordUserId = request.DiscordUserId }, cancellationToken);
-            MatchQueueEntity? currentQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
-
-            if (currentQueue == null)
-            {
-                currentQueue = new();
-                await _dbContext.MatchQueue.AddAsync(currentQueue);
-            }
+            MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);
 
             currentQueue.AddUserToQueue(user, DateTime.UtcNow + TimeSpan.FromMinutes(request.TimeoutMins));
 
