@@ -11,6 +11,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
     {
         public ulong DiscordUserId { get; set; }
         public int TimeoutMins { get; set; }
+        public DateTime? JoinAt { get; set; }
     }
 
     public class JoinQueueCommandHandler : ICommandHandler<JoinQueueCommand>

@@ -43,6 +43,16 @@ namespace ApacBreachersRanked.Modules
             await DeferAsync();
         }
 
+        [SlashCommand("joinq", "Join the queue with aditional options")]
+        public async Task JoinQueueAsync(
+            [Summary("at", "Join the queue at a particular time")]
+            DateTime at,
+            [Summary("for", "Join the queue for a particular amount of time")]
+            TimeSpan forTimeSpan)
+        {
+            await RespondAsync("Test");
+        }
+
         [SlashCommand("forcematch", "Force a match to start")]
         [RequireRole("mod")]
         public async Task ForceMatchAsync()
