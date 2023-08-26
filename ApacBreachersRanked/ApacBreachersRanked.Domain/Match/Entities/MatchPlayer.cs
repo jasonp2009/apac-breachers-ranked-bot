@@ -1,7 +1,7 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.Match.Events;
-using ApacBreachersRanked.Domain.MMR.Entities;
+using ApacBreachersRanked.Domain.MMR.Enums;
 using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.Match.Entities
@@ -12,15 +12,17 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public IUserId UserId { get; private set; }
         public string? Name { get; private set; }
         public decimal MMR { get; private set; }
+        public Rank? Rank { get; private set; }
         public MatchSide Side { get; private set; }
         public bool Confirmed { get; private set; } = false;
         public bool IsHost { get; private set; } = false;
         private MatchPlayer() { }
-        public MatchPlayer(IUser user, decimal mmr, MatchSide side)
+        public MatchPlayer(IUser user, decimal mmr, Rank? rank, MatchSide side)
         {
             UserId = user.UserId;
             Name = user.Name;
             MMR = mmr;
+            Rank = rank;
             Side = side;
         }
 
@@ -48,6 +50,11 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public void SetMMR(decimal mmr)
         {
             MMR = mmr;
+        }
+
+        public void SetRank(Rank? rank)
+        {
+            Rank = rank;
         }
     }
 }
