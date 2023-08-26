@@ -6,7 +6,6 @@ using ApacBreachersRanked.Domain.Match.Events;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using ApacBreachersRanked.Domain.MMR.Entities;
-using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.Match.Entities
 {
@@ -30,11 +29,11 @@ namespace ApacBreachersRanked.Domain.Match.Entities
             matchQueue.CloseQueueAndSetMatch(this);
             foreach (PlayerMMR homePlayer in home)
             {
-                AllPlayers.Add(new MatchPlayer(homePlayer, homePlayer.MMR, MatchSide.Home));
+                AllPlayers.Add(new MatchPlayer(homePlayer, homePlayer.MMR, homePlayer.Rank, MatchSide.Home));
             }
             foreach (PlayerMMR awayPlayer in away)
             {
-                AllPlayers.Add(new MatchPlayer(awayPlayer, awayPlayer.MMR, MatchSide.Away));
+                AllPlayers.Add(new MatchPlayer(awayPlayer, awayPlayer.MMR, awayPlayer.Rank, MatchSide.Away));
             }
             QueueDomainEvent(new MatchCreatedEvent { MatchId = Id });
             QueueDomainEvent(new AutoCancelMatchEvent { ScheduledForUtc = AutoCancelDateUtc, MatchId = Id });

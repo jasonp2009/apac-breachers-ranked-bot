@@ -2,6 +2,7 @@
 using ApacBreachersRanked.Application.Match.Models;
 using ApacBreachersRanked.Application.MatchVote.Enums;
 using ApacBreachersRanked.Application.MatchVote.Models;
+using ApacBreachersRanked.Application.MMR.Extensions;
 using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
@@ -108,6 +109,10 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         private static string GetPlayerMetion(this MatchPlayer player, bool withConfirmation = false, bool withHost = false, bool withMMR = true, decimal? mmrAdjustment = null)
         {
             StringBuilder sb = new();
+            if (withMMR)
+            {
+                sb.Append($"{player.Rank.GetEmoji()} ");
+            }
             sb.Append(player.GetUserMention());
             if (withMMR)
             {

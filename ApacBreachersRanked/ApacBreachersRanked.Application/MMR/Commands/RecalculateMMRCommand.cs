@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,9 @@ namespace ApacBreachersRanked.Application.MMR.Commands
                 {
                     foreach (MatchPlayer player in match.AllPlayers)
                     {
-                        player.SetMMR((await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(player.UserId), cancellationToken))?.MMR ?? 1000);
+                        PlayerMMR? playerMMR = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(player.UserId), cancellationToken);
+                        player.SetMMR(playerMMR?.MMR ?? 1000);
+                        player.SetRank(playerMMR?.Rank);
                     }
                     await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, cancellationToken);
                     await _dbContext.SaveChangesAsync(cancellationToken);

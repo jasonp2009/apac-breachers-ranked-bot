@@ -1,5 +1,7 @@
-﻿using ApacBreachersRanked.Application.Config;
+﻿using ApacBreachersRanked.Application.Common.Mediator;
+using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.MMR.Commands;
 using ApacBreachersRanked.Application.MMR.Extensions;
 using ApacBreachersRanked.Application.MMR.Models;
 using ApacBreachersRanked.Domain.MMR.Entities;
@@ -11,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace ApacBreachersRanked.Application.MMR.EventHandlers
 {
-    public class UpdateLeaderBoardHandler : INotificationHandler<MatchMMRCalculatedEvent>
+    public class UpdateLeaderBoardHandler : INotificationHandler<MatchMMRCalculatedEvent>, ICommandHandler<RefreshLeaderboardCommand>
     {
         private readonly IDbContext _dbContext;
         private readonly IDiscordClient _discordClient;
@@ -54,6 +56,12 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
                     await _dbContext.SaveChangesAsync(cancellationToken);
                 }
             }
+        }
+
+        public async Task<Unit> Handle(RefreshLeaderboardCommand request, CancellationToken cancellationToken)
+        {
+            await Handle(new MatchMMRCalculatedEvent(), cancellationToken);
+            return Unit.Value;
         }
     }
 }
