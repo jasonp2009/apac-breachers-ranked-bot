@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.MMR.Commands;
+using ApacBreachersRanked.Application.Moderation.Commands;
 using Discord.Interactions;
 using MediatR;
 
@@ -19,5 +20,9 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("rank_emojis", "Force an update of the rank emojis if they were modified")]
         public Task RankEmojis()
             => _mediator.Send(new SetRankEmojisCommand(), CancellationToken.None);
+
+        [SlashCommand("bans", "Force an update of the active bans message")]
+        public Task ActiveBans()
+            => _mediator.Send(new RefreshBanMessageCommand(), CancellationToken.None);
     }
 }

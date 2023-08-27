@@ -25,6 +25,9 @@ namespace ApacBreachersRanked.Application.Users
             }
             return false;
         }
+
+        public override string ToString()
+            => Id.ToString();
     }
 
     public static class IUserIdExtensions
