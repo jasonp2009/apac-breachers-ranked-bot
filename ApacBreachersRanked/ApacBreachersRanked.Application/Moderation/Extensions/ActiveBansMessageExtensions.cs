@@ -7,7 +7,7 @@ namespace ApacBreachersRanked.Application.Moderation.Extensions
 {
     public static class ActiveBansMessageExtensions
     {
-        public static Embed GetActiveBanEmbed(this IEnumerable<UserBan> activeBans)
+        public static Embed GetActiveBansEmbed(this IEnumerable<UserBan> activeBans)
         {
             EmbedBuilder eb = new();
             eb.WithTitle("Active bans");

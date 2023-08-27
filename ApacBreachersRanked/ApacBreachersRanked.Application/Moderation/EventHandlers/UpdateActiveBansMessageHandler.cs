@@ -71,12 +71,12 @@ namespace ApacBreachersRanked.Application.Moderation.EventHandlers
                     await message.ModifyAsync(msg =>
                     {
                         msg.Content = string.Join(" ", activeBans.Select(x => x.GetUserMention()));
-                        msg.Embed = activeBans.GetActiveBanEmbed();
+                        msg.Embed = activeBans.GetActiveBansEmbed();
                     });
                 }
                 else
                 {
-                    IUserMessage newMessage = await channel.SendMessageAsync(string.Join(" ", activeBans.Select(x => x.GetUserMention())), embed: activeBans.GetActiveBanEmbed());
+                    IUserMessage newMessage = await channel.SendMessageAsync(string.Join(" ", activeBans.Select(x => x.GetUserMention())), embed: activeBans.GetActiveBansEmbed());
                     activeBanMessage.ActiveBansMessageId = newMessage.Id;
                     await _dbContext.SaveChangesAsync(cancellationToken);
                 }
