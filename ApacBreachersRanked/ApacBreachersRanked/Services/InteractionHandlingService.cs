@@ -60,6 +60,11 @@ namespace Example.Services
                 if (!result.IsSuccess)
                 {
                     _logger.LogWarning(result.ErrorReason);
+
+                    if (result.Error == InteractionCommandError.UnmetPrecondition)
+                    {
+                        await interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+                    }
                 }
             }
             catch

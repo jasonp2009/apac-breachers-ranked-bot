@@ -1,4 +1,6 @@
-﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
+﻿using ApacBreachersRanked.Application.Common.Extensions;
+using ApacBreachersRanked.Application.MatchQueue.Commands;
+using ApacBreachersRanked.Application.Moderation.Exceptions;
 using Discord.Interactions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -19,12 +21,24 @@ namespace ApacBreachersRanked.Modules
         {
             if (response == "join")
             {
-                JoinQueueCommand command = new JoinQueueCommand()
+                try
                 {
-                    DiscordUserId = Context.User.Id,
-                    TimeoutMins = 60
-                };
-                await _mediator.Send(command);
+                    JoinQueueCommand command = new JoinQueueCommand()
+                    {
+                        DiscordUserId = Context.User.Id,
+                        TimeoutMins = 60
+                    };
+                    await _mediator.Send(command);
+                }
+                catch (UserBannedException ex)
+                {
+                    await RespondAsync($"You cannot join the queue due to an active ban.{Environment.NewLine}" +
+                                       $"Your ban will expire {ex.ExpiryUtc.ToDiscordRelativeEpoch()}{Environment.NewLine}" +
+                                       $"Ban reason: {ex.Reason}",
+                                       ephemeral: true);
+                    return;
+                }
+                
             } else if (response == "leave")
             {
                 LeaveQueueCommand command = new LeaveQueueCommand()
