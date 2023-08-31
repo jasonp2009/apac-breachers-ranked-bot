@@ -23,8 +23,6 @@ namespace ApacBreachersRanked.Domain.Match.Services
 
         public (List<PlayerMMR> Home, List<PlayerMMR> Away) AllocateTeams(List<PlayerMMR> playerMMRs)
         {
-            playerMMRs = playerMMRs.OrderByDescending(x => x.MMR).ToList();
-
             (List<PlayerMMR> firstList, List<PlayerMMR> secondList) = DividePlayerMMRList(playerMMRs);
 
             List<PlayerMMR> Home, Away;
@@ -45,9 +43,15 @@ namespace ApacBreachersRanked.Domain.Match.Services
         // Chat-GPT algo (idk how good it is)
         public static (List<PlayerMMR>, List<PlayerMMR>) DividePlayerMMRList(List<PlayerMMR> playerMMRs)
         {
+
+            playerMMRs = playerMMRs.OrderByDescending(x => x.MMR).ToList();
+            List<PlayerMMR> topPlayer = new List<PlayerMMR>() { playerMMRs[0] };
+            List<PlayerMMR> secondTopPlayer = new List<PlayerMMR>() { playerMMRs[1] };
+
             (List<PlayerMMR>, List<PlayerMMR>) bestPartition = (new List<PlayerMMR>(), new List<PlayerMMR>());
             int bestDiff = int.MaxValue;
-            PartitionPlayerMMRList(playerMMRs, new List<PlayerMMR>(), new List<PlayerMMR>(), 0, 0, 0, Math.Min(MatchConstants.MaxTeamSize,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff);
+
+            PartitionPlayerMMRList(playerMMRs, topPlayer, secondTopPlayer, (int)playerMMRs[0].MMR, (int)playerMMRs[1].MMR, 2, Math.Min(MatchConstants.MaxTeamSize,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff);
 
             return bestPartition;
         }

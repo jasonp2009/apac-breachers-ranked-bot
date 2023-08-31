@@ -85,5 +85,32 @@ namespace ApacBreachersRanked.Tests.Match.Services
                 //greedyDiff.Should().BeLessThanOrEqualTo(Math.Max(reasonableMaxDiff, 10), $"Run {rep}");
             }
         }
+
+        [Fact]
+        public void GivenAListOfPlayers_WhenAssigningTeams_EnsureTop2PlayersAreDivided()
+        {
+            TestUser bestPlayer = new TestUser();
+            TestUser secondBestPlayer = new TestUser();
+
+            List<PlayerMMR> players = new()
+                {
+                    new PlayerMMR(bestPlayer, 125),
+                    new PlayerMMR(secondBestPlayer, 120),
+                    new PlayerMMR(new TestUser(), 110),
+                    new PlayerMMR(new TestUser(), 100),
+                    new PlayerMMR(new TestUser(), 90),
+                    new PlayerMMR(new TestUser(), 55)
+                };
+
+            (List<PlayerMMR> Home, List<PlayerMMR> Away) = _sut.AllocateTeams(players);
+
+            if (Home.Any(x => x.Equals(bestPlayer)))
+            {
+                Assert.Contains(Away, x => x.UserId.Equals(secondBestPlayer.UserId));
+            }
+            {
+                Assert.Contains(Home, x => x.UserId.Equals(secondBestPlayer.UserId));
+            }
+        }
     }
 }
