@@ -12,7 +12,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
         protected Task<List<PlayerMMR>> GetPlayerMMRsAsync(IEnumerable<IUser> users, CancellationToken cancellationToken = default);
         public async Task<MatchEntity> CreateMatchFromQueue(MatchQueueEntity matchQueue, CancellationToken cancellationToken)
         {
-            List<IUser> users = matchQueue.Users.Select(user => user as IUser).ToList();
+            List<IUser> users = matchQueue.Users.Take(10).Select(user => user as IUser).ToList();
 
             List<PlayerMMR> playerMMRs = await GetPlayerMMRsAsync(users, cancellationToken);
 
