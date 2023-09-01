@@ -1,10 +1,8 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.Config;
-using ApacBreachersRanked.Application.Match.Services;
 using ApacBreachersRanked.Application.MMR.Services;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain;
-using ApacBreachersRanked.Domain.Match.Services;
 using ApacBreachersRanked.Domain.MMR.Services;
 using ApacBreachersRanked.Domain.User.Interfaces;
 using MediatR;
@@ -32,7 +30,7 @@ namespace ApacBreachersRanked.Application
 
             services.AddScoped<IMMRAdjustmentService, MMRAdjustmentService>();
 
-            services.AddScoped<IMatchService, MatchService>();
+            services.AddScoped<IMMRService, MMRService>();
 
             services.AddDomain();
 

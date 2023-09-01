@@ -1,19 +1,20 @@
 ﻿using ApacBreachersRanked.Application.MMR.Queries;
-using ApacBreachersRanked.Domain.Match.Services;
 using ApacBreachersRanked.Domain.MMR.Entities;
+using ApacBreachersRanked.Domain.MMR.Services;
 using ApacBreachersRanked.Domain.User.Interfaces;
 using MediatR;
 
-namespace ApacBreachersRanked.Application.Match.Services
+namespace ApacBreachersRanked.Application.MMR.Services
 {
-    internal class MatchService : IMatchService
+    internal class MMRService : IMMRService
     {
         private readonly IMediator _mediator;
-        public MatchService(IMediator mediator)
+
+        public MMRService(IMediator mediator)
         {
             _mediator = mediator;
         }
-        Task<List<PlayerMMR>> IMatchService.GetPlayerMMRsAsync(IEnumerable<IUser> users, CancellationToken cancellationToken)
+        public Task<List<PlayerMMR>> GetPlayerMMRsAsync(IEnumerable<IUser> users, CancellationToken cancellationToken = default)
             => _mediator.Send(new GetPlayerMMRsQuery { Users = users }, cancellationToken);
     }
 }
