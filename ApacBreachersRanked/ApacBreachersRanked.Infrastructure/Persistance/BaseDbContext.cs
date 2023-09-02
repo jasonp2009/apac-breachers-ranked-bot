@@ -43,6 +43,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             OnModelCreatingScheduledEvent(modelBuilder);
             OnModelCreatingMMR(modelBuilder);
             OnModelCreatingModeration(modelBuilder);
+            OnModelCreatingPingTimer(modelBuilder);
         }
 
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder);
@@ -51,6 +52,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
         partial void OnModelCreatingScheduledEvent(ModelBuilder modelBuilder);
         partial void OnModelCreatingMMR(ModelBuilder modelBuilder);
         partial void OnModelCreatingModeration(ModelBuilder modelBuilder);
+        partial void OnModelCreatingPingTimer(ModelBuilder modelBuilder);
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
