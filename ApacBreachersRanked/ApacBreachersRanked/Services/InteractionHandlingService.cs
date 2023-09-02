@@ -102,7 +102,7 @@ namespace Example.Services
 
         private async Task OnMessageAsync(SocketMessage message)
         {
-            if (!message.MentionedRoles.Any()) return;
+            if (message.Author.IsBot || !message.MentionedRoles.Any()) return;
 
             using (IServiceScope scope = _services.CreateScope())
             {
