@@ -61,5 +61,28 @@ namespace ApacBreachersRanked.Modules
                 await Context.Interaction.FollowupAsync(ex.Message);
             }
         }
+
+        [SlashCommand("cancelmatch", "Cancel a match")]
+        public async Task CancelMatch(
+            [Summary("matchNumber", "The match you want to cancel")]
+            int matchNumber,
+            [Summary("reason", "The reason you want to cancel this match")]
+            string cancellationReason)
+        {
+            await DeferAsync(ephemeral: true);
+            try
+            {
+                await _mediator.Send(new CancelMatchCommand
+                {
+                    MatchNumber = matchNumber,
+                    CancellationReason = cancellationReason
+                });
+                await Context.Interaction.FollowupAsync("User has been unbanned");
+            }
+            catch (Exception ex)
+            {
+                await Context.Interaction.FollowupAsync(ex.Message);
+            }
+        }
     }
 }

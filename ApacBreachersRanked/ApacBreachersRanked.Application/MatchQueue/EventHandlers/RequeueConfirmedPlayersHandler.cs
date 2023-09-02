@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Queries;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.Match.Events;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
@@ -20,6 +21,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
         }
         public async Task Handle(MatchCancelledEvent notification, CancellationToken cancellationToken)
         {
+            if (notification.PreviousStatus != MatchStatus.PendingConfirmation) return;
+
             MatchEntity match = await _dbContext.Matches
                 .AsNoTracking()
                 .SingleAsync(x => x.Id == notification.MatchId, cancellationToken);
