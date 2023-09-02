@@ -35,7 +35,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
 
             try
             {
-                MatchEntity match = await _matchService.CreateMatchFromQueue(matchQueue, cancellationToken);
+                MatchEntity match = await _matchService.CreateMatchFromQueueAsync(matchQueue, cancellationToken);
 
                 _dbContext.Matches.Add(match);
                 await _dbContext.SaveChangesAsync(cancellationToken);

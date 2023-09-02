@@ -58,9 +58,12 @@ namespace ApacBreachersRanked.Domain.Match.Entities
 
         public void CancelMatch(string reason)
         {
+            if (Status == MatchStatus.Completed)
+                throw new InvalidOperationException($"Match #{MatchNumber} is already completed. Cannot cancel a completed match.");
+            MatchStatus previousStatus = Status;
             Status = MatchStatus.Cancelled;
             CancellationReason = reason;
-            QueueDomainEvent(new MatchCancelledEvent { MatchId = Id });
+            QueueDomainEvent(new MatchCancelledEvent { MatchId = Id, PreviousStatus = previousStatus });
             QueueDomainEvent(new MatchQueueUpdatedEvent());
         }
 

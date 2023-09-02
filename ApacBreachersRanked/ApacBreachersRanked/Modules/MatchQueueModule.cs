@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.Common.Extensions;
 using ApacBreachersRanked.Application.MatchQueue.Commands;
+using ApacBreachersRanked.Application.MatchQueue.Exceptions;
 using ApacBreachersRanked.Application.Moderation.Exceptions;
 using Discord.Interactions;
 using MediatR;
@@ -36,6 +37,13 @@ namespace ApacBreachersRanked.Modules
                                        $"Your ban will expire {ex.ExpiryUtc.ToDiscordRelativeEpoch()}{Environment.NewLine}" +
                                        $"Ban reason: {ex.Reason}",
                                        ephemeral: true);
+                    return;
+                }
+                catch (UserInMatchException ex)
+                {
+                    await RespondAsync($"You are currently in an in-progress match #{ex.MatchNumber}. {Environment.NewLine}" +
+                                        "Please complete the match and confirm the score before joining the queue.",
+                                        ephemeral: true);
                     return;
                 }
                 
