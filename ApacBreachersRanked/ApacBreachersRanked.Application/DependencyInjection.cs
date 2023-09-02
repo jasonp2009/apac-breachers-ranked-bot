@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.MMR.Services;
+using ApacBreachersRanked.Application.PingTimer;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain;
 using ApacBreachersRanked.Domain.MMR.Services;
@@ -31,6 +32,8 @@ namespace ApacBreachersRanked.Application
             services.AddScoped<IMMRAdjustmentService, MMRAdjustmentService>();
 
             services.AddScoped<IMMRService, MMRService>();
+
+            services.AddPingTimer();
 
             services.AddDomain();
 

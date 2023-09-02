@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Application.MMR.Commands;
+using ApacBreachersRanked.Application.PingTimer.Events;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.TypeConverters;
 using Discord;
@@ -37,6 +38,7 @@ namespace Example.Services
             _discord.Ready += () => _interactions.RegisterCommandsGloballyAsync(true);
             _discord.InteractionCreated += OnInteractionAsync;
             _discord.Ready += OnReadyAsync;
+            _discord.MessageReceived += OnMessageAsync;
 
             _interactions.AddTypeConverter<Map>(new EnumConverter<Map>());
 
@@ -96,6 +98,20 @@ namespace Example.Services
                     throw;
                 }
             });
+        }
+
+        private async Task OnMessageAsync(SocketMessage message)
+        {
+            if (!message.MentionedRoles.Any()) return;
+
+            using (IServiceScope scope = _services.CreateScope())
+            {
+                IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                foreach (SocketRole role in message.MentionedRoles)
+                {
+                    await mediator.Publish(new RolePingedEvent { RoleId = role.Id });
+                }
+            }
         }
     }
 }
