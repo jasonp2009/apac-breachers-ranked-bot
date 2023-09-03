@@ -93,6 +93,58 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             return eb.Build();
         }
 
+        public static Embed GenerateCurrentMatchEmbed(this MatchEntity match, MatchVoteModel? matchVote)
+        {
+            EmbedBuilder eb = new();
+            StringBuilder sb = new();
+            eb.WithTitle($"Match #{match.MatchNumber}");
+            if (match.Status == MatchStatus.PendingConfirmation)
+            {
+                eb.WithColor(PendingColour);
+            } else
+            {
+                eb.WithColor(ConfirmedColour);
+                if (matchVote?.VotedMap == null)
+                {
+                    sb.AppendLine("Home is currently voting on map");
+                }
+                else
+                {
+                    sb.AppendLine($"Home chose {matchVote.VotedMap}");
+                    if (matchVote?.VotedHomeSide == null)
+                    {
+                        sb.AppendLine("Away is currently voting on side");
+                    }
+                    else
+                    {
+                        if (matchVote.VotedHomeSide == GameSide.Enforcers)
+                        {
+                            sb.AppendLine($"Away choose {GameSide.Revolters.ToString()}");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"Away choose {GameSide.Enforcers.ToString()}");
+                        }
+                    }
+                }
+            }
+            
+            eb.WithDescription(sb.ToString());
+            
+            if (matchVote?.VotedHomeSide != null)
+            {
+                eb.AddTeamField($"Home [{matchVote.VotedHomeSide}] ({match.HomeMMR.ToString("0")})", match.HomePlayers, match.Status == MatchStatus.PendingConfirmation, false, true);
+                GameSide awaySide = matchVote.VotedHomeSide == GameSide.Enforcers ? GameSide.Revolters : GameSide.Enforcers;
+                eb.AddTeamField($"Away [{awaySide}] ({match.AwayMMR.ToString("0")})", match.AwayPlayers, match.Status == MatchStatus.PendingConfirmation, false, true);
+            } else
+            {
+                eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, match.Status == MatchStatus.PendingConfirmation, false, true);
+                eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers, match.Status == MatchStatus.PendingConfirmation, false,true);
+            }
+            
+            return eb.Build();
+        }
+
         private static void AddTeamField(this EmbedBuilder eb,
             string teamName, IEnumerable<MatchPlayer> players,
             bool withConfirmation = false, bool withHost = false,
