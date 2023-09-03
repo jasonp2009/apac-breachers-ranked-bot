@@ -79,4 +79,16 @@ namespace ApacBreachersRanked.Application.Users
             _discordUser = discordUser;
         }
     }
+
+    public class UnknownDiscordUser : IUser
+    {
+        public IUserId UserId { get; set; }
+
+        public string? Name => "Unknown user";
+
+        public UnknownDiscordUser(IUserId userId)
+        {
+            UserId = userId;
+        }
+    }
 }

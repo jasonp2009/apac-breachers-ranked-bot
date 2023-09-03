@@ -29,7 +29,16 @@ namespace ApacBreachersRanked.Application.Stats.Queries
         }
         public async Task<BasicPlayerStats> Handle(GetBasicPlayerStatsQuery request, CancellationToken cancellationToken)
         {
-            IUser user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
+            IUser user;
+            try
+            {
+                user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
+            }
+            catch (Exception)
+            {
+                user = new UnknownDiscordUser(request.DiscordUserId.ToIUserId());
+            }
+            
 
             List<MatchEntity> matches = await _dbContext.Matches.AsNoTracking()
                 .Where(x => x.Status == MatchStatus.Completed && x.AllPlayers.Any(player => player.UserId.Equals(user.UserId)))
