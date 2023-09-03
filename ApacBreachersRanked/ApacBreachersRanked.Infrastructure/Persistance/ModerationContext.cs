@@ -2,6 +2,7 @@
 using ApacBreachersRanked.Application.Moderation.Models;
 using ApacBreachersRanked.Application.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
@@ -15,6 +16,8 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             modelBuilder.Entity<UserBan>(e =>
             {
                 e.Property(p => p.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
+
+                e.Property(p => p.Duration).HasConversion(new TimeSpanToTicksConverter());
             });
         }
     }

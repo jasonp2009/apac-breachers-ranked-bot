@@ -27,7 +27,7 @@ namespace ApacBreachersRanked.Modules
                     JoinQueueCommand command = new JoinQueueCommand()
                     {
                         DiscordUserId = Context.User.Id,
-                        TimeoutMins = 60
+                        TimeoutMins = 30
                     };
                     await _mediator.Send(command);
                 }

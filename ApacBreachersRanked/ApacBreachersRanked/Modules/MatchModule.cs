@@ -1,9 +1,11 @@
 ﻿using ApacBreachersRanked.Application.Match.Commands;
+using ApacBreachersRanked.Application.Match.Queries;
 using ApacBreachersRanked.Application.MatchVote.Commands;
 using ApacBreachersRanked.Application.MatchVote.Enums;
 using ApacBreachersRanked.Application.MMR.Commands;
 using ApacBreachersRanked.AutoCompleteHandlers;
 using ApacBreachersRanked.Domain.Match.Enums;
+using Discord;
 using Discord.Interactions;
 using MediatR;
 
@@ -102,6 +104,21 @@ namespace ApacBreachersRanked.Modules
             {
                 await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
                 throw;
+            }
+        }
+
+        [SlashCommand("playing", "List the matches that are currently being played")]
+        public async Task Playing()
+        {
+            List<Embed> embeds = await _mediator.Send(new GetPlayingEmbedsQuery());
+
+            if (embeds.Count() == 0)
+            {
+                await RespondAsync("There are no in-progress matchess", ephemeral: true);
+            }
+            else
+            {
+                await RespondAsync(embeds: embeds.ToArray(), ephemeral: true);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace ApacBreachersRanked.Application.Moderation.Models
             Name = user.Name;
             BannedAtUtc = DateTime.UtcNow;
             Duration = duration;
-            ExpiryUtc = BannedAtUtc + duration;
+            ExpiryUtc = BannedAtUtc.Add(duration);
             Reason = reason;
             QueueDomainEvent(new UserBannedEvent { UserBanId = Id });
             QueueDomainEvent(new UserBanExpiredEvent { UserBanId = Id, ScheduledForUtc = ExpiryUtc });
