@@ -1,0 +1,34 @@
+USE [ApacBreachersDb-Live]
+GO
+
+DROP TABLE UserBans
+
+/****** Object:  Table [dbo].[UserBans]    Script Date: 3/09/2023 9:04:22 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UserBans](
+	[Id] [uniqueidentifier] NOT NULL,
+	[UserId] [decimal](20, 0) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+	[BannedAtUtc] [datetime2](7) NOT NULL,
+	[Duration] [bigint] NOT NULL,
+	[ExpiryUtc] [datetime2](7) NOT NULL,
+	[Reason] [nvarchar](max) NOT NULL,
+	[UnBanOverride] [bit] NOT NULL,
+	[UnBanReason] [nvarchar](max) NULL,
+ CONSTRAINT [PK_UserBans] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+INSERT INTO UserBans VALUES
+('03BF694D-F5D5-464B-A789-053B40BAD812', 1139127736175173712, 'Ligma', '2023-09-03 10:31:51.0111821', 36000000000, '2023-09-03 11:31:51.0111821', 'abandoning match #97', CAST (0 AS BIT), NULL),
+('3EB5B55C-1F16-4470-BC68-725D9A7D27FF', 439213507637018654, 'Bola', '2023-09-01 12:38:45.8086202', 18000000000,'2023-09-01 13:08:45.8086202', 'Leaving match #82', CAST (1 AS BIT), 'next match'),
+('4BF73878-F097-4D65-8106-B4B7FC85DFA3', 752050016234766417, 'frage', '2023-08-31 09:17:48.0798369', 36000000000, '2023-08-31 10:17:48.0798369', 'Left match #73 3rd round', CAST (0 AS BIT), NULL)
+SELECT * FROM UserBans
