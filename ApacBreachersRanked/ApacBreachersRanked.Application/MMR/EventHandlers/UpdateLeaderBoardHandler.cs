@@ -4,6 +4,9 @@ using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MMR.Commands;
 using ApacBreachersRanked.Application.MMR.Extensions;
 using ApacBreachersRanked.Application.MMR.Models;
+using ApacBreachersRanked.Application.Stats.Models;
+using ApacBreachersRanked.Application.Stats.Queries;
+using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Events;
 using Discord;
@@ -16,15 +19,18 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
     public class UpdateLeaderBoardHandler : INotificationHandler<MatchMMRCalculatedEvent>, ICommandHandler<RefreshLeaderboardCommand>
     {
         private readonly IDbContext _dbContext;
+        private readonly IMediator _mediator;
         private readonly IDiscordClient _discordClient;
         private readonly BreachersDiscordOptions _config;
 
         public UpdateLeaderBoardHandler(
             IDbContext dbContext,
+            IMediator mediator,
             IDiscordClient discordClient,
             IOptions<BreachersDiscordOptions> options)
         {
             _dbContext = dbContext;
+            _mediator = mediator;
             _discordClient = discordClient;
             _config = options.Value;
         }
@@ -34,6 +40,14 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
                 .OrderByDescending(x => x.MMR)
                 .Take(50)
                 .ToListAsync(cancellationToken);
+
+            List<LeaderBoardPlayer> leaderBoardPlayers = new();
+
+            foreach(PlayerMMR playerMMR in top50Players)
+            {
+                BasicPlayerStats basicStats = await _mediator.Send(new GetBasicPlayerStatsQuery { DiscordUserId = playerMMR.UserId.GetDiscordId() }, cancellationToken);
+                leaderBoardPlayers.Add(new(playerMMR, basicStats.Match));
+            }
 
             LeaderBoardMessage? leaderBoardMessage = await _dbContext.LeaderBoardMessages.FirstOrDefaultAsync(cancellationToken);
 
@@ -48,10 +62,10 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
                 if (leaderBoardMessage.LeaderBoardMessageId != 0 &&
                     await channel.GetMessageAsync(leaderBoardMessage.LeaderBoardMessageId) is IUserMessage message)
                 {
-                    await message.ModifyAsync(msg => msg.Embed = top50Players.GetLeaderBoardEmbed());
+                    await message.ModifyAsync(msg => msg.Embed = leaderBoardPlayers.GetLeaderBoardEmbed());
                 } else
                 {
-                    IUserMessage newMessage = await channel.SendMessageAsync(embed: top50Players.GetLeaderBoardEmbed());
+                    IUserMessage newMessage = await channel.SendMessageAsync(embed: leaderBoardPlayers.GetLeaderBoardEmbed());
                     leaderBoardMessage.LeaderBoardMessageId = newMessage.Id;
                     await _dbContext.SaveChangesAsync(cancellationToken);
                 }
