@@ -31,9 +31,8 @@ namespace ApacBreachersRanked.Application.Stats.Queries
         {
             IUser user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
 
-            List<MatchPlayer> matchPlayers = await _dbContext.MatchPlayers
-                .Include(x => x.Match)
-                .Where(x => x.Match.Status == MatchStatus.Completed && x.UserId.Equals(user.UserId))
+            List<MatchEntity> matches = await _dbContext.Matches.AsNoTracking()
+                .Where(x => x.Status == MatchStatus.Completed && x.AllPlayers.Any(player => player.UserId.Equals(user.UserId)))
                 .ToListAsync(cancellationToken);
 
             PlayerMMR playerMMR = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(user.UserId), cancellationToken)
@@ -41,9 +40,9 @@ namespace ApacBreachersRanked.Application.Stats.Queries
 
             BasicMatchPlayerStats matchStats = new();
 
-            foreach (MatchPlayer matchPlayer in matchPlayers)
+            foreach (MatchEntity match in matches)
             {
-                MatchEntity match = matchPlayer.Match;
+                MatchPlayer matchPlayer = match.AllPlayers.Single(x => x.UserId.Equals(user.UserId));
                 if (match.Score != null)
                 {
                     matchStats.Played++;
