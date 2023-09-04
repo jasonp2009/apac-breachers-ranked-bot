@@ -17,51 +17,55 @@ namespace ApacBreachersRanked.Modules
             _logger = logger;
         }
 
-        [ComponentInteraction("match-queue-*")]
-        public async Task JoinQueueAsync(string response)
+        [ComponentInteraction("join-queue-*")]
+        public async Task JoinQueueAsync(int timeoutMins)
         {
-            if (response == "join")
+            try
             {
-                try
+                JoinQueueCommand command = new JoinQueueCommand()
                 {
-                    JoinQueueCommand command = new JoinQueueCommand()
-                    {
-                        DiscordUserId = Context.User.Id,
-                        TimeoutMins = 30
-                    };
-                    await _mediator.Send(command);
-                }
-                catch (UserBannedException ex)
-                {
-                    await RespondAsync($"You cannot join the queue due to an active ban.{Environment.NewLine}" +
-                                       $"Your ban will expire {ex.ExpiryUtc.ToDiscordRelativeEpoch()}{Environment.NewLine}" +
-                                       $"Ban reason: {ex.Reason}",
-                                       ephemeral: true);
-                    return;
-                }
-                catch (UserInMatchException ex)
-                {
-                    await RespondAsync($"You are currently in an in-progress match #{ex.MatchNumber}. {Environment.NewLine}" +
-                                        "Please complete the match and confirm the score before joining the queue.",
-                                        ephemeral: true);
-                    return;
-                }
-                
-            } else if (response == "leave")
-            {
-                LeaveQueueCommand command = new LeaveQueueCommand()
-                {
-                    DiscordUserId = Context.User.Id
-                };
-                await _mediator.Send(command);
-            } else
-            {
-                VoteToForceCommand command = new VoteToForceCommand()
-                {
-                    DiscordUserId = Context.User.Id
+                    DiscordUserId = Context.User.Id,
+                    TimeoutMins = timeoutMins
                 };
                 await _mediator.Send(command);
             }
+            catch (UserBannedException ex)
+            {
+                await RespondAsync($"You cannot join the queue due to an active ban.{Environment.NewLine}" +
+                                   $"Your ban will expire {ex.ExpiryUtc.ToDiscordRelativeEpoch()}{Environment.NewLine}" +
+                                   $"Ban reason: {ex.Reason}",
+                                   ephemeral: true);
+                return;
+            }
+            catch (UserInMatchException ex)
+            {
+                await RespondAsync($"You are currently in an in-progress match #{ex.MatchNumber}. {Environment.NewLine}" +
+                                    "Please complete the match and confirm the score before joining the queue.",
+                                    ephemeral: true);
+                return;
+            }
+            await DeferAsync();
+        }
+
+        [ComponentInteraction("leave-queue")]
+        public async Task LeaveQueueAsync()
+        {
+            LeaveQueueCommand command = new LeaveQueueCommand()
+            {
+                DiscordUserId = Context.User.Id
+            };
+            await _mediator.Send(command);
+            await DeferAsync();
+        }
+
+        [ComponentInteraction("vote-force-match")]
+        public async Task VoteForceMatchAsync()
+        {
+            VoteToForceCommand command = new VoteToForceCommand()
+            {
+                DiscordUserId = Context.User.Id
+            };
+            await _mediator.Send(command);
             await DeferAsync();
         }
 
