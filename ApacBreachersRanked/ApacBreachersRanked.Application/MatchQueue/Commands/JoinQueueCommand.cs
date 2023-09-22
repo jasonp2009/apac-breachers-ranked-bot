@@ -33,11 +33,9 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
 
             ApplicationDiscordUser user = await _mediator.Send(new GetDiscordUserQuery() { DiscordUserId = request.DiscordUserId }, cancellationToken);
 
-            MatchEntity? currentMatch = await _mediator.Send(new GetInProgressMatchByUserQuery { UserId = request.DiscordUserId.ToIUserId() }, cancellationToken);
-
-            if (currentMatch != null)
+            if (await _mediator.Send(new IsUserInMatchQuery { UserId = request.DiscordUserId.ToIUserId() }, cancellationToken))
             {
-                throw new UserInMatchException(user, currentMatch);
+                throw new UserInMatchException(user);
             }
 
             MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);

@@ -1,18 +1,17 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
-using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.User.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.MatchQueue.Queries
 {
-    public class GetInProgressMatchByUserQuery : IQuery<MatchEntity?>
+    public class IsUserInMatchQuery : IQuery<bool>
     {
         public IUserId UserId { get; set; } = null!;
     }
 
-    public class IsUserInMatchHandler : IQueryHandler<GetInProgressMatchByUserQuery, MatchEntity?>
+    public class IsUserInMatchHandler : IQueryHandler<IsUserInMatchQuery, bool>
     {
         private readonly IDbContext _dbContext;
 
@@ -20,8 +19,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.Queries
         {
             _dbContext = dbContext;
         }
-        public Task<MatchEntity?> Handle(GetInProgressMatchByUserQuery request, CancellationToken cancellationToken)
-            => _dbContext.Matches.FirstOrDefaultAsync(
+        public Task<bool> Handle(IsUserInMatchQuery request, CancellationToken cancellationToken)
+            => _dbContext.Matches.AnyAsync(
                 x => (x.Status == MatchStatus.PendingConfirmation ||
                       x.Status == MatchStatus.Confirmed) &&
                       x.AllPlayers.Any(x => x.UserId.Equals(request.UserId)),

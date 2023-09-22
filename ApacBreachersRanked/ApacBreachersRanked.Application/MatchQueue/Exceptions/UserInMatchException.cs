@@ -17,5 +17,11 @@ namespace ApacBreachersRanked.Application.MatchQueue.Exceptions
             MatchId = match.Id;
             MatchNumber = match.MatchNumber;
         }
+
+        public UserInMatchException(IUser user)
+        {
+            UserId = user.UserId;
+            Name = user.Name;
+        }
     }
 }

@@ -37,9 +37,9 @@ namespace ApacBreachersRanked.Modules
                                    ephemeral: true);
                 return;
             }
-            catch (UserInMatchException ex)
+            catch (UserInMatchException)
             {
-                await RespondAsync($"You are currently in an in-progress match #{ex.MatchNumber}. {Environment.NewLine}" +
+                await RespondAsync($"You are currently in an in-progress match. {Environment.NewLine}" +
                                     "Please complete the match and confirm the score before joining the queue.",
                                     ephemeral: true);
                 return;
