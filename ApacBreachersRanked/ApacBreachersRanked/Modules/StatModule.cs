@@ -17,6 +17,8 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("basic", "Get basic stats")]
         public async Task Stats(SocketUser? user = null)
         {
+            await RespondAsync("This command is disabled", ephemeral: true);
+            return;
             if (user == null) user = Context.User;
             await DeferAsync(ephemeral: true);
             BasicPlayerStats stats = await _mediator.Send(new GetBasicPlayerStatsQuery
@@ -29,6 +31,8 @@ namespace ApacBreachersRanked.Modules
         [SlashCommand("matches", "Get stats for your matches")]
         public async Task MatchStats(SocketUser? user = null)
         {
+            await RespondAsync("This command is disabled", ephemeral: true);
+            return;
             if (user == null) user = Context.User;
             await DeferAsync(ephemeral: true);
             MatchesPlayerStats stats = await _mediator.Send(new GetMatchPlayerStatsQuery
