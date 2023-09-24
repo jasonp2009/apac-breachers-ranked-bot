@@ -21,7 +21,7 @@ namespace ApacBreachersRanked
             services.AddSingleton(new InteractionServiceConfig
             {
                 AutoServiceScopes = true,
-                DefaultRunMode = RunMode.Async,
+                DefaultRunMode = RunMode.Sync,
                 ThrowOnError = true
             });
             services.AddSingleton<InteractionService>();
