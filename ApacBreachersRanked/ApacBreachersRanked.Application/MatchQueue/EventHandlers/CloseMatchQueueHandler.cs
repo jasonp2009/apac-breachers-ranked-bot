@@ -40,7 +40,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
                 .Include(x => x.Match)
                 .Include(x => x.Users)
-                .FirstOrDefaultAsync(x => x.Id == notification.MatchQueueId, cancellationToken);
+                .Where(x => x.Id == notification.MatchQueueId)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (matchQueue == null) return;
 
@@ -68,7 +69,9 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
         
         private async Task DeleteOldQueueMessage(MatchQueueEntity matchQueue, CancellationToken cancellationToken)
         {
-            MatchQueueMessage? matchQueueMessage = await _dbContext.MatchQueueMessages.FirstOrDefaultAsync(x => x.MatchQueue == matchQueue, cancellationToken);
+            MatchQueueMessage? matchQueueMessage = await _dbContext.MatchQueueMessages
+                .Where(x => x.MatchQueue == matchQueue)
+                .FirstOrDefaultAsync(cancellationToken);
             if (matchQueueMessage == null || matchQueueMessage.IsDeleted) return;
 
             IMessageChannel channel = await _discordClient.GetChannelAsync(_breachersDiscordOptions.ReadyUpChannelId) as IMessageChannel;

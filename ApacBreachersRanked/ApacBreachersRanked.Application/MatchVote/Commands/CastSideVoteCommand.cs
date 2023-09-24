@@ -25,7 +25,9 @@ namespace ApacBreachersRanked.Application.MatchVote.Commands
         }
         public async Task<Unit> Handle(CastSideVoteCommand request, CancellationToken cancellationToken)
         {
-            MatchVoteModel matchVote = await _dbContext.MatchVotes.SingleAsync(x => x.Match.MatchNumber == request.MatchNumber, cancellationToken);
+            MatchVoteModel matchVote = await _dbContext.MatchVotes
+                .Where(x => x.Match.MatchNumber == request.MatchNumber)
+                .SingleAsync(cancellationToken);
 
             matchVote.CastSideVote(request.DiscordUserId.ToIUserId(), request.Vote);
 

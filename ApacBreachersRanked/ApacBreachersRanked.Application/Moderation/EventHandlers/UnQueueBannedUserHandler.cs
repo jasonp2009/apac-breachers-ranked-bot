@@ -23,7 +23,8 @@ namespace ApacBreachersRanked.Application.Moderation.EventHandlers
         {
             UserBan ban = await _dbContext.UserBans
                 .AsNoTracking()
-                .FirstAsync(x => x.Id == notification.UserBanId, cancellationToken);
+                .Where(x => x.Id == notification.UserBanId)
+                .FirstAsync(cancellationToken);
 
             await _mediator.Send(new LeaveQueueCommand { DiscordUserId = ban.UserId.GetDiscordId() }, cancellationToken);
         }

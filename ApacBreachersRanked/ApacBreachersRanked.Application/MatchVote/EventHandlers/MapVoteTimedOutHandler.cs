@@ -16,7 +16,9 @@ namespace ApacBreachersRanked.Application.MatchVote.EventHandlers
         }
         public async Task Handle(MapVoteTimedOutEvent notification, CancellationToken cancellationToken)
         {
-            MatchVoteModel matchVote = await _dbContext.MatchVotes.SingleAsync(x => x.MatchId == notification.MatchId, cancellationToken);
+            MatchVoteModel matchVote = await _dbContext.MatchVotes
+                .Where(x => x.MatchId == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             matchVote.CompletMapVote();
 

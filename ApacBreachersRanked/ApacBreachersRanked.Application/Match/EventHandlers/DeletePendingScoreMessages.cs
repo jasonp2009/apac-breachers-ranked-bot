@@ -25,7 +25,9 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
             IEnumerable<PendingMatchScore> pendingScores = _dbContext.PendingMatchScores
                 .Where(x => x.MatchId == notification.MatchId);
 
-            MatchThreads matchThreads = await _dbContext.MatchThreads.SingleAsync(x => x.Match.Id == notification.MatchId, cancellationToken);
+            MatchThreads matchThreads = await _dbContext.MatchThreads
+                .Where(x => x.Match.Id == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel channel)
             {

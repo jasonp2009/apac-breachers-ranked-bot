@@ -21,8 +21,12 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
 
         public async Task Handle(MatchCancelledEvent notification, CancellationToken cancellationToken)
         {
-            MatchEntity match = await _dbContext.Matches.AsNoTracking().SingleAsync(x => x.Id == notification.MatchId, cancellationToken);
-            MatchThreads matchThreads = await _dbContext.MatchThreads.AsNoTracking().SingleAsync(x => x.Match.Id == notification.MatchId, cancellationToken);
+            MatchEntity match = await _dbContext.Matches.AsNoTracking()
+                .Where(x => x.Id == notification.MatchId)
+                .SingleAsync(cancellationToken);
+            MatchThreads matchThreads = await _dbContext.MatchThreads.AsNoTracking()
+                .Where(x => x.Match.Id == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel channel)
             {

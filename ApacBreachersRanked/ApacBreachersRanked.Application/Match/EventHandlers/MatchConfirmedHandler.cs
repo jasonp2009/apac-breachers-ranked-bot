@@ -28,15 +28,18 @@ namespace ApacBreachersRanked.Application.Match.Events
         {
             MatchEntity match = await _dbContext.Matches
                 .AsNoTracking()
-                .FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
+                .Where(match => match.Id == notification.MatchId)
+                .FirstAsync(cancellationToken);
 
             MatchVoteModel matchVote = await _dbContext.MatchVotes
                 .AsNoTracking()
-                .SingleAsync(x => x.MatchId ==  notification.MatchId, cancellationToken);
+                .Where(x => x.MatchId ==  notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             MatchThreads matchThreads = await _dbContext.MatchThreads
                 .AsNoTracking()
-                .FirstAsync(threads => threads.Match.Id == match.Id, cancellationToken);
+                .Where(threads => threads.Match.Id == match.Id)
+                .FirstAsync(cancellationToken);
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel channel)
             {

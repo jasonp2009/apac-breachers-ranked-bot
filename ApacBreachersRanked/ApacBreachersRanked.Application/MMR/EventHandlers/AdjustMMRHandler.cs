@@ -25,7 +25,9 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
         {
             try
             {
-                MatchEntity match = await _dbContext.Matches.FirstAsync(match => match.Id == notification.MatchId, cancellationToken);
+                MatchEntity match = await _dbContext.Matches
+                    .Where(match => match.Id == notification.MatchId)
+                    .FirstAsync(cancellationToken);
 
                 await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, cancellationToken);
 

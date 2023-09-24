@@ -42,7 +42,9 @@ namespace ApacBreachersRanked.Application.MMR.Commands
                 {
                     foreach (MatchPlayer player in match.AllPlayers)
                     {
-                        PlayerMMR? playerMMR = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(player.UserId), cancellationToken);
+                        PlayerMMR? playerMMR = await _dbContext.PlayerMMRs
+                            .Where(x => x.UserId.Equals(player.UserId))
+                            .FirstOrDefaultAsync(cancellationToken);
                         player.SetMMR(playerMMR?.MMR ?? 1000);
                         player.SetRank(playerMMR?.Rank);
                     }

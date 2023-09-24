@@ -30,7 +30,9 @@ namespace ApacBreachersRanked.Application.Match.Commands
 
         public async Task<Unit> Handle(CreateMatchCommand notification, CancellationToken cancellationToken)
         {
-            MatchQueueEntity? matchQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
+            MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
+                .Where(x => x.IsOpen)
+                .FirstOrDefaultAsync(cancellationToken);
             if (matchQueue == null || !matchQueue.IsOpen) return Unit.Value;
 
             try

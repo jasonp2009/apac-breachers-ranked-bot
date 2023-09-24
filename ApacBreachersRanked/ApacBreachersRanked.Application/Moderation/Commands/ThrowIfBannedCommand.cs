@@ -26,7 +26,8 @@ namespace ApacBreachersRanked.Application.Moderation.Commands
         {
             IQueryable<UserBan> activeBans = await _mediator.Send(new GetActiveBansQuery(), cancellationToken);
             UserBan? userBan = await activeBans.OrderBy(x => x.BannedAtUtc)
-                .FirstOrDefaultAsync(x => x.UserId.Equals(request.UserId), cancellationToken);
+                .Where(x => x.UserId.Equals(request.UserId))
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (userBan != null)
             {

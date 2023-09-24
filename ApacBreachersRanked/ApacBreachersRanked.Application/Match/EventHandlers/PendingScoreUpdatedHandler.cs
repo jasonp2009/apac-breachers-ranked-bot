@@ -24,9 +24,12 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         public async Task Handle(PendingScoreUpdatedEvent notification, CancellationToken cancellationToken)
         {
             PendingMatchScore pendingMatchScore = await _dbContext.PendingMatchScores
-                .SingleAsync(x => x.Id == notification.PendingMatchScoreId, cancellationToken);
+                .Where(x => x.Id == notification.PendingMatchScoreId)
+                .SingleAsync(cancellationToken);
 
-            MatchThreads matchThreads = await _dbContext.MatchThreads.SingleAsync(x => x.Match.Id == pendingMatchScore.MatchId, cancellationToken);
+            MatchThreads matchThreads = await _dbContext.MatchThreads
+                .Where(x => x.Match.Id == pendingMatchScore.MatchId)
+                .SingleAsync(cancellationToken);
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IMessageChannel channel)
             {

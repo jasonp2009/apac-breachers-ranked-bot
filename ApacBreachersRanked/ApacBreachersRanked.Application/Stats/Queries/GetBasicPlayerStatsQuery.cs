@@ -44,7 +44,9 @@ namespace ApacBreachersRanked.Application.Stats.Queries
                 .Where(x => x.Status == MatchStatus.Completed && x.AllPlayers.Any(player => player.UserId.Equals(user.UserId)))
                 .ToListAsync(cancellationToken);
 
-            PlayerMMR playerMMR = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(user.UserId), cancellationToken)
+            PlayerMMR playerMMR = await _dbContext.PlayerMMRs
+                .Where(x => x.UserId.Equals(user.UserId))
+                .FirstOrDefaultAsync(cancellationToken)
                 ?? new(user);
 
             BasicMatchPlayerStats matchStats = new();

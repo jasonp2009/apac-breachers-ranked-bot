@@ -31,11 +31,13 @@ namespace ApacBreachersRanked.Application.MatchVote.EventHandlers
                 MatchVoteModel matchVote = await _dbContext.MatchVotes
                 .AsNoTracking()
                 .Include(x => x.Match)
-                .SingleAsync(x => x.MatchId == notification.MatchId, cancellationToken);
+                .Where(x => x.MatchId == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
                 MatchThreads matchThreads = await _dbContext.MatchThreads
                     .AsNoTracking()
-                    .SingleAsync(x => x.Match.Id == notification.MatchId, cancellationToken);
+                    .Where(x => x.Match.Id == notification.MatchId)
+                    .SingleAsync(cancellationToken);
 
                 if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel channel)
                 {

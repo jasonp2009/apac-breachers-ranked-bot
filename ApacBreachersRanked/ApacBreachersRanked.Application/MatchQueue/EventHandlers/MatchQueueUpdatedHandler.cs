@@ -39,19 +39,25 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             if (notification.MatchQueueId != null)
             {
                 matchQueue = await _dbContext.MatchQueue
-                    .FirstOrDefaultAsync(x => x.Id == notification.MatchQueueId, cancellationToken);
+                    .Where(x => x.Id == notification.MatchQueueId)
+                    .FirstOrDefaultAsync(cancellationToken);
             } else
             {
                 matchQueue = await _dbContext.MatchQueue
-                    .FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
+                    .Where(x => x.IsOpen)
+                    .FirstOrDefaultAsync(cancellationToken);
             }
                 
             if (matchQueue == null)
             {
                 return;
             }
-            int inProgressMatches = await _dbContext.Matches.CountAsync(match => match.Status == MatchStatus.PendingConfirmation || match.Status == MatchStatus.Confirmed, cancellationToken);
-            Task<MatchQueueMessage?> matchQueueMessageTask = _dbContext.MatchQueueMessages.FirstOrDefaultAsync(x => x.MatchQueue.Id == matchQueue.Id, cancellationToken);
+            int inProgressMatches = await _dbContext.Matches
+                .Where(match => match.Status == MatchStatus.PendingConfirmation || match.Status == MatchStatus.Confirmed)
+                .CountAsync(cancellationToken);
+            Task<MatchQueueMessage?> matchQueueMessageTask = _dbContext.MatchQueueMessages
+                .Where(x => x.MatchQueue.Id == matchQueue.Id)
+                .FirstOrDefaultAsync(cancellationToken);
             Task<IChannel> readyUpChannelTask = _discordClient.GetChannelAsync(_breachersDiscordOptions.ReadyUpChannelId);
 
             await Task.WhenAll(

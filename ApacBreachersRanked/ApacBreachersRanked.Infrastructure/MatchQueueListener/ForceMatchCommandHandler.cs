@@ -21,7 +21,9 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 
         public async Task<Unit> Handle(ForceMatchCommand request, CancellationToken cancellationToken)
         {
-            MatchQueueEntity? matchQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
+            MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
+                .Where(x => x.IsOpen)
+                .FirstOrDefaultAsync(cancellationToken);
             if (matchQueue == null) return Unit.Value;
 
             if (matchQueue.Users.Count < MatchConstants.MinCapacity) throw new InvalidOperationException($"There must be atleast {MatchConstants.MinCapacity} players to force match");

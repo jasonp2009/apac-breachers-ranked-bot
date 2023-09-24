@@ -35,7 +35,8 @@ namespace ApacBreachersRanked.Application.Stats.Queries
             PlayerMMR? playerMMR = await _dbContext.PlayerMMRs
                 .Include(x => x.Adjustments)
                 .ThenInclude(x => x.Match)
-                .FirstOrDefaultAsync(player => player.UserId.Equals(user.UserId), cancellationToken);
+                .Where(player => player.UserId.Equals(user.UserId))
+                .FirstOrDefaultAsync(cancellationToken);
 
             MatchesPlayerStats stats = new MatchesPlayerStats
             {

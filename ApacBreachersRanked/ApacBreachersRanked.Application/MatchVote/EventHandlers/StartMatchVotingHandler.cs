@@ -17,7 +17,9 @@ namespace ApacBreachersRanked.Application.MatchVote.EventHandlers
         }
         public async Task Handle(MatchConfirmedEvent notification, CancellationToken cancellationToken)
         {
-            MatchEntity match = await _dbContext.Matches.SingleAsync(x => x.Id == notification.MatchId, cancellationToken);
+            MatchEntity match = await _dbContext.Matches
+                .Where(x => x.Id == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             MatchVoteModel matchVote = new(match);
 

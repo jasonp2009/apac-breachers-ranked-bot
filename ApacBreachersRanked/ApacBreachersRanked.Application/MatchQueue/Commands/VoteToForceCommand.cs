@@ -22,7 +22,9 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         }
         public async Task<Unit> Handle(VoteToForceCommand request, CancellationToken cancellationToken)
         {
-            MatchQueueEntity? currentQueue = await _dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, cancellationToken);
+            MatchQueueEntity? currentQueue = await _dbContext.MatchQueue
+                .Where(x => x.IsOpen)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (currentQueue == null)
             {

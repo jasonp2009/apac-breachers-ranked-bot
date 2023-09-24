@@ -17,7 +17,8 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         {
             PendingMatchScore pendingMatchScore = await _dbContext.PendingMatchScores
                 .Include(x => x.Match)
-                .SingleAsync(x => x.Id == notification.PendingMatchScoreId, cancellationToken);
+                .Where(x => x.Id == notification.PendingMatchScoreId)
+                .SingleAsync(cancellationToken);
 
             pendingMatchScore.Match.SetScore(pendingMatchScore.Score);
             await _dbContext.SaveChangesAsync(cancellationToken);

@@ -26,7 +26,9 @@ namespace ApacBreachersRanked.Application.PingTimer.EventHandlers
         }
         public async Task Handle(RolePingedEvent notification, CancellationToken cancellationToken)
         {
-            TimedPing? timedPing = await _dbContext.TimedPings.FirstOrDefaultAsync(x => x.RoleId == notification.RoleId, cancellationToken);
+            TimedPing? timedPing = await _dbContext.TimedPings
+                .Where(x => x.RoleId == notification.RoleId)
+                .FirstOrDefaultAsync(cancellationToken);
             if (timedPing == null) return;
 
             IGuild guild = await _discordClient.GetGuildAsync(_options.GuildId);

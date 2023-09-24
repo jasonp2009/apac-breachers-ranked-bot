@@ -25,11 +25,13 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 
             MatchEntity match = await _dbContext.Matches
                 .AsNoTracking()
-                .SingleAsync(x => x.Id == notification.MatchId, cancellationToken);
+                .Where(x => x.Id == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             MatchQueueEntity matchQueue = await _dbContext.MatchQueue
                 .AsNoTracking()
-                .SingleAsync(x => x.Match != null && x.Match.Id == notification.MatchId, cancellationToken);
+                .Where(x => x.Match != null && x.Match.Id == notification.MatchId)
+                .SingleAsync(cancellationToken);
 
             MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);
 

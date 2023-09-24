@@ -31,7 +31,9 @@ namespace ApacBreachersRanked.Application.Match.Events
 
         public async Task Handle(MatchCreatedEvent notification, CancellationToken cancellationToken)
         {
-            MatchEntity? match = await _dbContext.Matches.FirstOrDefaultAsync(x => x.Id == notification.MatchId, cancellationToken);
+            MatchEntity? match = await _dbContext.Matches
+                .Where(x => x.Id == notification.MatchId)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (match == null) return;
 

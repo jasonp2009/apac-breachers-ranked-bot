@@ -45,7 +45,8 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 
                 try
                 {
-                    MatchQueueEntity? currentQueue = await dbContext.MatchQueue.FirstOrDefaultAsync(x => x.IsOpen, _stoppingToken);
+                    MatchQueueEntity? currentQueue = await dbContext.MatchQueue.Where(x => x.IsOpen)
+                        .FirstOrDefaultAsync(_stoppingToken);
                     if (IsForceStartEnabled || (currentQueue?.Users.All(x => x.VoteToForce) ?? false))
                     {
                         if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MinCapacity))

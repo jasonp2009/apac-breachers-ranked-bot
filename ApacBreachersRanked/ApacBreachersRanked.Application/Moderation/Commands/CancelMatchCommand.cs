@@ -22,7 +22,9 @@ namespace ApacBreachersRanked.Application.Moderation.Commands
         }
         public async Task<Unit> Handle(CancelMatchCommand request, CancellationToken cancellationToken)
         {
-            MatchEntity match = await _dbContext.Matches.FirstAsync(x => x.MatchNumber == request.MatchNumber, cancellationToken);
+            MatchEntity match = await _dbContext.Matches
+                .Where(x => x.MatchNumber == request.MatchNumber)
+                .FirstAsync(cancellationToken);
             match.CancelMatch(request.CancellationReason);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Unit.Value;

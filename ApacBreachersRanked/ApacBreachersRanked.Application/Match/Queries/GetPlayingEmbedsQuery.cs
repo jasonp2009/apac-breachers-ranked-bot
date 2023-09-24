@@ -28,7 +28,9 @@ namespace ApacBreachersRanked.Application.Match.Queries
 
             foreach (MatchEntity match in matches)
             {
-                MatchVoteModel? matchVote = await _dbContext.MatchVotes.FirstOrDefaultAsync(x => x.MatchId == match.Id, cancellationToken);
+                MatchVoteModel? matchVote = await _dbContext.MatchVotes
+                    .Where(x => x.MatchId == match.Id)
+                    .FirstOrDefaultAsync(cancellationToken);
                 embeds.Add(match.GenerateCurrentMatchEmbed(matchVote));
             }
 

@@ -26,7 +26,9 @@ namespace ApacBreachersRanked.Application.MMR.Queries
 
             foreach (IUser user in request.Users)
             {
-                PlayerMMR? playerMMR = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(x => x.UserId.Equals(user.UserId), cancellationToken);
+                PlayerMMR? playerMMR = await _dbContext.PlayerMMRs
+                    .Where(x => x.UserId.Equals(user.UserId))
+                    .FirstOrDefaultAsync(cancellationToken);
 
                 if (playerMMR == null)
                 {
