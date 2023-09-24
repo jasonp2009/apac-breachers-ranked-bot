@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace ApacBreachersRanked.Application.Common.Mediator
 {
@@ -19,9 +20,13 @@ namespace ApacBreachersRanked.Application.Common.Mediator
 
             var requestNameWithGuid = $"{requestName} [{requestGuid}]";
 
+            var timer = new Stopwatch();
+            timer.Start();
+
             using (var logScope = _logger.BeginScope(requestNameWithGuid))
             {
-                _logger.LogInformation($"[START]");
+                _logger.LogInformation("[START] {RequestNameWithGuid}",
+                    requestNameWithGuid);
                 TResponse response;
 
                 try
@@ -35,8 +40,11 @@ namespace ApacBreachersRanked.Application.Common.Mediator
                 }
                 finally
                 {
+                    timer.Stop();
                     _logger.LogInformation(
-                        $"[END] {requestNameWithGuid}");
+                        "[END] {RequestNameWithGuid} RequestTime: {RequestTime}",
+                        requestNameWithGuid,
+                        timer.ElapsedMilliseconds);
                 }
                 return response;
             }
