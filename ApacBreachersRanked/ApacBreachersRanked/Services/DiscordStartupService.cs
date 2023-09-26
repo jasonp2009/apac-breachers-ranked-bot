@@ -1,6 +1,7 @@
-﻿using ApacBreachersRanked.Config;
+﻿using ApacBreachersRanked.Application.MMR.Commands;
+using ApacBreachersRanked.Config;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
+using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,14 +11,17 @@ namespace ApacBreachersRanked.Services
     public class DiscordStartupService : IHostedService
     {
         private readonly DiscordSocketClient _discord;
+        private readonly IMediator _mediator;
         private readonly DiscordOptions _config;
         private readonly ILogger<DiscordStartupService> _logger;
 
-        public DiscordStartupService(DiscordSocketClient discord, IOptions<DiscordOptions> config, ILogger<DiscordStartupService> logger)
+        public DiscordStartupService(DiscordSocketClient discord, IMediator mediator, IOptions<DiscordOptions> config, ILogger<DiscordStartupService> logger)
         {
             _discord = discord;
+            _mediator = mediator;
             _config = config.Value;
             discord.Log += Log;
+            discord.Ready += OnReadyAsync;
             _logger = logger;
         }
 
@@ -68,6 +72,22 @@ namespace ApacBreachersRanked.Services
                         break;
                     }
             }
+        }
+
+        private async Task OnReadyAsync()
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _mediator.Send(new SetRankEmojisCommand());
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex, "An exception occured when processing on ready tasks");
+                    throw;
+                }
+            });
         }
     }
 }
