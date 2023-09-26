@@ -11,12 +11,10 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
     public class ForceMatchCommandHandler : ICommandHandler<ForceMatchCommand>
     {
         private readonly IDbContext _dbContext;
-        private readonly MatchQueueListenerService _matchQueueListenerService;
 
-        public ForceMatchCommandHandler(IDbContext dbContext, MatchQueueListenerService matchQueueListenerService)
+        public ForceMatchCommandHandler(IDbContext dbContext)
         {
             _dbContext = dbContext;
-            _matchQueueListenerService = matchQueueListenerService;
         }
 
         public async Task<Unit> Handle(ForceMatchCommand request, CancellationToken cancellationToken)
@@ -27,8 +25,6 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
             if (matchQueue == null) return Unit.Value;
 
             if (matchQueue.Users.Count < MatchConstants.MinCapacity) throw new InvalidOperationException($"There must be atleast {MatchConstants.MinCapacity} players to force match");
-
-            _matchQueueListenerService.ForceStart();
 
             return Unit.Value;
         }

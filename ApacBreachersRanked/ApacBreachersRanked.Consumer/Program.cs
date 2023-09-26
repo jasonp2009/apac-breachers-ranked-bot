@@ -7,15 +7,15 @@ using Serilog;
 using Serilog.Formatting.Compact;
 
 using IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((host,services) =>
+    .ConfigureServices((host, services) =>
     {
-        services.UseSqsPublisher(host.Configuration);
-        services.AddInteractionService(host.Configuration);
+        services.UseSqsConsumer(host.Configuration);
         services.AddDiscordClient(host.Configuration);
         services.AddApplication(host.Configuration);
         services.AddInfrastructure(host.Configuration);
+        services.AddMatchQueueListenderService();
     })
-    .UseSerilog((a,cfg) =>
+    .UseSerilog((a, cfg) =>
     {
         cfg.WriteTo.Console(new CompactJsonFormatter());
     })

@@ -1,5 +1,4 @@
 ﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
-using ApacBreachersRanked.Application.MMR.Commands;
 using ApacBreachersRanked.Application.PingTimer.Events;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.TypeConverters;
@@ -89,7 +88,6 @@ namespace Example.Services
                     {
                         IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                         await mediator.Send(new InitialiseQueueCommand());
-                        await mediator.Send(new SetRankEmojisCommand());
                     }
                 }
                 catch (Exception ex)

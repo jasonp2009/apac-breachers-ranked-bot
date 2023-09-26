@@ -75,6 +75,8 @@ namespace ApacBreachersRanked.Modules
         {
             try
             {
+                await RespondAsync(ephemeral: true, text: "This command is currently unavailable");
+                return;
                 await DeferAsync(ephemeral: true);
                 await _mediator.Send(new ForceMatchCommand());
                 await Context.Interaction.FollowupAsync("Match forced", ephemeral: true);

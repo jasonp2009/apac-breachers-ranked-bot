@@ -41,7 +41,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 
                 if (user == null) continue;
 
-                DateTime expiryUtc = DateTime.Now.AddMinutes(15);
+                DateTime expiryUtc = DateTime.UtcNow.AddMinutes(15);
 
                 if (user.ExpiryUtc > expiryUtc) expiryUtc = user.ExpiryUtc;
 

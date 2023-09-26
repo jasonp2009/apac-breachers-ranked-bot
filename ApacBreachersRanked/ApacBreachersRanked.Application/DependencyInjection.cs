@@ -7,7 +7,6 @@ using ApacBreachersRanked.Domain;
 using ApacBreachersRanked.Domain.MMR.Services;
 using ApacBreachersRanked.Domain.User.Interfaces;
 using MediatR;
-using MediatR.NotificationPublishers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,12 +16,6 @@ namespace ApacBreachersRanked.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMediatR(cfg => {
-                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-
-                cfg.NotificationPublisherType = typeof(ForeachAwaitPublisher);
-            });
-
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             services.Configure<BreachersDiscordOptions>(options => configuration.GetSection(BreachersDiscordOptions.Key).Bind(options));
