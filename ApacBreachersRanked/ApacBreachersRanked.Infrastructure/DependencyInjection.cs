@@ -18,10 +18,11 @@ namespace ApacBreachersRanked.Infrastructure
 
             services.AddScoped<IDbContext, BreachersDbContext>();
 
-            services.AddSingleton<ScheduledEventHandlingService>();
+            return services;
+        }
 
-            services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<ScheduledEventHandlingService>());
-
+        public static IServiceCollection AddMatchQueueListenderService(this IServiceCollection services)
+        {
             services.AddSingleton<MatchQueueListenerService>();
 
             services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<MatchQueueListenerService>());

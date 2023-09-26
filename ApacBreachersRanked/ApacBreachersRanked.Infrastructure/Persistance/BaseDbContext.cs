@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Infrastructure.Config;
-using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -11,15 +11,15 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
     internal partial class BreachersDbContext : DbContext
     {
         private readonly IServiceProvider _services;
-        private readonly ScheduledEventHandlingService _scheduledEventHandlerService;
+        private readonly IMediator _mediator;
         private readonly RdsOptions _options;
         public BreachersDbContext(
             IServiceProvider services,
-            ScheduledEventHandlingService scheduledEventHandlingService,
+            IMediator mediator,
             IOptions<RdsOptions> options)
         {
             _services = services;
-            _scheduledEventHandlerService = scheduledEventHandlingService;
+            _mediator = mediator;
             _options = options.Value;
             Database.EnsureCreated();
         }
@@ -82,7 +82,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 if (scheduledHashes.Contains(eventHash)) continue;
 
                 scheduledHashes.Add(eventHash);
-                _scheduledEventHandlerService.ScheduleEvent(domainEvent);
+                await _mediator.Publish(domainEvent, cancellationToken);
             }
         }
 

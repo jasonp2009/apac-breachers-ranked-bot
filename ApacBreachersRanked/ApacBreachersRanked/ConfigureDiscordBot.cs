@@ -11,13 +11,8 @@ namespace ApacBreachersRanked
 {
     public static class ConfigureDiscordBot
     {
-        public static IServiceCollection AddDiscordBot(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInteractionService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<DiscordOptions>(options => configuration.GetSection(DiscordOptions.Key).Bind(options));
-
-            services.AddSingleton<DiscordSocketClient>();
-            services.AddSingleton<IDiscordClient>(x => x.GetRequiredService<DiscordSocketClient>());
-
             services.AddSingleton(new InteractionServiceConfig
             {
                 AutoServiceScopes = true,
@@ -26,8 +21,17 @@ namespace ApacBreachersRanked
             });
             services.AddSingleton<InteractionService>();
             services.AddHostedService<InteractionHandlingService>();
-            services.AddHostedService<DiscordStartupService>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddDiscordClient(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<DiscordOptions>(options => configuration.GetSection(DiscordOptions.Key).Bind(options));
+
+            services.AddSingleton<DiscordSocketClient>();
+            services.AddSingleton<IDiscordClient>(x => x.GetRequiredService<DiscordSocketClient>());
+            services.AddHostedService<DiscordStartupService>();
             return services;
         }
     }
