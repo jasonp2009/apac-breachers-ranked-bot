@@ -53,6 +53,7 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
             if (notification is IScheduledEvent scheduledEvent && DateTime.UtcNow < scheduledEvent.ScheduledForUtc)
             {
                 await _sqsPublisher.Publish(new List<NotificationHandlerExecutor>(), notification, _stoppingToken);
+                await _sqsClient.DeleteMessageAsync(_config.QueueUrl, message.ReceiptHandle, _stoppingToken);
                 return;
             }
             using (IServiceScope scope = _services.CreateScope())
