@@ -23,6 +23,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
         public async Task<Unit> Handle(PlayerRespondMatchCommand request, CancellationToken cancellationToken)
         {
             MatchPlayer? matchPlayer = await _dbContext.MatchPlayers
+                .Include(x => x.Match)
                 .Where(mp =>
                     mp.Match.Status == Domain.Match.Enums.MatchStatus.PendingConfirmation &&
                     mp.UserId == request.DiscordUserId.ToIUserId())
