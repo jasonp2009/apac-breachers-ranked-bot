@@ -26,6 +26,8 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
             try
             {
                 MatchEntity match = await _dbContext.Matches
+                    .Include(x => x.AllPlayers)
+                    .Include(x => x.Score)
                     .Where(match => match.Id == notification.MatchId)
                     .FirstAsync(cancellationToken);
 

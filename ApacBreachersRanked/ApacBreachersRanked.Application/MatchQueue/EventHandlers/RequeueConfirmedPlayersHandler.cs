@@ -24,11 +24,13 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             if (notification.PreviousStatus != MatchStatus.PendingConfirmation) return;
 
             MatchEntity match = await _dbContext.Matches
+                .Include(x => x.AllPlayers)
                 .AsNoTracking()
                 .Where(x => x.Id == notification.MatchId)
                 .SingleAsync(cancellationToken);
 
             MatchQueueEntity matchQueue = await _dbContext.MatchQueue
+                .Include(x => x.Users)
                 .AsNoTracking()
                 .Where(x => x.Match != null && x.Match.Id == notification.MatchId)
                 .SingleAsync(cancellationToken);

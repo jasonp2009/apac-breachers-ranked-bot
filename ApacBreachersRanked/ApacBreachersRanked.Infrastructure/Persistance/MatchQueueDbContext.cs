@@ -21,7 +21,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                     users.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
                 });
 
-                e.Navigation(x => x.Users).AutoInclude();
+                e.Navigation(x => x.Users);
 
                 e.HasOne(x => x.Match)
                 .WithOne()

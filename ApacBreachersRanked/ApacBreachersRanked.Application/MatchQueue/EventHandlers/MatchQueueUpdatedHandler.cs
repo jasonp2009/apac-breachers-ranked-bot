@@ -39,11 +39,13 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
             if (notification.MatchQueueId != null)
             {
                 matchQueue = await _dbContext.MatchQueue
+                    .Include(x => x.Users)
                     .Where(x => x.Id == notification.MatchQueueId)
                     .FirstOrDefaultAsync(cancellationToken);
             } else
             {
                 matchQueue = await _dbContext.MatchQueue
+                    .Include(x => x.Users)
                     .Where(x => x.IsOpen)
                     .FirstOrDefaultAsync(cancellationToken);
             }

@@ -27,6 +27,7 @@ namespace ApacBreachersRanked.Application.Match.Events
         public async Task Handle(SideVoteCompletedEvent notification, CancellationToken cancellationToken)
         {
             MatchEntity match = await _dbContext.Matches
+                .Include(x => x.AllPlayers)
                 .AsNoTracking()
                 .Where(match => match.Id == notification.MatchId)
                 .FirstAsync(cancellationToken);

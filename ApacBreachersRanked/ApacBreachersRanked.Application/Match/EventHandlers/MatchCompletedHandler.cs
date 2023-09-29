@@ -27,6 +27,8 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         public async Task Handle(MatchMMRCalculatedEvent notification, CancellationToken cancellationToken)
         {
             MatchEntity match = await _dbContext.Matches.AsNoTracking()
+                .Include(x => x.AllPlayers)
+                .Include(x => x.Score)
                 .Where(x => x.Id == notification.MatchId)
                 .SingleAsync(cancellationToken);
             MatchThreads matchThreads = await _dbContext.MatchThreads.AsNoTracking()

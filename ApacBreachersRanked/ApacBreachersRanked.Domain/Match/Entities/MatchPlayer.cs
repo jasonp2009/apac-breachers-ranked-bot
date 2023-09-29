@@ -8,6 +8,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
 {
     public class MatchPlayer : BaseEntity, IUser
     {
+        public Guid MatchId { get; private set; }
         public MatchEntity Match { get; private set; }
         public IUserId UserId { get; private set; }
         public string? Name { get; private set; }
@@ -29,7 +30,7 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public void Confirm()
         {
             Confirmed = true;
-            QueueDomainEvent(new PlayerConfirmedEvent { MatchId = Match.Id, MatchPlayerId = Id });
+            QueueDomainEvent(new PlayerConfirmedEvent { MatchId = MatchId, MatchPlayerId = Id });
             if (Match.AllPlayers.All(player => player.Confirmed))
             {
                 Match.ConfirmMatch();

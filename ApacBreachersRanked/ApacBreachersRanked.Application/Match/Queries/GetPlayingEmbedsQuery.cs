@@ -23,7 +23,10 @@ namespace ApacBreachersRanked.Application.Match.Queries
         }
         public async Task<List<Embed>> Handle(GetPlayingEmbedsQuery request, CancellationToken cancellationToken)
         {
-            List<MatchEntity> matches = await _dbContext.Matches.Where(x => x.Status == MatchStatus.PendingConfirmation || x.Status == MatchStatus.Confirmed).ToListAsync(cancellationToken);
+            List<MatchEntity> matches = await _dbContext.Matches
+                .Include(x => x.AllPlayers)
+                .Include(x => x.Score)
+                .Where(x => x.Status == MatchStatus.PendingConfirmation || x.Status == MatchStatus.Confirmed).ToListAsync(cancellationToken);
             List<Embed> embeds = new();
 
             foreach (MatchEntity match in matches)

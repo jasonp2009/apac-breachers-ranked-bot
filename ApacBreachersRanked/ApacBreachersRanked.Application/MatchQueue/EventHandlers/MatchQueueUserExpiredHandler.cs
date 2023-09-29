@@ -16,6 +16,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
         public async Task Handle(MatchQueueUserExpiredEvent notification, CancellationToken cancellationToken)
         {
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
+                .Include(x => x.Users)
                 .Where(x => x.IsOpen && x.Users.Any(user => user.UserId.Equals(notification.MatchQueueUserId)))
                 .FirstOrDefaultAsync(cancellationToken);
             if (matchQueue == null) return;

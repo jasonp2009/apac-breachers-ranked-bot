@@ -20,6 +20,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Queries
         public async Task<MatchQueueEntity> Handle(GetCurrentQueueQuery request, CancellationToken cancellationToken)
         {
             MatchQueueEntity? currentQueue = await _dbContext.MatchQueue
+                .Include(x => x.Users)
                 .Where(x => x.IsOpen)
                 .FirstOrDefaultAsync(cancellationToken);
 

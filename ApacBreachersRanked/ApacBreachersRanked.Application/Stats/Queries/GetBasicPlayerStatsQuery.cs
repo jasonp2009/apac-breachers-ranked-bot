@@ -41,6 +41,8 @@ namespace ApacBreachersRanked.Application.Stats.Queries
             
 
             List<MatchEntity> matches = await _dbContext.Matches.AsNoTracking()
+                .Include(x => x.AllPlayers)
+                .Include(x => x.Score)
                 .Where(x => x.Status == MatchStatus.Completed && x.AllPlayers.Any(player => player.UserId.Equals(user.UserId)))
                 .ToListAsync(cancellationToken);
 

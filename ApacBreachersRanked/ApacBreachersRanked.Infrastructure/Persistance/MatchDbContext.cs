@@ -24,8 +24,6 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 e.HasMany(p => p.AllPlayers)
                 .WithOne(p => p.Match);
 
-                e.Navigation(p => p.AllPlayers).AutoInclude();
-
                 e.Ignore(p => p.HomePlayers);
                 e.Ignore(p => p.HomeMMR);
                 e.Ignore(p => p.AwayPlayers);
@@ -44,12 +42,12 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                     score.ToTable("MatchScores");
                 });
 
-                e.Navigation(p => p.Score).AutoInclude();
+                e.Navigation(p => p.Score);
             });
 
             modelBuilder.Entity<MatchPlayer>(e =>
             {
-                e.Navigation(p => p.Match).AutoInclude();
+                e.Navigation(p => p.Match);
                 e.Property(p => p.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
             });
 

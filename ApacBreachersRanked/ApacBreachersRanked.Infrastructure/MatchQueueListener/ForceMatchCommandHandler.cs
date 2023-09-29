@@ -20,6 +20,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
         public async Task<Unit> Handle(ForceMatchCommand request, CancellationToken cancellationToken)
         {
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
+                .Include(x => x.Users)
                 .Where(x => x.IsOpen)
                 .FirstOrDefaultAsync(cancellationToken);
             if (matchQueue == null) return Unit.Value;

@@ -34,6 +34,8 @@ namespace ApacBreachersRanked.Application.MMR.Commands
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 List<MatchEntity> matches = await _dbContext.Matches
+                    .Include(x => x.AllPlayers)
+                    .Include(x => x.Score)
                     .Where(x => x.Status == Domain.Match.Enums.MatchStatus.Completed)
                     .OrderBy(x => x.MatchNumber)
                     .ToListAsync(cancellationToken);
