@@ -24,6 +24,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
         {
             MatchPlayer? matchPlayer = await _dbContext.MatchPlayers
                 .Include(x => x.Match)
+                .ThenInclude(x => x.AllPlayers)
                 .Where(mp =>
                     mp.Match.Status == Domain.Match.Enums.MatchStatus.PendingConfirmation &&
                     mp.UserId == request.DiscordUserId.ToIUserId())
