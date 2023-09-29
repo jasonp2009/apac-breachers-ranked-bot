@@ -25,6 +25,7 @@ namespace ApacBreachersRanked.Infrastructure.SQS
         {
             services.Configure<SqsOptions>(options => configuration.GetSection(SqsOptions.Key).Bind(options));
 
+            services.AddSingleton<SqsPublisher>();
             services.AddSingleton<SqsConsumer>();
 
             services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<SqsConsumer>());
@@ -32,7 +33,7 @@ namespace ApacBreachersRanked.Infrastructure.SQS
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
-                cfg.NotificationPublisherType = typeof(ForeachAwaitPublisher);
+                cfg.NotificationPublisherType = typeof(ConsumerNotificationPublisher);
             });
 
             return services;

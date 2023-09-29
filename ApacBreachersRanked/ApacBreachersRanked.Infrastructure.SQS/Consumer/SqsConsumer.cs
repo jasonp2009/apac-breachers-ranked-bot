@@ -13,7 +13,6 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
 {
     internal class SqsConsumer : BackgroundService
     {
-        private readonly SqsPublisher _sqsPublisher;
         private readonly IServiceProvider _services;
         private readonly SqsOptions _config;
         private readonly IAmazonSQS _sqsClient;
@@ -26,7 +25,6 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
             BasicAWSCredentials basicCredentials = new BasicAWSCredentials(_config.AccessKey, _config.Secret);
             RegionEndpoint region = RegionEndpoint.GetBySystemName(_config.Region);
             _sqsClient = new AmazonSQSClient(basicCredentials, region);
-            _sqsPublisher = new(config);
         }
 
 
@@ -49,17 +47,13 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
         private async Task HandleMessage(Message message)
         {
             INotification? notification = MessageSerializer.Deserialize<INotification>(message.Body);
-            if (notification == null) return;
-            if (notification is IScheduledEvent scheduledEvent && DateTime.UtcNow < scheduledEvent.ScheduledForUtc)
+            if (notification != null)
             {
-                await _sqsPublisher.Publish(new List<NotificationHandlerExecutor>(), notification, _stoppingToken);
-                await _sqsClient.DeleteMessageAsync(_config.QueueUrl, message.ReceiptHandle, _stoppingToken);
-                return;
-            }
-            using (IServiceScope scope = _services.CreateScope())
-            {
-                IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                await mediator.Publish(notification, _stoppingToken);
+                using (IServiceScope scope = _services.CreateScope())
+                {
+                    IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    await mediator.Publish(notification, _stoppingToken);
+                }
             }
             await _sqsClient.DeleteMessageAsync(_config.QueueUrl, message.ReceiptHandle, _stoppingToken);
         }
