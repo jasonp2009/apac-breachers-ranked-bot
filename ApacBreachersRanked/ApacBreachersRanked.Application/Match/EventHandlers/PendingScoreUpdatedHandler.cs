@@ -24,6 +24,7 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
         public async Task Handle(PendingScoreUpdatedEvent notification, CancellationToken cancellationToken)
         {
             PendingMatchScore pendingMatchScore = await _dbContext.PendingMatchScores
+                .Include(x => x.Players)
                 .Where(x => x.Id == notification.PendingMatchScoreId)
                 .SingleAsync(cancellationToken);
 

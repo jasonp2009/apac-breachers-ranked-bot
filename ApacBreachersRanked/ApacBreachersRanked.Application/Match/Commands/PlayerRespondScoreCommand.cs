@@ -26,6 +26,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
         public async Task<Unit> Handle(PlayerRespondScoreCommand request, CancellationToken cancellationToken)
         {
             PendingMatchScore pendingMatchScore = await _dbContext.PendingMatchScores
+                .Include(x => x.Players)
                 .Where(x => x.MessageId == request.PendingScoreMessageId)
                 .SingleAsync(cancellationToken);
 
