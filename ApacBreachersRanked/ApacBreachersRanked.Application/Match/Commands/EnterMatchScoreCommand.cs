@@ -29,6 +29,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
         {
             MatchEntity match = await _dbContext.MatchThreads
                 .Include(x => x.Match)
+                .ThenInclude(x => x.AllPlayers)
                 .Where(x => x.MatchThreadId == request.MatchThreadId)
                 .Select(x => x.Match)
                 .FirstOrDefaultAsync(cancellationToken)
