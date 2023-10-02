@@ -2,7 +2,7 @@
 {
     public enum Rank
     {
-        [RankRange(1090, 1150)]
+        [RankRange(1090, 1500)]
         Diamond = 1120,
 
         [RankRange(1030, 1090)]
@@ -14,7 +14,7 @@
         [RankRange(910, 970)]
         Bronze = 940,
 
-        [RankRange(850, 910)]
+        [RankRange(500, 910)]
         Copper = 880
     }
 
