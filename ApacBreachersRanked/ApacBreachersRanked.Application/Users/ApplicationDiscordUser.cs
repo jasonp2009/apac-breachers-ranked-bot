@@ -90,5 +90,10 @@ namespace ApacBreachersRanked.Application.Users
         {
             UserId = userId;
         }
+
+        public UnknownDiscordUser(ulong userId)
+        {
+            UserId = new ApplicationDiscordUserId(userId);
+        }
     }
 }

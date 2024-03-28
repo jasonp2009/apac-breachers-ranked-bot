@@ -5,12 +5,12 @@ using Microsoft.Extensions.Options;
 
 namespace ApacBreachersRanked.Application.Users
 {
-    public class GetDiscordUserQuery : IQuery<ApplicationDiscordUser>
+    public class GetDiscordUserQuery : IQuery<Domain.User.Interfaces.IUser>
     {
         public ulong DiscordUserId { get; set; }
     }
 
-    public class GetDiscordUserQueryHandler : IQueryHandler<GetDiscordUserQuery, ApplicationDiscordUser>
+    public class GetDiscordUserQueryHandler : IQueryHandler<GetDiscordUserQuery, Domain.User.Interfaces.IUser>
     {
         private readonly IDiscordClient _discordClient;
         private readonly BreachersDiscordOptions _breachersDiscordOptions;
@@ -23,11 +23,11 @@ namespace ApacBreachersRanked.Application.Users
             _breachersDiscordOptions = beachersDiscordOptions.Value;
         }
 
-        public async Task<ApplicationDiscordUser> Handle(GetDiscordUserQuery request, CancellationToken cancellationToken)
+        public async Task<Domain.User.Interfaces.IUser> Handle(GetDiscordUserQuery request, CancellationToken cancellationToken)
         {
             IGuild guild = await _discordClient.GetGuildAsync(_breachersDiscordOptions.GuildId);
-            IGuildUser guildUser = await guild.GetUserAsync(request.DiscordUserId)
-                ?? throw new InvalidOperationException("Cannot find user in server");
+            IGuildUser guildUser = await guild.GetUserAsync(request.DiscordUserId);
+            if (guildUser == null) return new UnknownDiscordUser(request.DiscordUserId);
             return new ApplicationDiscordUser(guildUser);
         }
     }

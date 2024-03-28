@@ -2,13 +2,13 @@
 using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Infrastructure.SQS.Extensions;
-using ApacBreachersRanked.Infrastructure.SQS.Publisher;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
 {
     internal class SqsConsumer : BackgroundService
@@ -16,15 +16,17 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
         private readonly IServiceProvider _services;
         private readonly SqsOptions _config;
         private readonly IAmazonSQS _sqsClient;
+        private readonly ILogger _logger;
         private CancellationToken _stoppingToken;
 
-        public SqsConsumer(IServiceProvider services, IOptions<SqsOptions> config)
+        public SqsConsumer(IServiceProvider services, IOptions<SqsOptions> config, ILogger<SqsConsumer> logger)
         {
             _services = services;
             _config = config.Value;
             BasicAWSCredentials basicCredentials = new BasicAWSCredentials(_config.AccessKey, _config.Secret);
             RegionEndpoint region = RegionEndpoint.GetBySystemName(_config.Region);
             _sqsClient = new AmazonSQSClient(basicCredentials, region);
+            _logger = logger;
         }
 
 
@@ -46,16 +48,26 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
 
         private async Task HandleMessage(Message message)
         {
-            INotification? notification = MessageSerializer.Deserialize<INotification>(message.Body);
-            if (notification != null)
+            try
             {
-                using (IServiceScope scope = _services.CreateScope())
+                INotification? notification = MessageSerializer.Deserialize<INotification>(message.Body);
+                if (notification != null)
                 {
-                    IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                    await mediator.Publish(notification, _stoppingToken);
+                    using (IServiceScope scope = _services.CreateScope())
+                    {
+                        IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                        await mediator.Publish(notification, _stoppingToken);
+                    }
                 }
+                await _sqsClient.DeleteMessageAsync(_config.QueueUrl, message.ReceiptHandle, _stoppingToken);
             }
-            await _sqsClient.DeleteMessageAsync(_config.QueueUrl, message.ReceiptHandle, _stoppingToken);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "An exception occurred when trying to process {MessageId} with body: {@Body}",
+                    message.MessageId,
+                    message.Body);
+            }
         }
     }
 }
