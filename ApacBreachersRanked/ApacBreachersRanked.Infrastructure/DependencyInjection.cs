@@ -12,6 +12,8 @@ namespace ApacBreachersRanked.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            
             services.Configure<RdsOptions>(options => configuration.GetSection(RdsOptions.Key).Bind(options));
 
             services.AddScoped<BreachersDbContext>();
