@@ -5,20 +5,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
     internal partial class BreachersDbContext : DbContext
     {
-        private readonly IServiceProvider _services;
         private readonly IMediator _mediator;
         private readonly RdsOptions _options;
         public BreachersDbContext(
-            IServiceProvider services,
             IMediator mediator,
             IOptions<RdsOptions> options)
         {
-            _services = services;
             _mediator = mediator;
             _options = options.Value;
             Database.EnsureCreated();
@@ -26,7 +24,17 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer(_options.ConnectionString);
+            switch(_options.DatabaseEngine)
+            {
+                case DatabaseEngine.SqlServer:
+                    options.UseSqlServer(_options.ConnectionString);
+                    break;
+                case DatabaseEngine.Postgress:
+                    options.UseNpgsql(_options.ConnectionString);
+                    break;
+                default:
+                    throw new NotImplementedException($"Database engine {_options.DatabaseEngine} is not supported");
+            };
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
