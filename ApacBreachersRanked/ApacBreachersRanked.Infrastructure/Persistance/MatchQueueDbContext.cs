@@ -11,11 +11,14 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         public DbSet<MatchQueueEntity> MatchQueue => Set<MatchQueueEntity>();
         public DbSet<MatchQueueMessage> MatchQueueMessages => Set<MatchQueueMessage>();
+        public DbSet<ScheduledMatchQueueEntity> ScheduleMatchQueues => Set<ScheduledMatchQueueEntity>();
+        public DbSet<ScheduledMatchQueueMessage> ScheduledMatchQueueMessages => Set<ScheduledMatchQueueMessage>();
 
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MatchQueueEntity>(e =>
             {
+                e.UseTpcMappingStrategy().ToTable("MatchQueue");
                 e.OwnsMany(x => x.Users, users =>
                 {
                     users.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
@@ -34,6 +37,25 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                 e.HasOne(p => p.MatchQueue)
                 .WithOne()
                 .HasForeignKey<MatchQueueMessage>("MatchQueueId");
+            });
+
+            modelBuilder.Entity<ScheduledMatchQueueEntity>(e =>
+            {
+                e.UseTpcMappingStrategy().ToTable("ScheduledMatchQueues");
+                e.OwnsMany(x => x.Users, users =>
+                {
+                    users.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
+                });
+
+                e.Navigation(x => x.Users);
+            });
+
+            modelBuilder.Entity<ScheduledMatchQueueMessage>(e =>
+            {
+                e.ToTable("ScheduledMatchQueueMessages");
+                e.HasOne(p => p.MatchQueue)
+                    .WithOne()
+                    .HasForeignKey<ScheduledMatchQueueMessage>("MatchQueueId");
             });
         }
     }

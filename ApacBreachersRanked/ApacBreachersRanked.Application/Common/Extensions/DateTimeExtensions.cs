@@ -10,5 +10,8 @@
 
         public static string ToDiscordRelativeEpoch(this DateTime utcDateTime)
             => $"<t:{utcDateTime.ToEpoch()}:R>";
+        
+        public static string ToDiscordFullEpoch(this DateTime utcDateTime)
+            => $"<t:{utcDateTime.ToEpoch()}:F>";
     }
 }

@@ -8,7 +8,7 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
 {
     public class MatchQueueEntity : BaseEntity
     {
-        public bool IsOpen { get; private set; } = true;
+        public bool IsOpen { get; protected set; } = true;
         public IList<MatchQueueUser> Users { get; private set; } = new List<MatchQueueUser>();
         public MatchEntity? Match { get; private set; }
 
