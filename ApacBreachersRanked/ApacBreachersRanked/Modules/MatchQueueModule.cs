@@ -2,9 +2,11 @@
 using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Application.MatchQueue.Exceptions;
 using ApacBreachersRanked.Application.Moderation.Exceptions;
+using ApacBreachersRanked.AutoCompleteHandlers;
 using Discord.Interactions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using TimeZoneConverter;
 
 namespace ApacBreachersRanked.Modules
 {
@@ -87,5 +89,46 @@ namespace ApacBreachersRanked.Modules
                 await Context.Interaction.FollowupAsync(ex.Message, ephemeral: true);
             }
         }
+
+        [SlashCommand("playingat", "Schedule when you want to join queue")]
+        public async Task PlayingAt(
+            [Summary("When", "When you want to join the queue")]DateTime when,
+            [Summary("Timezone"), Autocomplete(typeof(TimeZoneAutoCompleteHandler))]string timezone)
+        {
+            var tzi = TZConvert.GetTimeZoneInfo(timezone);
+            var whenUtc = TimeZoneInfo.ConvertTimeToUtc(when, tzi);
+            ScheduledJoinQueueCommand command = new()
+            {
+                DiscordUserId = Context.User.Id,
+                JoinAtUtc = whenUtc
+            };
+            await _mediator.Send(command);
+            await RespondAsync(ephemeral: true,
+                text: $"You have been scheduled to join the queue at {whenUtc.ToDiscordFullEpoch()}");
+        }
+
+        [ComponentInteraction("scheduled-join-queue-*")]
+        public async Task ScheduledJoinQueueAsync(string scheduledQueueId)
+        {
+            ScheduledJoinQueueByIdCommand command = new()
+            {
+                DiscordUserId = Context.User.Id,
+                ScheduledQueueId = Guid.Parse(scheduledQueueId)
+            };
+            await _mediator.Send(command);
+            await DeferAsync();
+        }
+
+        [ComponentInteraction("scheduled-leave-queue-*")]
+        public async Task ScheduledLeaveQueueAsync(string scheduledQueueId)
+        {
+            ScheduledLeaveQueueCommand command = new()
+            {
+                DiscordUserId = Context.User.Id,
+                ScheduledQueueId = Guid.Parse(scheduledQueueId)
+            };
+            await _mediator.Send(command);
+            await DeferAsync();
+        } 
     }
 }

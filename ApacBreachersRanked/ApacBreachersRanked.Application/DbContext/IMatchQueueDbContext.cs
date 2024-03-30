@@ -13,5 +13,7 @@ namespace ApacBreachersRanked.Application.DbContext
     {
         DbSet<MatchQueueEntity> MatchQueue { get; }
         DbSet<MatchQueueMessage> MatchQueueMessages { get; }
+        DbSet<ScheduledMatchQueueEntity> ScheduleMatchQueues { get; }
+        DbSet<ScheduledMatchQueueMessage> ScheduledMatchQueueMessages { get; }
     }
 }

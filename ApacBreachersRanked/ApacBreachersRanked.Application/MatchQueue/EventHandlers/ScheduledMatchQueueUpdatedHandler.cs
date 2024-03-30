@@ -3,7 +3,6 @@ using ApacBreachersRanked.Application.Common.Extensions;
 using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Models;
-using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using Discord;
@@ -14,13 +13,14 @@ using Microsoft.Extensions.Options;
 
 namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 {
-    public class MatchQueueUpdatedHandler : INotificationHandler<MatchQueueUpdatedEvent>
+    public class ScheduledMatchQueueUpdatedHandler : INotificationHandler<ScheduledMatchQueueUpdatedEvent>
     {
         private readonly IDbContext _dbContext;
         private readonly IDiscordClient _discordClient;
         private readonly BreachersDiscordOptions _breachersDiscordOptions;
         private readonly ILogger<MatchQueueUpdatedHandler> _logger;
-        public MatchQueueUpdatedHandler(
+        
+        public ScheduledMatchQueueUpdatedHandler(
             IDbContext dbContext,
             IDiscordClient discordClient,
             IOptions<BreachersDiscordOptions> breachersDiscordOptions,
@@ -31,20 +31,14 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             _breachersDiscordOptions = breachersDiscordOptions.Value;
             _logger = logger;
         }
-        public async Task Handle(MatchQueueUpdatedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(ScheduledMatchQueueUpdatedEvent notification, CancellationToken cancellationToken)
         {
-            MatchQueueEntity matchQueue;
+            ScheduledMatchQueueEntity matchQueue = null;
             if (notification.MatchQueueId != null)
             {
-                matchQueue = await _dbContext.MatchQueue
+                matchQueue = await _dbContext.ScheduleMatchQueues
                     .Include(x => x.Users)
                     .Where(x => x.Id == notification.MatchQueueId)
-                    .FirstOrDefaultAsync(cancellationToken);
-            } else
-            {
-                matchQueue = await _dbContext.MatchQueue
-                    .Include(x => x.Users)
-                    .Where(x => x.IsOpen)
                     .FirstOrDefaultAsync(cancellationToken);
             }
                 
@@ -52,28 +46,26 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             {
                 return;
             }
-            int inProgressMatches = await _dbContext.Matches
-                .Where(match => match.Status == MatchStatus.PendingConfirmation || match.Status == MatchStatus.Confirmed)
-                .CountAsync(cancellationToken);
-            Task<MatchQueueMessage?> matchQueueMessageTask = _dbContext.MatchQueueMessages
+            
+            Task<ScheduledMatchQueueMessage> matchQueueMessageTask = _dbContext.ScheduledMatchQueueMessages
                 .Where(x => x.MatchQueue.Id == matchQueue.Id)
                 .FirstOrDefaultAsync(cancellationToken);
-            Task<IChannel> readyUpChannelTask = _discordClient.GetChannelAsync(_breachersDiscordOptions.ReadyUpChannelId);
+            Task<IChannel> playingAtChannelTask = _discordClient.GetChannelAsync(_breachersDiscordOptions.PlayingAtChannelId);
 
             await Task.WhenAll(
                 matchQueueMessageTask,
-                readyUpChannelTask);
+                playingAtChannelTask);
 
-            Embed embed = GetEmbed(matchQueue.Users, inProgressMatches);
-            string pings = matchQueue.Users.Count >= 4 ? $"<@&{_breachersDiscordOptions.PingRoleId}>" : "";
-            MatchQueueMessage? matchQueueMessage = matchQueueMessageTask.Result;
-            IMessageChannel readyUpChannel = readyUpChannelTask.Result as IMessageChannel;
+            Embed embed = GetEmbed(matchQueue);
+            string pings = $"<@&{_breachersDiscordOptions.PingRoleId}>";
+            ScheduledMatchQueueMessage matchQueueMessage = matchQueueMessageTask.Result;
+            IMessageChannel playingAtChannel = playingAtChannelTask.Result as IMessageChannel;
 
             if (matchQueueMessage?.DiscordMessageId != null && matchQueueMessage?.DiscordMessageId != 0)
             {
                 try
                 {
-                    if (await readyUpChannel.GetMessageAsync(matchQueueMessage.DiscordMessageId) is IUserMessage message)
+                    if (await playingAtChannel.GetMessageAsync(matchQueueMessage.DiscordMessageId) is IUserMessage message)
                     {
                         await message.ModifyAsync(msg =>
                         {
@@ -91,45 +83,35 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             else
             {
                 ComponentBuilder cb = new();
-                cb.WithButton("Join 30", "join-queue-30", style: ButtonStyle.Success);
-                cb.WithButton("Join 60", "join-queue-60", style: ButtonStyle.Success);
-                cb.WithButton("Leave", "leave-queue", style: ButtonStyle.Danger);
-                cb.WithButton("Force", "vote-force-match", style: ButtonStyle.Primary);
+                cb.WithButton("Join", $"scheduled-join-queue-{matchQueue.Id}", style: ButtonStyle.Success);
+                cb.WithButton("Leave", $"scheduled-leave-queue-{matchQueue.Id}", style: ButtonStyle.Danger);
 
-                IUserMessage message = await readyUpChannel.SendMessageAsync(text: pings, embed: embed, components: cb.Build());
+                IUserMessage message = await playingAtChannel.SendMessageAsync(text: pings, embed: embed, components: cb.Build());
                 matchQueueMessage = new()
                 {
                     MatchQueue = matchQueue,
                     DiscordMessageId = message.Id
                 };
-                _dbContext.MatchQueueMessages.Add(matchQueueMessage);
+                _dbContext.ScheduledMatchQueueMessages.Add(matchQueueMessage);
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
 
-        private Embed GetEmbed(IList<MatchQueueUser> users, int inProgressMatches)
+        private Embed GetEmbed(ScheduledMatchQueueEntity matchQueue)
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.WithTitle("APAC Breachers Ranked Queue");
-            embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(GetUserLine)));
+            embedBuilder.WithTitle($"Playing at {matchQueue.ScheduledForUtc.ToDiscordFullEpoch()}");
+            embedBuilder.WithDescription(string.Join(Environment.NewLine, matchQueue.Users.Select(GetUserLine)));
             StringBuilder footerBuilder = new();
-            footerBuilder.AppendLine($"{users.Count}/10 players in queue");
-            if (inProgressMatches != 0)
-            {
-                footerBuilder.AppendLine($"{inProgressMatches} match(s) in progress");
-            }
+            footerBuilder.AppendLine($"{matchQueue.Users.Count}/10 players");
             embedBuilder.WithFooter(footerBuilder.ToString());
             return embedBuilder.Build();
         }
 
-        private static string ForceEmoji = "\uD83D\uDD2B";
-
         private string GetUserLine(MatchQueueUser user)
         {
             StringBuilder sb = new();
-            if (user.VoteToForce) sb.Append($"{ForceEmoji} ");
             sb.Append(user.GetUserMention());
-            sb.Append($" until {user.ExpiryUtc.ToDiscordRelativeEpoch()}");
             return sb.ToString();
         }
     }

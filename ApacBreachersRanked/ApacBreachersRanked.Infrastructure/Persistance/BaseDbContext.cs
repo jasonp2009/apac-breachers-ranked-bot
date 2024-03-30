@@ -3,9 +3,7 @@ using ApacBreachersRanked.Infrastructure.Config;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
