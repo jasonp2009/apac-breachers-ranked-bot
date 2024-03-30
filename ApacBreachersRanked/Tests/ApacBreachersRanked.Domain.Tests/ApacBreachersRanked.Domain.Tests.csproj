@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ApacBreachersRanked.Application\ApacBreachersRanked.Application.csproj" />
     <ProjectReference Include="..\..\ApacBreachersRanked.Domain\ApacBreachersRanked.Domain.csproj" />
+    <ProjectReference Include="..\..\ApacBreachersRanked.Infrastructure.SQS\ApacBreachersRanked.Infrastructure.SQS.csproj" />
   </ItemGroup>
 
 </Project>

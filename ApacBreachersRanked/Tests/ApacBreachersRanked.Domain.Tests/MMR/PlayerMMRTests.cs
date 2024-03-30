@@ -1,8 +1,10 @@
 ﻿using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Enums;
+using ApacBreachersRanked.Domain.MMR.Events;
 using ApacBreachersRanked.Domain.Tests.User;
 using ApacBreachersRanked.Domain.User.Interfaces;
+using ApacBreachersRanked.Infrastructure.SQS.Extensions;
 using FluentAssertions;
 
 namespace ApacBreachersRanked.Domain.Tests.MMR
@@ -28,6 +30,17 @@ namespace ApacBreachersRanked.Domain.Tests.MMR
 
             // ASSERT
             playerMMR.Rank.Should().Be(expectedRank);
+        }
+
+        [Fact]
+        public void Test()
+        {
+            MatchMMRCalculatedEvent test = new()
+            {
+                MatchId = Guid.Parse("DDC4090E-DAD8-44CD-9283-E01D63403EBF")
+            };
+            var testString = MessageSerializer.Serialize(test);
+            Console.WriteLine(testString);
         }
     }
 }
