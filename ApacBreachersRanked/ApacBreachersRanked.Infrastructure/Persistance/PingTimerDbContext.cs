@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal partial class BreachersDbContext
+    public partial class BreachersDbContext
     {
         public DbSet<TimedPing> TimedPings => Set<TimedPing>();
 

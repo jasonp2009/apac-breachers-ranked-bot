@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal partial class BreachersDbContext : IDbContext
+    public partial class BreachersDbContext : IDbContext
     {
         public DbSet<UserBan> UserBans => Set<UserBan>();
         public DbSet<ActiveBansMessage> ActiveBansMessages => Set<ActiveBansMessage>();

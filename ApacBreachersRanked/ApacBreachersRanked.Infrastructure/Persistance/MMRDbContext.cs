@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal partial class BreachersDbContext : IDbContext
+    public partial class BreachersDbContext : IDbContext
     {
         public DbSet<PlayerMMR> PlayerMMRs => Set<PlayerMMR>();
         public DbSet<MMRAdjustment> MMRAdjustments => Set<MMRAdjustment>();

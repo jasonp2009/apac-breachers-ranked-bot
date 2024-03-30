@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal partial class BreachersDbContext : IDbContext
+    public partial class BreachersDbContext : IDbContext
     {
         public DbSet<MatchVoteModel> MatchVotes => Set<MatchVoteModel>();
 

@@ -1,6 +1,6 @@
 ﻿namespace ApacBreachersRanked.Infrastructure.Config
 {
-    internal class RdsOptions
+    public class RdsOptions
     {
         public static string Key = "RdsOptions";
         public DatabaseEngine DatabaseEngine { get; set; } = DatabaseEngine.SqlServer;

@@ -1,6 +1,6 @@
 ﻿namespace ApacBreachersRanked.Infrastructure.Config
 {
-    internal enum DatabaseEngine
+    public enum DatabaseEngine
     {
         SqlServer,
         Postgress

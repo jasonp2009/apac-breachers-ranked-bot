@@ -6,10 +6,11 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal partial class BreachersDbContext : DbContext
+    public partial class BreachersDbContext : DbContext
     {
         private readonly IMediator _mediator;
         private readonly RdsOptions _options;
@@ -20,6 +21,13 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             _mediator = mediator;
             _options = options.Value;
             Database.EnsureCreated();
+        }
+
+        public BreachersDbContext(RdsOptions options)
+        {
+            _options = options;
+            var serviceCollection = new ServiceCollection();
+            _mediator = new Mediator(serviceCollection.BuildServiceProvider());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
