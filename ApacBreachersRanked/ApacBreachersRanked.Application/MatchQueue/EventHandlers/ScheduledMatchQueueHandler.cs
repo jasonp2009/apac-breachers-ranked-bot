@@ -30,6 +30,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 
             foreach (var user in schedulesMatchQueue.Users)
             {
+                if (await _mediator.Send(new IsUserInMatchQuery { UserId = user.UserId }, cancellationToken)) continue;
+                
                 currentQueue.AddUserToQueue(user, user.ExpiryUtc);
             }
 

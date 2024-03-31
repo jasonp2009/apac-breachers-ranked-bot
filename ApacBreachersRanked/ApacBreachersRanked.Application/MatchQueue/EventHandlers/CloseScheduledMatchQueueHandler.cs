@@ -41,7 +41,6 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 
             try
             {
-
                 if (await _discordClient.GetChannelAsync(_breachersDiscordOptions.PlayingAtChannelId) is IMessageChannel
                     channel)
                 {
