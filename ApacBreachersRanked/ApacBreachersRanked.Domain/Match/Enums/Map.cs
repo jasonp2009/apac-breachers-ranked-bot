@@ -11,6 +11,7 @@ namespace ApacBreachersRanked.Domain.Match.Enums
         Factory,
         Skyscraper,
         Hideout,
-        Ship
+        Ship,
+        Arctic
     }
 }
