@@ -17,12 +17,12 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             MatchQueueEntity newQueue = new();
             foreach(MatchQueueUser user in users)
             {
-                newQueue.Users.Add(new MatchQueueUser(user, user.ExpiryUtc));
+                newQueue.Users.Add(new MatchQueueUser(user, user.ExpiryUtc, user.JoinedAtUtc));
             }
             newQueue.QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = newQueue.Id });
             return newQueue;
         }
-        public void AddUserToQueue(IUser user, DateTime expiryUtc)
+        public void AddUserToQueue(IUser user, DateTime expiryUtc, DateTime? joinedAtUtc = null)
         {
             MatchQueueUser? matchQueueUser = Users.FirstOrDefault(x => x.UserId.Equals(user.UserId));
             if (matchQueueUser != null)
@@ -30,7 +30,7 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
                 matchQueueUser.UpdateExpiry(expiryUtc);
             } else
             {
-                matchQueueUser = new(user, expiryUtc);
+                matchQueueUser = new(user, expiryUtc, joinedAtUtc);
                 Users.Add(matchQueueUser);
                 if (Users.Count >= MatchConstants.MaxCapacity)
                 {

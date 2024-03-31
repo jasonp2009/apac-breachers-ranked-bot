@@ -47,7 +47,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 
                 if (user.ExpiryUtc > expiryUtc) expiryUtc = user.ExpiryUtc;
 
-                currentQueue.AddUserToQueue(player, expiryUtc);
+                currentQueue.AddUserToQueue(player, expiryUtc, user.JoinedAtUtc);
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);

@@ -32,7 +32,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             {
                 if (await _mediator.Send(new IsUserInMatchQuery { UserId = user.UserId }, cancellationToken)) continue;
                 
-                currentQueue.AddUserToQueue(user, user.ExpiryUtc);
+                currentQueue.AddUserToQueue(user, user.ExpiryUtc, user.JoinedAtUtc);
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);
