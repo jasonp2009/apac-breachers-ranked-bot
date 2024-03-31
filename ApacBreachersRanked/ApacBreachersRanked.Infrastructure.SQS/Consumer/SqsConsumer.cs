@@ -50,6 +50,10 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
         {
             try
             {
+                _logger.LogInformation("Begin processing {MessageId} with body: {@Body}",
+                    message.MessageId,
+                    message.Body);
+                
                 INotification? notification = MessageSerializer.Deserialize<INotification>(message.Body);
                 if (notification != null)
                 {
@@ -60,6 +64,10 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
                     }
                 }
                 await _sqsClient.DeleteMessageAsync(_config.QueueUrl, message.ReceiptHandle, _stoppingToken);
+                
+                _logger.LogInformation("Successfully processed {MessageId} with body: {@Body}",
+                    message.MessageId,
+                    message.Body);
             }
             catch (Exception ex)
             {
