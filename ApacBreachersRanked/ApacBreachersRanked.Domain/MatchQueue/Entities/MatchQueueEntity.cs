@@ -28,6 +28,10 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             if (matchQueueUser != null)
             {
                 matchQueueUser.UpdateExpiry(expiryUtc);
+                if (joinedAtUtc != null && joinedAtUtc < matchQueueUser.JoinedAtUtc)
+                {
+                    matchQueueUser.UpdateJoinedAt(joinedAtUtc.Value);
+                }
             } else
             {
                 matchQueueUser = new(user, expiryUtc, joinedAtUtc);

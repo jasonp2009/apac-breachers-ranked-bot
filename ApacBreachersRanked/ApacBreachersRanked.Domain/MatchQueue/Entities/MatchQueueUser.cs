@@ -27,6 +27,11 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             ExpiryUtc = expiryUtc;
         }
 
+        internal void UpdateJoinedAt(DateTime joinedAt)
+        {
+            JoinedAtUtc = joinedAt;
+        }
+
         internal void ToggleVoteToForce()
         {
             VoteToForce = !VoteToForce;
