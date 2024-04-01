@@ -8,7 +8,7 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Extensions
         {
             TimeSpan delay = scheduledEvent.ScheduledForUtc - DateTime.UtcNow;
             int delaySeconds;
-            if (delay.Minutes > 15)
+            if (delay.TotalMinutes > 15)
             {
                 delaySeconds = 15 * 60;
             }
