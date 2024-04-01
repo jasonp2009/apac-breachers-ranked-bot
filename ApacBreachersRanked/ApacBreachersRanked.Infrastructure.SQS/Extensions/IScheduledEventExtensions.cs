@@ -14,7 +14,7 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Extensions
             }
             else
             {
-                delaySeconds = delay.Seconds;
+                delaySeconds = Convert.ToInt32(Math.Floor(delay.TotalSeconds));
             }
             return delaySeconds;
         }
