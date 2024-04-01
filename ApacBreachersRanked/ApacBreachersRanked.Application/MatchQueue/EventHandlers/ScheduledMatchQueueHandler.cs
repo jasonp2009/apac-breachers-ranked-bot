@@ -21,6 +21,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
         public async Task Handle(ScheduledMatchQueueEvent notification, CancellationToken cancellationToken)
         {
             ScheduledMatchQueueEntity schedulesMatchQueue = await _dbContext.ScheduleMatchQueues
+                .Include(x => x.Users)
                 .FirstOrDefaultAsync(x => x.Id == notification.ScheduledMatchQueueId, cancellationToken);
             if (schedulesMatchQueue == null) return;
 
