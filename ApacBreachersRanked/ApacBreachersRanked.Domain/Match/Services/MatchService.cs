@@ -59,6 +59,19 @@ namespace ApacBreachersRanked.Domain.Match.Services
                     away.Add(pairs[i].Item1);
                 }
             }
+
+            if (playerMMRs.Any())
+            {
+                var remainingPlayer = playerMMRs.FirstOrDefault();
+                if (home.Sum(x => x.MMR) > away.Sum(x => x.MMR))
+                {
+                    away.Add(remainingPlayer);
+                }
+                else
+                {
+                    home.Add(remainingPlayer);
+                }
+            }
             return (home, away);
         }
 

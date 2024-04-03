@@ -2,6 +2,7 @@
 using ApacBreachersRanked.Application.MMR.Models;
 using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.MMR.Entities;
+using ApacBreachersRanked.Infrastructure.Config;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
@@ -14,8 +15,15 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         public async Task ResetMMRAsync()
         {
-            await Database.ExecuteSqlRawAsync($"DELETE [{Model.FindEntityType(typeof(MMRAdjustment))?.GetTableName()}]");
-            await Database.ExecuteSqlRawAsync($"DELETE [{Model.FindEntityType(typeof(PlayerMMR))?.GetTableName()}]");
+            if (_options.DatabaseEngine == DatabaseEngine.SqlServer)
+            {
+                await Database.ExecuteSqlRawAsync($"DELETE [{Model.FindEntityType(typeof(MMRAdjustment))?.GetTableName()}]");
+                await Database.ExecuteSqlRawAsync($"DELETE [{Model.FindEntityType(typeof(PlayerMMR))?.GetTableName()}]");
+            } else if (_options.DatabaseEngine == DatabaseEngine.Postgress)
+            {
+                await MMRAdjustments.ExecuteDeleteAsync();
+                await PlayerMMRs.ExecuteDeleteAsync();
+            }
         }
 
         partial void OnModelCreatingMMR(ModelBuilder modelBuilder)

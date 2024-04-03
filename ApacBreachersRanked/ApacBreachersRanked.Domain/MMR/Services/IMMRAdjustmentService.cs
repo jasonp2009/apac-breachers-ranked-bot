@@ -47,10 +47,11 @@ namespace ApacBreachersRanked.Domain.MMR.Services
 
         private decimal CalculateTeamMMRAdjustment(MatchScore score, List<PlayerMMR> homePlayerMMRs, List<PlayerMMR> awayPlayerMMRs)
         {
-            decimal homeAvgMMR = homePlayerMMRs.Average(x => x.MMR);
-            decimal awayAvgMMR = awayPlayerMMRs.Average(x => x.MMR);
+            decimal totalPlayers = homePlayerMMRs.Count + awayPlayerMMRs.Count;
+            decimal homeWeightedAvgMMR = homePlayerMMRs.Sum(x => x.MMR) / (totalPlayers/2);
+            decimal awayWeightedAvgMMR = awayPlayerMMRs.Sum(x => x.MMR) / (totalPlayers/2);
 
-            decimal expectedHome = 1 / (1 + Convert.ToDecimal(Math.Pow(10, (double)(awayAvgMMR - homeAvgMMR) / 400)));
+            decimal expectedHome = 1 / (1 + Convert.ToDecimal(Math.Pow(10, (double)(awayWeightedAvgMMR - homeWeightedAvgMMR) / 400)));
 
             int roundDiff = score.Maps.Sum(map => map.Home) - score.Maps.Sum(map => map.Away);
 
