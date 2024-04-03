@@ -23,7 +23,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             ScheduledMatchQueueEntity schedulesMatchQueue = await _dbContext.ScheduleMatchQueues
                 .Include(x => x.Users)
                 .FirstOrDefaultAsync(x => x.Id == notification.ScheduledMatchQueueId, cancellationToken);
-            if (schedulesMatchQueue == null) return;
+            if (schedulesMatchQueue == null || !schedulesMatchQueue.IsOpen) return;
 
             schedulesMatchQueue.CloseQueue();
 

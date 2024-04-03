@@ -31,6 +31,11 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
 
             scheduledQueue.RemoveUserFromQueue(request.DiscordUserId.ToIUserId());
 
+            if (!scheduledQueue.Users.Any())
+            {
+                scheduledQueue.CloseQueue();
+            }
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
