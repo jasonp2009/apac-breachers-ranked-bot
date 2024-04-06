@@ -1,4 +1,6 @@
-﻿using ApacBreachersRanked.Application.Common.Extensions;
+﻿using System.Text;
+using ApacBreachersRanked.Application.Common.Extensions;
+using ApacBreachersRanked.Application.Common.Services;
 using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Application.MatchQueue.Exceptions;
 using ApacBreachersRanked.Application.Moderation.Exceptions;
@@ -12,10 +14,12 @@ namespace ApacBreachersRanked.Modules
 {
     public class MatchQueueModule : BaseModule
     {
+        private readonly DateTimeParser _dateTimeParser;
         private readonly ILogger<MatchQueueModule> _logger;
-        public MatchQueueModule(IMediator mediator, ILogger<MatchQueueModule> logger)
+        public MatchQueueModule(IMediator mediator,DateTimeParser dateTimeParser, ILogger<MatchQueueModule> logger)
             : base(mediator)
         {
+            _dateTimeParser = dateTimeParser;
             _logger = logger;
         }
 
@@ -92,11 +96,29 @@ namespace ApacBreachersRanked.Modules
 
         [SlashCommand("playingat", "Schedule when you want to join queue")]
         public async Task PlayingAt(
-            [Summary("When", "When you want to join the queue")]DateTime when,
+            [Summary("When", "When you want to join the queue")]string when,
             [Summary("Timezone"), Autocomplete(typeof(TimeZoneAutoCompleteHandler))]string timezone)
         {
             var tzi = TZConvert.GetTimeZoneInfo(timezone);
-            var whenUtc = TimeZoneInfo.ConvertTimeToUtc(when, tzi);
+            var parsedResults = await _dateTimeParser.Parse(when,tzi).ToListAsync();
+            if (parsedResults.Count == 0)
+            {
+                await RespondAsync($"I am not quite sure what you mean by {when}", ephemeral: true);
+            }
+
+            if (parsedResults.Count > 1)
+            {
+                StringBuilder sb = new();
+                sb.AppendLine($"There are multiple possible values for the entered time {when}");
+                foreach (var parsedResult in parsedResults)
+                {
+                    sb.AppendLine(parsedResult.ToDiscordFullEpoch());
+                }
+
+                await RespondAsync(sb.ToString(), ephemeral: true);
+            }
+            
+            var whenUtc = parsedResults.Single();
             ScheduledJoinQueueCommand command = new()
             {
                 DiscordUserId = Context.User.Id,
