@@ -99,25 +99,36 @@ namespace ApacBreachersRanked.Modules
             [Summary("When", "When you want to join the queue")]string when,
             [Summary("Timezone"), Autocomplete(typeof(TimeZoneAutoCompleteHandler))]string timezone)
         {
-            var tzi = TZConvert.GetTimeZoneInfo(timezone);
-            var parsedResults = await _dateTimeParser.Parse(when,tzi).ToListAsync();
-            if (parsedResults.Count == 0)
+            List<DateTime> parsedResults;
+            try
+            {
+                var tzi = TZConvert.GetTimeZoneInfo(timezone);
+                parsedResults = await _dateTimeParser.Parse(when,tzi).ToListAsync();
+            }
+            catch (Exception)
             {
                 await RespondAsync($"I am not quite sure what you mean by {when}", ephemeral: true);
+                return;
             }
-
-            if (parsedResults.Count > 1)
+            switch (parsedResults.Count)
             {
-                StringBuilder sb = new();
-                sb.AppendLine($"There are multiple possible values for the entered time {when}");
-                foreach (var parsedResult in parsedResults)
+                case 0:
+                    await RespondAsync($"I am not quite sure what you mean by {when}", ephemeral: true);
+                    return;
+                case > 1:
                 {
-                    sb.AppendLine(parsedResult.ToDiscordFullEpoch());
-                }
+                    StringBuilder sb = new();
+                    sb.AppendLine($"There are multiple possible values for the entered time {when}");
+                    foreach (var parsedResult in parsedResults)
+                    {
+                        sb.AppendLine(parsedResult.ToDiscordFullEpoch());
+                    }
 
-                await RespondAsync(sb.ToString(), ephemeral: true);
+                    await RespondAsync(sb.ToString(), ephemeral: true);
+                    return;
+                }
             }
-            
+
             var whenUtc = parsedResults.Single();
             ScheduledJoinQueueCommand command = new()
             {
