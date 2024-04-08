@@ -17,7 +17,7 @@ public class DateTimeParser
         foreach (var moment in resultTimes)
         {
             var convertedMoment = TimeZoneInfo.ConvertTimeToUtc(moment, timeZone);
-            if (moment > DateTime.UtcNow)
+            if (moment > refTime)
             {
                 yield return convertedMoment;
             }
