@@ -16,7 +16,7 @@ public class WebhookController : ControllerBase
     [HttpPost("DeleteUser")]
     public async Task<IActionResult> DeleteUserAsync(object body)
     {
-        _logger.LogInformation("Received Delete User request with {@RequestBody}", body);
+        _logger.LogInformation("Received Delete User request with {RequestBody}", body.ToString());
         return Ok();
     }
 }
