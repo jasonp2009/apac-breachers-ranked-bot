@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Consumer", "ApacBreachersRanked.Consumer\ApacBreachersRanked.Consumer.csproj", "{17B99842-7D96-4F7A-ADBD-56D2399ED7DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacBreachersRanked.Api", "ApacBreachersRanked.Api\ApacBreachersRanked.Api.csproj", "{60A94AF9-94D8-4895-90B2-AFF91F41DE2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{17B99842-7D96-4F7A-ADBD-56D2399ED7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17B99842-7D96-4F7A-ADBD-56D2399ED7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17B99842-7D96-4F7A-ADBD-56D2399ED7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60A94AF9-94D8-4895-90B2-AFF91F41DE2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60A94AF9-94D8-4895-90B2-AFF91F41DE2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60A94AF9-94D8-4895-90B2-AFF91F41DE2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60A94AF9-94D8-4895-90B2-AFF91F41DE2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
