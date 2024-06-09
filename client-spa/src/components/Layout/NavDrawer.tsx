@@ -30,7 +30,9 @@ export function NavDrawer(navItems: NavItem[]) {
       <List>
         {navItems.map((navItem) => (
           <ListItem key={navItem.label} disablePadding>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => navigate(navItem.link)}
+            >
               <ListItemText primary={navItem.label}/>
             </ListItemButton>
           </ListItem>

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { NavDrawer } from "../../components";
+import { NavDrawer, MenuAppBar } from "../../components";
 import './Layout.css';
 import Box from "@mui/material/Box";
 export function Layout() {
@@ -14,8 +14,15 @@ export function Layout() {
         link: '/stats'
       }
     ]
-  )
-    return (
+  );
+  const appBar = MenuAppBar(navDrawer.toggleDrawer());
+  return (
+    <Box>
+      <Box
+        sx={{ marginLeft: { sm: `${navDrawer.drawerWidth}px` } }}
+      >
+        {appBar.bar}
+      </Box>
       <Box sx={{ display: 'flex' }}>
         <Box
           component="nav"
@@ -31,5 +38,6 @@ export function Layout() {
           <Outlet/>
         </Box>
       </Box>
-    );
+    </Box>
+  );
 }
