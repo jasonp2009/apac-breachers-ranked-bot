@@ -1,0 +1,9 @@
+@ApacBreachersRanked.Api_HostAddress = http://localhost:5058
+
+POST {{ApacBreachersRanked.Api_HostAddress}}/webhook/deleteuser
+Content-Type: application/json
+
+{
+  "UserId": 1234
+}
+###
