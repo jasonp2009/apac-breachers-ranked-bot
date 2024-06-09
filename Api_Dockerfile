@@ -4,6 +4,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 # Set the working directory inside the container
 WORKDIR /app
 
+# Expose ports
+EXPOSE 80
+EXPOSE 443
+
 # Copy the .csproj and .sln files to the container's working directory
 COPY . .
 
