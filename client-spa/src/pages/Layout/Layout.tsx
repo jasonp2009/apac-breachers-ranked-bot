@@ -17,7 +17,13 @@ export function Layout() {
   );
   const appBar = MenuAppBar(navDrawer.toggleDrawer());
   return (
-    <Box>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'nowrap'
+      }}
+    >
       <Box
         sx={{ marginLeft: { sm: `${navDrawer.drawerWidth}px` } }}
       >
@@ -33,7 +39,7 @@ export function Layout() {
         </Box>
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${navDrawer.drawerWidth}px)` } }}
+          sx={{ flexGrow: 1, p: 3 }}
           >
           <Outlet/>
         </Box>
