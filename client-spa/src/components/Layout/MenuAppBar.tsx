@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,16 +7,14 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { useLogin } from "../../hooks";
+import { getProfilePicture } from "../../hooks/Login/getProfilePicture";
+import { Avatar, Button } from "@mui/material";
 
 export function MenuAppBar(onClickHamburger?: () => void) {
-  const [ auth, setAuth ] = React.useState(true);
   const [ anchorEl, setAnchorEl ] = React.useState<null | HTMLElement>(null);
   const [ label, setLabel ] = React.useState<string>("Home");
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
-
+  const { isLoggedIn, user, login, logout } = useLogin();
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -42,7 +40,7 @@ export function MenuAppBar(onClickHamburger?: () => void) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {label}
           </Typography>
-          {auth && (
+          {isLoggedIn && (
             <div>
               <IconButton
                 size="large"
@@ -52,6 +50,7 @@ export function MenuAppBar(onClickHamburger?: () => void) {
                 onClick={handleMenu}
                 color="inherit"
               >
+                <Avatar src={getProfilePicture(user)}> </Avatar>
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -70,14 +69,18 @@ export function MenuAppBar(onClickHamburger?: () => void) {
               >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={logout}>Logout</MenuItem>
               </Menu>
             </div>
+          )}
+          {!isLoggedIn && (
+            <Button color="secondary" variant="contained" onClick={login}>Login</Button>
           )}
         </Toolbar>
       </AppBar>
     </Box>
   );
-  
+
   return {
     bar,
     setLabel
