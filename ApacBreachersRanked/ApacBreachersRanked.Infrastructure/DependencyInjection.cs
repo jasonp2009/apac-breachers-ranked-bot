@@ -1,8 +1,8 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Infrastructure.BreachersApi;
 using ApacBreachersRanked.Infrastructure.Config;
 using ApacBreachersRanked.Infrastructure.MatchQueueListener;
 using ApacBreachersRanked.Infrastructure.Persistance;
-using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +20,8 @@ namespace ApacBreachersRanked.Infrastructure
 
             services.AddScoped<IDbContext, BreachersDbContext>();
 
+            services.AddBreachersApi(configuration);
+            
             return services;
         }
 
@@ -29,6 +31,18 @@ namespace ApacBreachersRanked.Infrastructure
 
             services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<MatchQueueListenerService>());
 
+            return services;
+        }
+
+        private static IServiceCollection AddBreachersApi(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<BreachersApiOptions>(options => configuration.GetSection(BreachersApiOptions.Key).Bind(options));
+
+            services.AddTransient<BreachersAuthenticationHandler>();
+            
+            services.AddHttpClient<BreachersApiClient>()
+                .AddHttpMessageHandler<BreachersAuthenticationHandler>();
             return services;
         }
     }

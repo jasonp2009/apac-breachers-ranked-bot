@@ -1,3 +1,7 @@
+using ApacBreachersRanked;
+using ApacBreachersRanked.Application;
+using ApacBreachersRanked.Infrastructure;
+using ApacBreachersRanked.Infrastructure.SQS;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -9,6 +13,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.UseSqsPublisher(builder.Configuration);
+builder.Services.AddDiscordClient(builder.Configuration);
+builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddMatchQueueListenderService();
+
 builder.Host.UseSerilog((a, cfg) =>
 {
     cfg.WriteTo.Console(new CompactJsonFormatter());
