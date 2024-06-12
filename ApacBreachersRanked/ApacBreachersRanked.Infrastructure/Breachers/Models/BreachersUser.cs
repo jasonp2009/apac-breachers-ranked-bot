@@ -17,7 +17,7 @@ public class BreachersUser
     {
         string fullUserName = "";
         fullUserName += !string.IsNullOrWhiteSpace(ClanTag)
-            ? $"[{ClanTag}] "
+            ? $"[{ClanTag}]"
             : "";
         fullUserName += UserName;
         return fullUserName;

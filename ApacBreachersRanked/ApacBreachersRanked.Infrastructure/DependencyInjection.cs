@@ -23,6 +23,8 @@ namespace ApacBreachersRanked.Infrastructure
             services.AddScoped<IDbContext, BreachersDbContext>();
 
             services.AddScoped<IBreachersUserService, BreachersUserService>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             
             services.AddBreachersApi(configuration);
             
