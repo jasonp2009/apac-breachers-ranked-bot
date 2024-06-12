@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using ApacBreachersRanked.Domain.Match.Enums;
 
-namespace ApacBreachersRanked.Infrastructure.BreachersApi.Models;
+namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 
 public class BreachersGameData
 {

@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Json;
-using ApacBreachersRanked.Infrastructure.BreachersApi.Models;
+using ApacBreachersRanked.Infrastructure.Breachers.Models;
 using ApacBreachersRanked.Infrastructure.Config;
 using Microsoft.Extensions.Options;
 
-namespace ApacBreachersRanked.Infrastructure.BreachersApi;
+namespace ApacBreachersRanked.Infrastructure.Breachers.Api;
 
 public class BreachersApiClient
 {

@@ -1,5 +1,5 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
-using ApacBreachersRanked.Infrastructure.BreachersApi;
+using ApacBreachersRanked.Infrastructure.Breachers.Api;
 using ApacBreachersRanked.Infrastructure.Config;
 using ApacBreachersRanked.Infrastructure.MatchQueueListener;
 using ApacBreachersRanked.Infrastructure.Persistance;

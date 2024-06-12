@@ -1,10 +1,9 @@
-﻿using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using ApacBreachersRanked.Infrastructure.Config;
 using Microsoft.Extensions.Options;
 
-namespace ApacBreachersRanked.Infrastructure.BreachersApi;
+namespace ApacBreachersRanked.Infrastructure.Breachers.Api;
 
 public class BreachersAuthenticationHandler : DelegatingHandler
 {

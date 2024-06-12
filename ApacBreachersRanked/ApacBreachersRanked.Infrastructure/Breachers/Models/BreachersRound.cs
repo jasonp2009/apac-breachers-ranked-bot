@@ -1,4 +1,4 @@
-﻿namespace ApacBreachersRanked.Infrastructure.BreachersApi.Models;
+﻿namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 
 public class BreachersRound
 {

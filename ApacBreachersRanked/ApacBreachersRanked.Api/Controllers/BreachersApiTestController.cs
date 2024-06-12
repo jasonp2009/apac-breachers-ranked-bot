@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Infrastructure.BreachersApi;
+﻿using ApacBreachersRanked.Infrastructure.Breachers.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApacBreachersRanked.Api.Controllers;
