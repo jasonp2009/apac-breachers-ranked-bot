@@ -1,5 +1,7 @@
-﻿using ApacBreachersRanked.Application.DbContext;
+﻿using ApacBreachersRanked.Application.BreachersUsers.Services;
+using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Infrastructure.Breachers.Api;
+using ApacBreachersRanked.Infrastructure.Breachers.Services;
 using ApacBreachersRanked.Infrastructure.Config;
 using ApacBreachersRanked.Infrastructure.MatchQueueListener;
 using ApacBreachersRanked.Infrastructure.Persistance;
@@ -20,6 +22,8 @@ namespace ApacBreachersRanked.Infrastructure
 
             services.AddScoped<IDbContext, BreachersDbContext>();
 
+            services.AddScoped<IBreachersUserService, BreachersUserService>();
+            
             services.AddBreachersApi(configuration);
             
             return services;

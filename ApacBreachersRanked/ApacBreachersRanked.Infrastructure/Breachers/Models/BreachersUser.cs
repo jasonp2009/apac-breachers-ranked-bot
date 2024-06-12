@@ -12,4 +12,14 @@ public class BreachersUser
     public int IdTag { get; set; }
     [JsonPropertyName("clan_tag")]
     public string ClanTag { get; set; }
+
+    public string GetFullUserName()
+    {
+        string fullUserName = "";
+        fullUserName += !string.IsNullOrWhiteSpace(ClanTag)
+            ? $"[{ClanTag}] "
+            : "";
+        fullUserName += UserName;
+        return fullUserName;
+    }
 }

@@ -4,6 +4,7 @@ using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.MMR.Services;
 using ApacBreachersRanked.Application.PingTimer;
 using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Application.Users.Services;
 using ApacBreachersRanked.Domain;
 using ApacBreachersRanked.Domain.MMR.Services;
 using ApacBreachersRanked.Domain.User.Interfaces;
@@ -26,6 +27,8 @@ namespace ApacBreachersRanked.Application
             services.AddScoped<IMMRAdjustmentService, MMRAdjustmentService>();
 
             services.AddScoped<IMMRService, MMRService>();
+
+            services.AddScoped<DiscordUserContextService>();
 
             services.AddSingleton<DateTimeParser>();
 
