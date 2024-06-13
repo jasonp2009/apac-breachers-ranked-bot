@@ -9,5 +9,8 @@ public interface IBreachersUserService
 
     public Task LinkDiscordUser(ApplicationDiscordUser discordUser, string breachersUserId,
         CancellationToken cancellationToken);
-    public Task<BreachersUser> GetBreachersUser(ApplicationDiscordUser discordUser, CancellationToken cancellationToken);
+
+    public Task<BreachersUser> GetBreachersUser(ApplicationDiscordUser discordUser, CancellationToken cancellationToken)
+        => GetBreachersUser(discordUser.UserId.GetDiscordId(), cancellationToken);
+    public Task<BreachersUser> GetBreachersUser(ulong discordUserId, CancellationToken cancellationToken);
 }

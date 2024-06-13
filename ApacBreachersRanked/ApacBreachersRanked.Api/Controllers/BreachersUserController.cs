@@ -31,4 +31,11 @@ public class BreachersUserController : ControllerBase
     {
         return Ok(await _mediator.Send(command, cancellationToken));
     }
+
+    [HttpGet("GetLinkedBreachersUser")]
+    public async Task<IActionResult> GetLinkedBreachersUser(
+        [FromQuery] GetLinkedBreachersUserQuery query, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(query, cancellationToken));
+    }
 }

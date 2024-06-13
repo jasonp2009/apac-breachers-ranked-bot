@@ -56,11 +56,11 @@ internal class BreachersUserService : IBreachersUserService
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<ApplicationBreachersUser> GetBreachersUser(ApplicationDiscordUser discordUser, CancellationToken cancellationToken)
+    public async Task<ApplicationBreachersUser> GetBreachersUser(ulong discordUserId, CancellationToken cancellationToken)
     {
         BreachersDiscordUserLink userLink =
             await _dbContext.BreachersDiscordUserLinks.FirstOrDefaultAsync(
-                x => x.DiscordUserId == discordUser.UserId.GetDiscordId(), cancellationToken);
+                x => x.DiscordUserId == discordUserId, cancellationToken);
         if (userLink == null) return null;
 
         BreachersUser breachersUser =
