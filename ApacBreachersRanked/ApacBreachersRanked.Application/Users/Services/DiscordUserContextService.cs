@@ -13,7 +13,7 @@ public class DiscordUserContextService
         _mediator = mediator;
     }
 
-    public async Task SetUserContext(ulong discordUserId, CancellationToken cancellationToken)
+    public async Task SetUserContext(ulong discordUserId, CancellationToken cancellationToken = default)
     {
         _discordUser =
             await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = discordUserId }, cancellationToken) as

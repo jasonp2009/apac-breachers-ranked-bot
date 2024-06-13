@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Application.MatchQueue.Commands;
+using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Application.PingTimer.Events;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.TypeConverters;
@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using ApacBreachersRanked.Application.Users.Services;
 
 namespace Example.Services
 {
@@ -28,7 +29,7 @@ namespace Example.Services
         {
             _discord = discord;
             _interactions = interactions;
-            _services = services;
+            _services = services.CreateScope().ServiceProvider;
             _logger = logger;
         }
 
@@ -52,30 +53,38 @@ namespace Example.Services
 
         private async Task OnInteractionAsync(SocketInteraction interaction)
         {
-            _logger.BeginScope("User {UserName}:({UserId}) performing {InteractionType}",
-                interaction.User.Username, interaction.User.Id, interaction.Type);
-            try
+            _ = Task.Run(async () =>
             {
-                var context = new SocketInteractionContext(_discord, interaction);
-                var result = await _interactions.ExecuteCommandAsync(context, _services);
-                if (!result.IsSuccess)
+                _logger.BeginScope("User {UserName}:({UserId}) performing {InteractionType}",
+                    interaction.User.Username, interaction.User.Id, interaction.Type);
+                try
                 {
-                    _logger.LogWarning(result.ErrorReason);
-
-                    if (result.Error == InteractionCommandError.UnmetPrecondition)
+                    using var scope = _services.CreateScope();
+                    var scopedServices = scope.ServiceProvider;
+                    var userContextService = scopedServices.GetRequiredService<DiscordUserContextService>();
+                    await userContextService.SetUserContext(interaction.User.Id);
+                
+                    var context = new SocketInteractionContext(_discord, interaction);
+                    var result = await _interactions.ExecuteCommandAsync(context, scopedServices);
+                    if (!result.IsSuccess)
                     {
-                        await interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+                        _logger.LogWarning(result.ErrorReason);
+
+                        if (result.Error == InteractionCommandError.UnmetPrecondition)
+                        {
+                            await interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+                        }
                     }
                 }
-            }
-            catch
-            {
-                if (interaction.Type == InteractionType.ApplicationCommand)
+                catch
                 {
-                    await await interaction.GetOriginalResponseAsync()
-                        .ContinueWith(async msg => await msg.Result.DeleteAsync());
+                    if (interaction.Type == InteractionType.ApplicationCommand)
+                    {
+                        await await interaction.GetOriginalResponseAsync()
+                            .ContinueWith(async msg => await msg.Result.DeleteAsync());
+                    }
                 }
-            }
+            });
         }
 
         private async Task OnReadyAsync()
