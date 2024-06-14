@@ -19,7 +19,9 @@ namespace ApacBreachersRanked
                 DefaultRunMode = RunMode.Sync,
                 ThrowOnError = true
             });
-            services.AddSingleton<InteractionService>();
+            services.AddSingleton<InteractionService>(x => new InteractionService(
+                x.GetRequiredService<DiscordSocketClient>(),
+                x.GetRequiredService<InteractionServiceConfig>()));
             services.AddHostedService<InteractionHandlingService>();
 
             return services;
