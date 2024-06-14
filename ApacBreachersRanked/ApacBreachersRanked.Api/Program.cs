@@ -1,4 +1,5 @@
 using ApacBreachersRanked;
+using ApacBreachersRanked.Api.Middleware;
 using ApacBreachersRanked.Application;
 using ApacBreachersRanked.Infrastructure;
 using ApacBreachersRanked.Infrastructure.SQS;
@@ -8,8 +9,9 @@ using Serilog.Formatting.Compact;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -36,8 +38,8 @@ if (app.Environment.IsDevelopment() || true)
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
+
+app.UseMiddleware<DiscordAuthMiddleware>();
 
 app.Run();

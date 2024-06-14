@@ -20,5 +20,8 @@ public class DiscordUserContextService
                 ApplicationDiscordUser;
     }
 
+    public void SetUserContext(Discord.IUser discordUser)
+        => _discordUser = new(discordUser);
+
     public ApplicationDiscordUser GetDiscordUser() => _discordUser;
 }

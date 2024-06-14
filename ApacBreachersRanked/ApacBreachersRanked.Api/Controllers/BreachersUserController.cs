@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.BreachersUsers.Commands;
+﻿using ApacBreachersRanked.Api.Attributes;
+using ApacBreachersRanked.Application.BreachersUsers.Commands;
 using ApacBreachersRanked.Application.BreachersUsers.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ public class BreachersUserController : ControllerBase
         return Ok(await _mediator.Send(query, cancellationToken));
     }
 
+    [RequireDiscordAuth]
     [HttpPost("LinkDiscordUser")]
     public async Task<IActionResult> LinkDiscordUser(
         [FromBody] LinkDiscordUserCommand command,
@@ -32,6 +34,7 @@ public class BreachersUserController : ControllerBase
         return Ok(await _mediator.Send(command, cancellationToken));
     }
 
+    [RequireDiscordAuth]
     [HttpGet("GetLinkedBreachersUser")]
     public async Task<IActionResult> GetLinkedBreachersUser(
         [FromQuery] GetLinkedBreachersUserQuery query, CancellationToken cancellationToken)

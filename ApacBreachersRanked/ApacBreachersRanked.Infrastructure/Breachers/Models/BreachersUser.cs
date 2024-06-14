@@ -7,7 +7,7 @@ public class BreachersUser
     [JsonPropertyName("id")]
     public string Id { get; set; }
     [JsonPropertyName("user_name")]
-    public string UserName { get; set; }
+    public virtual string UserName { get; set; }
     [JsonPropertyName("id_tag")]
     public int IdTag { get; set; }
     [JsonPropertyName("clan_tag")]
