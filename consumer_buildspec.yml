@@ -11,6 +11,7 @@ phases:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - aws s3 cp s3://abr-config/appsettings.json ApacBreachersRanked/ApacBreachersRanked.Consumer
+      - aws s3 cp s3://abr-config/appsettings.Production.json ApacBreachersRanked/ApacBreachersRanked.Consumer
   build:
     commands:
       - echo Build started on `date`
