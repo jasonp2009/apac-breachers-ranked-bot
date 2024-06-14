@@ -1,5 +1,5 @@
 # Stage 1: Build the .NET application
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN dotnet build "ApacBreachersRanked/ApacBreachersRanked/ApacBreachersRanked.csproj" -c Release -o /app/build
 
 # Stage 2: Create a smaller runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 # Set the working directory inside the container
 WORKDIR /app
