@@ -1,0 +1,27 @@
+﻿using MediatR;
+
+namespace ApacBreachersRanked.Application.Users.Services;
+
+public class DiscordUserContextService
+{
+    private ApplicationDiscordUser _discordUser;
+
+    private IMediator _mediator;
+
+    public DiscordUserContextService(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    public async Task SetUserContext(ulong discordUserId, CancellationToken cancellationToken = default)
+    {
+        _discordUser =
+            await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = discordUserId }, cancellationToken) as
+                ApplicationDiscordUser;
+    }
+
+    public void SetUserContext(Discord.IUser discordUser)
+        => _discordUser = new(discordUser);
+
+    public ApplicationDiscordUser GetDiscordUser() => _discordUser;
+}

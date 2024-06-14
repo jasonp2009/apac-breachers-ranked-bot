@@ -8,7 +8,6 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 {
     internal partial class BreachersDbContext : IDbContext
     {
-
         public DbSet<MatchEntity> Matches => Set<MatchEntity>();
         public DbSet<MatchPlayer> MatchPlayers => Set<MatchPlayer>();
         public DbSet<MapScore> MatchMaps => Set<MapScore>();

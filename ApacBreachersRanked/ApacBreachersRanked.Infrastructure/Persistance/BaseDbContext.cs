@@ -43,6 +43,8 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             {
                 modelBuilder.Entity(entityType).Ignore(nameof(BaseEntity.DomainEvents));
             }
+
+            OnModelCreatingBreachersApi(modelBuilder);
             OnModelCreatingMatchQueue(modelBuilder);
             OnModelCreatingMatch(modelBuilder);
             OnModelCreatingMatchVote(modelBuilder);
@@ -52,6 +54,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             OnModelCreatingPingTimer(modelBuilder);
         }
 
+        partial void OnModelCreatingBreachersApi(ModelBuilder modelBuilder);
         partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder);
         partial void OnModelCreatingMatch(ModelBuilder modelBuilder);
         partial void OnModelCreatingMatchVote(ModelBuilder modelBuilder);

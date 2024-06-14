@@ -11,9 +11,9 @@ using IHost host = Host.CreateDefaultBuilder(args)
     {
         services.UseSqsPublisher(host.Configuration);
         services.AddInteractionService(host.Configuration);
-        services.AddDiscordClient(host.Configuration);
         services.AddApplication(host.Configuration);
         services.AddInfrastructure(host.Configuration);
+        services.AddDiscordClient(host.Configuration);
     })
     .UseSerilog((a,cfg) =>
     {
