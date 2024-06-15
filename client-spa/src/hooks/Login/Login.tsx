@@ -1,0 +1,50 @@
+import { useDiscordLogin } from 'react-discord-login';
+import {useEffect, useState} from "react";
+import { TokenResponse, User } from "react-discord-login/dist/DiscordLoginTypes";
+import { useCookies} from "react-cookie";
+
+export const loginCookieKey = 'discordToken';
+const expiryBuffer = 15*60;
+
+export function useLogin() {
+  const [ cookies, setCookie, deleteCookie ] = useCookies([loginCookieKey]);
+  const [ user, setUser ] = useState<User>();
+
+  useEffect(() => {
+    const cookieUser = cookies[loginCookieKey]?.user;
+    setUser(cookieUser ?? undefined);
+  }, [cookies]);
+  
+  const { buildUrl, isLoading } = useDiscordLogin({
+    clientId: '1138013824507711498',
+    redirectUri: process.env.REACT_APP_DISCORD_REDIRECT_URL,
+    responseType: 'token', // or 'code'
+    scopes: ['identify', 'email'],
+    onSuccess: response => {
+      const tokenResponse = response as TokenResponse;
+      setTokenResponseCookie(tokenResponse);
+    }
+  });
+  
+  const setTokenResponseCookie = (tokenResponse: TokenResponse) => {
+    setCookie(loginCookieKey,tokenResponse, {
+      maxAge: tokenResponse.expires_in - expiryBuffer
+    });
+  }
+
+  const login = () => {
+    window.location.href = buildUrl();
+  }
+  
+  const logout = () => {
+    setUser(undefined);
+    deleteCookie(loginCookieKey);
+  }
+
+  return {
+    isLoggedIn: !!user,
+    user,
+    login,
+    logout
+  };
+}
