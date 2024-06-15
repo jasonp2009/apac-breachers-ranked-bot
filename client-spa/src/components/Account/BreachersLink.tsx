@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 export function BreachersLink() {
   const [ isLoading, setIsLoading ] = useState<boolean>(true);
   const [ breachersUser, setBreachersUser ] = useState<BreachersUser>();
-  const [ test, setTest ] = useState<BreachersUser>();
   const [ searchValue, setSearchValue ] = useState<BreachersUser[]>();
   const [ isModalOpen, setIsModalOpen ] = useState<boolean>(false);
   const [ selectedBreachersUser, setSelectedBreachersUser ] = useState<BreachersUser>();
@@ -33,7 +32,6 @@ export function BreachersLink() {
   
   const selectBreachersUser = (breachersUser: BreachersUser) => {
     setSelectedBreachersUser(breachersUser);
-    console.log(test);
     setIsModalOpen(true);
   }
   const confirmBreachersUser = async () => {
