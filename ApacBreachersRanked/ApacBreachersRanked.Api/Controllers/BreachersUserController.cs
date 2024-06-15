@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Api.Attributes;
 using ApacBreachersRanked.Application.BreachersUsers.Commands;
+using ApacBreachersRanked.Application.BreachersUsers.Models;
 using ApacBreachersRanked.Application.BreachersUsers.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ public class BreachersUserController : ControllerBase
     }
 
     [HttpGet("SearchUsers")]
+    [ProducesResponseType<IEnumerable<BreachersUser>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> SearchUsers(
         [FromQuery] SearchBreachersUsersQuery query,
         CancellationToken cancellationToken)
@@ -36,6 +38,7 @@ public class BreachersUserController : ControllerBase
 
     [RequireDiscordAuth]
     [HttpGet("GetLinkedBreachersUser")]
+    [ProducesResponseType<BreachersUser>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLinkedBreachersUser(
         [FromQuery] GetLinkedBreachersUserQuery query, CancellationToken cancellationToken)
     {

@@ -3,15 +3,15 @@ import {useEffect, useState} from "react";
 import { TokenResponse, User } from "react-discord-login/dist/DiscordLoginTypes";
 import { useCookies} from "react-cookie";
 
-const cookieKey = 'discordToken';
+export const loginCookieKey = 'discordToken';
 const expiryBuffer = 15*60;
 
 export function useLogin() {
-  const [ cookies, setCookie, deleteCookie ] = useCookies([cookieKey]);
+  const [ cookies, setCookie, deleteCookie ] = useCookies([loginCookieKey]);
   const [ user, setUser ] = useState<User>();
 
   useEffect(() => {
-    const cookieUser = cookies[cookieKey]?.user;
+    const cookieUser = cookies[loginCookieKey]?.user;
     cookieUser && setUser(cookieUser);
   }, [cookies]);
   
@@ -27,7 +27,7 @@ export function useLogin() {
   });
   
   const setTokenResponseCookie = (tokenResponse: TokenResponse) => {
-    setCookie(cookieKey,tokenResponse, {
+    setCookie(loginCookieKey,tokenResponse, {
       maxAge: tokenResponse.expires_in - expiryBuffer
     });
   }
@@ -38,7 +38,7 @@ export function useLogin() {
   
   const logout = () => {
     setUser(undefined);
-    deleteCookie(cookieKey);
+    deleteCookie(loginCookieKey);
   }
 
   return {
