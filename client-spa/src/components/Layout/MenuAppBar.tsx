@@ -10,11 +10,14 @@ import Menu from '@mui/material/Menu';
 import { useLogin } from "../../hooks";
 import { getProfilePicture } from "../../hooks/Login/getProfilePicture";
 import { Avatar, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { RouteConstants } from "../../constants";
 
 export function MenuAppBar(onClickHamburger?: () => void) {
   const [ anchorEl, setAnchorEl ] = React.useState<null | HTMLElement>(null);
   const [ label, setLabel ] = React.useState<string>("Home");
   const { isLoggedIn, user, login, logout } = useLogin();
+  const navigate = useNavigate();
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -67,8 +70,7 @@ export function MenuAppBar(onClickHamburger?: () => void) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={() => navigate(RouteConstants.Account)}>My account</MenuItem>
                 <MenuItem onClick={logout}>Logout</MenuItem>
               </Menu>
             </div>

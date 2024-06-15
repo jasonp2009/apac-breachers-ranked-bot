@@ -19,11 +19,23 @@ public class BreachersApiClient
         => SearchUsers(new List<string> { userName });
     public async Task<IEnumerable<BreachersUser>> SearchUsers(IEnumerable<string> userNames, CancellationToken cancellationToken = default)
     {
+        userNames = userNames.Select(userName =>
+            userName.Contains(']')
+                ? userName.Split(']', 2).LastOrDefault()
+                : userName
+        );
         string request = $"get_player_id?player_name={string.Join(';', userNames)}";
         BreachersApiResponse<GetUsersResponse> response =
             await _httpClient.GetFromJsonAsync<BreachersApiResponse<GetUsersResponse>>(request, cancellationToken);
         if (!response.Success)
+        {
+            if (response.ErrorMessage.Equals("No valid names provided") ||
+                response.ErrorMessage.Equals("No users found."))
+            {
+                return new List<BreachersUser>();
+            }
             throw new InvalidOperationException($"[{nameof(SearchUsers)}] The breachers API threw an error: {response.ErrorMessage}");
+        }
         return response.Data.Single().Users;
     }
 

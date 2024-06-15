@@ -30,7 +30,7 @@ public class BreachersUserController : ControllerBase
     [RequireDiscordAuth]
     [HttpPost("LinkDiscordUser")]
     public async Task<IActionResult> LinkDiscordUser(
-        [FromBody] LinkDiscordUserCommand command,
+        [FromQuery] LinkDiscordUserCommand command,
         CancellationToken cancellationToken)
     {
         return Ok(await _mediator.Send(command, cancellationToken));

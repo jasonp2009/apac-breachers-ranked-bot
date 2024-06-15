@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { NavDrawer, MenuAppBar } from "../../components";
 import './Layout.css';
 import Box from "@mui/material/Box";
+import { RouteConstants } from "../../constants";
 export function Layout() {
   const navDrawer = NavDrawer(
     [
@@ -11,7 +12,7 @@ export function Layout() {
       },
       {
         label: 'Stats',
-        link: '/stats'
+        link: RouteConstants.Stats
       }
     ]
   );

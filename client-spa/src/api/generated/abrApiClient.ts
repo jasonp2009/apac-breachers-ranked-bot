@@ -68,20 +68,20 @@ export class AbrApiClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param breachersUserId (optional) 
      * @return OK
      */
-    linkDiscordUser(body?: LinkDiscordUserCommand | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/BreachersUser/LinkDiscordUser";
+    linkDiscordUser(breachersUserId?: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/BreachersUser/LinkDiscordUser?";
+        if (breachersUserId === null)
+            throw new Error("The parameter 'breachersUserId' cannot be null.");
+        else if (breachersUserId !== undefined)
+            url_ += "BreachersUserId=" + encodeURIComponent("" + breachersUserId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
             }
         };
 
@@ -265,42 +265,6 @@ export interface IBreachersUser {
     userName?: string | null;
     clanTag?: string | null;
     fullUserName?: string | null;
-}
-
-export class LinkDiscordUserCommand implements ILinkDiscordUserCommand {
-    breachersUserId?: string | null;
-
-    constructor(data?: ILinkDiscordUserCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.breachersUserId = _data["breachersUserId"] !== undefined ? _data["breachersUserId"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): LinkDiscordUserCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new LinkDiscordUserCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["breachersUserId"] = this.breachersUserId !== undefined ? this.breachersUserId : <any>null;
-        return data;
-    }
-}
-
-export interface ILinkDiscordUserCommand {
-    breachersUserId?: string | null;
 }
 
 export class ApiException extends Error {
