@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 export function useAbrApiClient() {
   const [ cookies ] = useCookies([loginCookieKey]);
   return new AbrApiClient(
-    'http://localhost:5058',
+    process.env.REACT_APP_ABR_BASE_URL,
     {
       fetch: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
         const token = cookies[loginCookieKey].access_token;

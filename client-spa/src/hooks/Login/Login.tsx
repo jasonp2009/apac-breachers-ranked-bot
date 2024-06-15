@@ -12,12 +12,12 @@ export function useLogin() {
 
   useEffect(() => {
     const cookieUser = cookies[loginCookieKey]?.user;
-    cookieUser && setUser(cookieUser);
+    setUser(cookieUser ?? undefined);
   }, [cookies]);
   
   const { buildUrl, isLoading } = useDiscordLogin({
     clientId: '1138013824507711498',
-    redirectUri: 'http://localhost:3000',
+    redirectUri: process.env.REACT_APP_DISCORD_REDIRECT_URL,
     responseType: 'token', // or 'code'
     scopes: ['identify', 'email'],
     onSuccess: response => {
