@@ -30,4 +30,4 @@ COPY --from=build /app/build .
 EXPOSE 3000
 
 # Run the app
-CMD ["serve"]
+CMD ["serve", "-s"]
