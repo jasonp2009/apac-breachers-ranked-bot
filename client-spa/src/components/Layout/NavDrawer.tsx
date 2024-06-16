@@ -13,7 +13,7 @@ export type NavItem = {
   link: To;
 }
 
-const drawerWidth = 240;
+export const drawerWidth = 240;
 
 export function NavDrawer(navItems: NavItem[]) {
   const [isOpen, setIsOpen] = React.useState(false);
