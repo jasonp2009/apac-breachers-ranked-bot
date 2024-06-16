@@ -27,6 +27,15 @@ public class BreachersUserController : ControllerBase
         return Ok(await _mediator.Send(query, cancellationToken));
     }
 
+    [HttpGet("GetUser")]
+    [ProducesResponseType<BreachersUser>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUser(
+        [FromQuery] GetBreachersUserQuery query,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(query, cancellationToken));
+    }
+
     [RequireDiscordAuth]
     [HttpPost("LinkDiscordUser")]
     public async Task<IActionResult> LinkDiscordUser(

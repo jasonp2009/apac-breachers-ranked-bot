@@ -1,6 +1,9 @@
 ﻿import { useAbrApiClient } from "../../api/useAbrApiClient";
 import React, { useEffect, useState } from "react";
 import { Autocomplete, Button, LinearProgress, Modal, TextField} from "@mui/material";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import { BreachersUser } from "../../api/generated/abrApiClient";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -20,11 +23,17 @@ export function BreachersLink() {
     })
   }, []);
   
-  const searchForBreachersUser = (searchString: string) => {
+  const searchForBreachersUser = async (searchString: string) => {
     if (searchString !== undefined && searchString.length !== 0) {
-      abrApi.searchUsers(searchString).then(resp => {
-        setSearchValue(resp);
-      });
+      if (searchString.includes("breacherstracker")) {
+        const splitString = searchString.split('/');
+        const breacherUserId = splitString[splitString.length - 1];
+        const resp = await abrApi.getUser(breacherUserId);
+        selectBreachersUser(resp);
+      } else {
+        const resp = await abrApi.searchUsers(searchString);
+        setSearchValue(resp)
+      }
     } else {
       setSearchValue(undefined);
     }
@@ -57,24 +66,35 @@ export function BreachersLink() {
             fullWidth
           />
         ) : (
-          <Autocomplete
-            id="breachers-user-autocomplete"
-            freeSolo
-            options={searchValue?? []}
-            filterOptions={(x) => x}
-            getOptionLabel={(option) => (option as BreachersUser).fullUserName ?? ""}
-            onInputChange={(event, newInputValue) => {
-              console.log(event);
-              if (event.type === 'change') {
-                searchForBreachersUser(newInputValue);
-              }
-            }}
-            onChange={(event, selectedUser) => {
-              console.log(event);
-              selectBreachersUser(selectedUser as BreachersUser);
-            }}
-            renderInput={(params) => <TextField {...params} label="Breachers User Name" />}
-          />
+          <Box sx={{display:'flex'}}>
+            <Autocomplete
+              sx={{flex: 30}}
+              id="breachers-user-autocomplete"
+              freeSolo
+              options={searchValue?? []}
+              filterOptions={(x) => x}
+              getOptionLabel={(option) => (option as BreachersUser).fullUserName ?? ""}
+              onInputChange={async (event, newInputValue) => {
+                if (event.type === 'change') {
+                  await searchForBreachersUser(newInputValue);
+                }
+              }}
+              onChange={(event, selectedUser) => {
+                console.log(event);
+                selectBreachersUser(selectedUser as BreachersUser);
+              }}
+              renderInput={(params) => <TextField {...params} label="Breachers User Name" />}
+            />
+            <Tooltip
+              sx={{flexGrow: 2, flexShrink: 1}}
+              title={(
+                <Typography>If you can't find your username, you can enter your breacher's tracker link instaed</Typography>
+              )}>
+              <IconButton>
+                <QuestionMarkIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
         )
       )}
       <Modal

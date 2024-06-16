@@ -23,13 +23,13 @@ internal class BreachersUserService : IBreachersUserService
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<ApplicationBreachersUser>> SearchUsers(string searchString, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ApplicationBreachersUser>> SearchUsers(string searchString, CancellationToken cancellationToken = default)
     {
         IEnumerable<BreachersUser> users = await _breachersApiClient.SearchUsers(searchString, cancellationToken);
         return users.Select(user => _mapper.Map<ApplicationBreachersUser>(user));
     }
 
-    public async Task LinkDiscordUser(ApplicationDiscordUser discordUser, string breachersUserId, CancellationToken cancellationToken)
+    public async Task LinkDiscordUser(ApplicationDiscordUser discordUser, string breachersUserId, CancellationToken cancellationToken = default)
     {
         BreachersDiscordUserLink existingBreachersUserLink =
             await _dbContext.BreachersDiscordUserLinks.FirstOrDefaultAsync(x =>
@@ -56,7 +56,7 @@ internal class BreachersUserService : IBreachersUserService
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<ApplicationBreachersUser> GetBreachersUser(ulong discordUserId, CancellationToken cancellationToken)
+    public async Task<ApplicationBreachersUser> GetBreachersUser(ulong discordUserId, CancellationToken cancellationToken = default)
     {
         BreachersDiscordUserLink userLink =
             await _dbContext.BreachersDiscordUserLinks.FirstOrDefaultAsync(
@@ -65,6 +65,12 @@ internal class BreachersUserService : IBreachersUserService
 
         BreachersUser breachersUser =
             await _breachersApiClient.GetUserStats(userLink.BreachersUserId, cancellationToken);
+        return _mapper.Map<ApplicationBreachersUser>(breachersUser);
+    }
+
+    public async Task<ApplicationBreachersUser> GetBreachersUser(string breachersUserId, CancellationToken cancellationToken = default)
+    {
+        BreachersUser breachersUser = await _breachersApiClient.GetUserStats(breachersUserId, cancellationToken);
         return _mapper.Map<ApplicationBreachersUser>(breachersUser);
     }
 }
