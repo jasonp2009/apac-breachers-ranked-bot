@@ -1,13 +1,26 @@
-﻿using ApacBreachersRanked.Domain.Common;
+﻿using System.Reflection;
+using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Infrastructure.Config;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.Match.Models;
+using ApacBreachersRanked.Application.MatchQueue.Models;
+using ApacBreachersRanked.Application.MatchVote.Models;
+using ApacBreachersRanked.Application.MMR.Models;
+using ApacBreachersRanked.Application.Moderation.Models;
+using ApacBreachersRanked.Application.PingTimer.Models;
+using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.MMR.Entities;
+using ApacBreachersRanked.Infrastructure.Breachers.Entities;
+using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
-    internal partial class BreachersDbContext : DbContext
+    internal class BreachersDbContext : DbContext, IDbContext
     {
         private readonly IMediator _mediator;
         private readonly RdsOptions _options;
@@ -19,7 +32,38 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
             _options = options.Value;
             Database.EnsureCreated();
         }
+        
+        internal DbSet<BreachersDiscordUserLink> BreachersDiscordUserLinks => Set<BreachersDiscordUserLink>();
+        public DbSet<MatchEntity> Matches => Set<MatchEntity>();
+        public DbSet<MatchPlayer> MatchPlayers => Set<MatchPlayer>();
+        public DbSet<MapScore> MatchMaps => Set<MapScore>();
+        public DbSet<MatchThreads> MatchThreads => Set<MatchThreads>();
+        public DbSet<PendingMatchScore> PendingMatchScores => Set<PendingMatchScore>();
+        public DbSet<MatchQueueEntity> MatchQueue => Set<MatchQueueEntity>();
+        public DbSet<MatchQueueMessage> MatchQueueMessages => Set<MatchQueueMessage>();
+        public DbSet<ScheduledMatchQueueEntity> ScheduleMatchQueues => Set<ScheduledMatchQueueEntity>();
+        public DbSet<ScheduledMatchQueueMessage> ScheduledMatchQueueMessages => Set<ScheduledMatchQueueMessage>();
+        public DbSet<MatchVoteModel> MatchVotes => Set<MatchVoteModel>();
+        public DbSet<PlayerMMR> PlayerMMRs => Set<PlayerMMR>();
+        public DbSet<MMRAdjustment> MMRAdjustments => Set<MMRAdjustment>();
+        public DbSet<LeaderBoardMessage> LeaderBoardMessages => Set<LeaderBoardMessage>();
+        public DbSet<UserBan> UserBans => Set<UserBan>();
+        public DbSet<ActiveBansMessage> ActiveBansMessages => Set<ActiveBansMessage>();
+        public DbSet<TimedPing> TimedPings => Set<TimedPing>();
+        internal DbSet<ScheduledEvent> ScheduledEvents => Set<ScheduledEvent>();
 
+        public async Task ResetMMRAsync()
+        {
+            if (_options.DatabaseEngine == DatabaseEngine.SqlServer)
+            {
+                await Database.ExecuteSqlRawAsync($"DELETE [{Model.FindEntityType(typeof(MMRAdjustment))?.GetTableName()}]");
+                await Database.ExecuteSqlRawAsync($"DELETE [{Model.FindEntityType(typeof(PlayerMMR))?.GetTableName()}]");
+            } else if (_options.DatabaseEngine == DatabaseEngine.Postgress)
+            {
+                await MMRAdjustments.ExecuteDeleteAsync();
+                await PlayerMMRs.ExecuteDeleteAsync();
+            }
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             switch(_options.DatabaseEngine)
@@ -37,31 +81,14 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            base.OnModelCreating(modelBuilder);
             IEnumerable<Type> entityTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(t => t.IsSubclassOf(typeof(BaseEntity)));
             foreach (Type entityType in entityTypes)
             {
                 modelBuilder.Entity(entityType).Ignore(nameof(BaseEntity.DomainEvents));
             }
-
-            OnModelCreatingBreachersApi(modelBuilder);
-            OnModelCreatingMatchQueue(modelBuilder);
-            OnModelCreatingMatch(modelBuilder);
-            OnModelCreatingMatchVote(modelBuilder);
-            OnModelCreatingScheduledEvent(modelBuilder);
-            OnModelCreatingMMR(modelBuilder);
-            OnModelCreatingModeration(modelBuilder);
-            OnModelCreatingPingTimer(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
-
-        partial void OnModelCreatingBreachersApi(ModelBuilder modelBuilder);
-        partial void OnModelCreatingMatchQueue(ModelBuilder modelBuilder);
-        partial void OnModelCreatingMatch(ModelBuilder modelBuilder);
-        partial void OnModelCreatingMatchVote(ModelBuilder modelBuilder);
-        partial void OnModelCreatingScheduledEvent(ModelBuilder modelBuilder);
-        partial void OnModelCreatingMMR(ModelBuilder modelBuilder);
-        partial void OnModelCreatingModeration(ModelBuilder modelBuilder);
-        partial void OnModelCreatingPingTimer(ModelBuilder modelBuilder);
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
