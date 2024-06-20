@@ -20,8 +20,8 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
         public decimal AwayMMR => AwayPlayers.Average(x => x.MMR);
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
-        public MatchPlayer? HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
-        public MatchScore? Score { get; private set; } = null;
+        public MatchPlayer HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
+        public MatchScore Score { get; private set; } = null;
         public string? CancellationReason { get; private set; }
         private MatchEntity() { }
         internal MatchEntity(MatchQueueEntity matchQueue, IList<PlayerMMR> home, IList<PlayerMMR> away)

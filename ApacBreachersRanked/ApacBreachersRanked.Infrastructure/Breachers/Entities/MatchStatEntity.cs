@@ -5,6 +5,6 @@ namespace ApacBreachersRanked.Infrastructure.Breachers.Entities;
 
 public class MatchStatEntity : BaseEntity
 {
-    public Guid MatchId { get; set; }
+    public Guid MatchId => Id;
     public IEnumerable<GetMatchResponse> Games { get; set; }
 }

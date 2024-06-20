@@ -11,4 +11,5 @@ public class BreachersGameData
     public int MatchType { get; set; }
     public IEnumerable<BreachersPlayer> Players { get; set; }
     public IEnumerable<BreachersPlayer> PlayersLeft { get; set; }
+    public IEnumerable<BreachersPlayer> AllPlayers => Players.Concat(PlayersLeft);
 }
