@@ -8,6 +8,9 @@ public class MatchStatConfiguration : IEntityTypeConfiguration<MatchStatEntity>
 {
     public void Configure(EntityTypeBuilder<MatchStatEntity> builder)
     {
-        builder.OwnsMany(p => p.Games);
+        builder.OwnsMany(p => p.Games, p =>
+        {
+            p.ToJson();
+        });
     }
 }
