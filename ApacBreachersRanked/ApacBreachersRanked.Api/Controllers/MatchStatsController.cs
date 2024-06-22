@@ -1,5 +1,5 @@
-﻿using ApacBreachersRanked.Application.Stats.Queries;
-using ApacBreachersRanked.Domain.Match.Entities;
+﻿using ApacBreachersRanked.Application.Stats.Models;
+using ApacBreachersRanked.Application.Stats.Queries;
 using ApacBreachersRanked.Infrastructure.Breachers.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ public class MatchStatsController : ControllerBase
     }
 
     [HttpGet("MatchHistory")]
-    [ProducesResponseType<IEnumerable<MatchEntity>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<MatchDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMatchHistory(
         [FromQuery]GetMatchHistoryQuery query,
         CancellationToken cancellationToken)
@@ -27,7 +27,7 @@ public class MatchStatsController : ControllerBase
     }
 
     [HttpGet("UserMatchHistory")]
-    [ProducesResponseType<IEnumerable<MatchEntity>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<MatchDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserMatchHistory(
         [FromQuery]GetUserMatchHistoryQuery query,
         CancellationToken cancellationToken)

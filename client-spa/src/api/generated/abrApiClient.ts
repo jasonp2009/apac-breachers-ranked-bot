@@ -227,7 +227,7 @@ export class AbrApiClient {
      * @param page (optional) 
      * @return OK
      */
-    matchHistory(limit?: number | undefined, page?: number | undefined): Promise<MatchEntity[]> {
+    matchHistory(limit?: number | undefined, page?: number | undefined): Promise<MatchDto[]> {
         let url_ = this.baseUrl + "/MatchStats/MatchHistory?";
         if (limit === null)
             throw new Error("The parameter 'limit' cannot be null.");
@@ -251,7 +251,7 @@ export class AbrApiClient {
         });
     }
 
-    protected processMatchHistory(response: Response): Promise<MatchEntity[]> {
+    protected processMatchHistory(response: Response): Promise<MatchDto[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -261,7 +261,7 @@ export class AbrApiClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(MatchEntity.fromJS(item));
+                    result200!.push(MatchDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -273,7 +273,7 @@ export class AbrApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<MatchEntity[]>(null as any);
+        return Promise.resolve<MatchDto[]>(null as any);
     }
 
     /**
@@ -282,7 +282,7 @@ export class AbrApiClient {
      * @param page (optional) 
      * @return OK
      */
-    userMatchHistory(discordUserId?: number | undefined, limit?: number | undefined, page?: number | undefined): Promise<MatchEntity[]> {
+    userMatchHistory(discordUserId?: number | undefined, limit?: number | undefined, page?: number | undefined): Promise<MatchDto[]> {
         let url_ = this.baseUrl + "/MatchStats/UserMatchHistory?";
         if (discordUserId === null)
             throw new Error("The parameter 'discordUserId' cannot be null.");
@@ -310,7 +310,7 @@ export class AbrApiClient {
         });
     }
 
-    protected processUserMatchHistory(response: Response): Promise<MatchEntity[]> {
+    protected processUserMatchHistory(response: Response): Promise<MatchDto[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -320,7 +320,7 @@ export class AbrApiClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(MatchEntity.fromJS(item));
+                    result200!.push(MatchDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -332,7 +332,7 @@ export class AbrApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<MatchEntity[]>(null as any);
+        return Promise.resolve<MatchDto[]>(null as any);
     }
 
     /**
@@ -1197,6 +1197,107 @@ export interface IMatchDataEntity {
     domainEvents?: IDomainEvent[] | null;
     matchId?: string;
     games?: GetMatchResponse[] | null;
+}
+
+export class MatchDto implements IMatchDto {
+    matchNumber?: number;
+    status?: MatchStatus;
+    readonly homePlayers?: MatchPlayer[] | null;
+    readonly homeMMR?: number;
+    readonly awayPlayers?: MatchPlayer[] | null;
+    readonly awayMMR?: number;
+    allPlayers?: MatchPlayer[] | null;
+    hostPlayer?: MatchPlayer;
+    score?: MatchScore;
+
+    constructor(data?: IMatchDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.matchNumber = _data["matchNumber"] !== undefined ? _data["matchNumber"] : <any>null;
+            this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
+            if (Array.isArray(_data["homePlayers"])) {
+                (<any>this).homePlayers = [] as any;
+                for (let item of _data["homePlayers"])
+                    (<any>this).homePlayers!.push(MatchPlayer.fromJS(item));
+            }
+            else {
+                (<any>this).homePlayers = <any>null;
+            }
+            (<any>this).homeMMR = _data["homeMMR"] !== undefined ? _data["homeMMR"] : <any>null;
+            if (Array.isArray(_data["awayPlayers"])) {
+                (<any>this).awayPlayers = [] as any;
+                for (let item of _data["awayPlayers"])
+                    (<any>this).awayPlayers!.push(MatchPlayer.fromJS(item));
+            }
+            else {
+                (<any>this).awayPlayers = <any>null;
+            }
+            (<any>this).awayMMR = _data["awayMMR"] !== undefined ? _data["awayMMR"] : <any>null;
+            if (Array.isArray(_data["allPlayers"])) {
+                this.allPlayers = [] as any;
+                for (let item of _data["allPlayers"])
+                    this.allPlayers!.push(MatchPlayer.fromJS(item));
+            }
+            else {
+                this.allPlayers = <any>null;
+            }
+            this.hostPlayer = _data["hostPlayer"] ? MatchPlayer.fromJS(_data["hostPlayer"]) : <any>null;
+            this.score = _data["score"] ? MatchScore.fromJS(_data["score"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["matchNumber"] = this.matchNumber !== undefined ? this.matchNumber : <any>null;
+        data["status"] = this.status !== undefined ? this.status : <any>null;
+        if (Array.isArray(this.homePlayers)) {
+            data["homePlayers"] = [];
+            for (let item of this.homePlayers)
+                data["homePlayers"].push(item.toJSON());
+        }
+        data["homeMMR"] = this.homeMMR !== undefined ? this.homeMMR : <any>null;
+        if (Array.isArray(this.awayPlayers)) {
+            data["awayPlayers"] = [];
+            for (let item of this.awayPlayers)
+                data["awayPlayers"].push(item.toJSON());
+        }
+        data["awayMMR"] = this.awayMMR !== undefined ? this.awayMMR : <any>null;
+        if (Array.isArray(this.allPlayers)) {
+            data["allPlayers"] = [];
+            for (let item of this.allPlayers)
+                data["allPlayers"].push(item.toJSON());
+        }
+        data["hostPlayer"] = this.hostPlayer ? this.hostPlayer.toJSON() : <any>null;
+        data["score"] = this.score ? this.score.toJSON() : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchDto {
+    matchNumber?: number;
+    status?: MatchStatus;
+    homePlayers?: MatchPlayer[] | null;
+    homeMMR?: number;
+    awayPlayers?: MatchPlayer[] | null;
+    awayMMR?: number;
+    allPlayers?: MatchPlayer[] | null;
+    hostPlayer?: MatchPlayer;
+    score?: MatchScore;
 }
 
 export class MatchEntity implements IMatchEntity {
