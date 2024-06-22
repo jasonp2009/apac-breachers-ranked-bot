@@ -6,6 +6,7 @@ namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 public class BreachersGameData
 {
     [JsonPropertyName("MapName")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Map Map { get; set; }
     public int MatchMode { get; set; }
     public int MatchType { get; set; }

@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.Common.Mediator;
+﻿using ApacBreachersRanked.Application.BreachersUsers.Queries;
+using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Exceptions;
 using ApacBreachersRanked.Application.MatchQueue.Queries;
@@ -37,6 +38,12 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
             {
                 throw new UserInMatchException(user);
             }
+
+            await _mediator.Send(new IsUserLinkedQuery
+                {
+                    DiscordUserId = request.DiscordUserId, ThrowWhenNotLinked = true
+                },
+                cancellationToken);
 
             MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);
 

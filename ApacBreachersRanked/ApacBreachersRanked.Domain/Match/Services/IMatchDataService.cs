@@ -2,7 +2,7 @@
 
 namespace ApacBreachersRanked.Domain.Match.Services;
 
-public interface IMatchStatService
+public interface IMatchDataService
 {
     public Task<MatchScore> GetScore(Guid matchId, CancellationToken cancellationToken);
 }

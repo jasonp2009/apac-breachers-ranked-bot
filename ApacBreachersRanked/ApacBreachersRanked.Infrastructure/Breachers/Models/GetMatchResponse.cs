@@ -9,9 +9,9 @@ public class GetMatchResponse
     [JsonPropertyName("players")]
     public int Players { get; set; }
     [JsonPropertyName("timestamp")]
-    public DateTime TimeStamp { get; set; }
-    [JsonPropertyName("clan_game")]
-    public object ClanGame { get; set; }
+    public string TimeStampString { get; set; }
+    [JsonIgnore]
+    public DateTime TimeStamp => DateTime.Parse(TimeStampString);
     [JsonPropertyName("game_data")]
     public BreachersGameData GameData { get; set; }
 }

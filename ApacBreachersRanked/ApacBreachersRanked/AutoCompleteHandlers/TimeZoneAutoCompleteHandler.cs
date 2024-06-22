@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Interactions;
-using MongoDB.Driver.Linq;
 using TimeZoneConverter;
 
 namespace ApacBreachersRanked.AutoCompleteHandlers;

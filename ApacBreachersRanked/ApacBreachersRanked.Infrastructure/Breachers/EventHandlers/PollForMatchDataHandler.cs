@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.Match.Events;
 using ApacBreachersRanked.Infrastructure.Breachers.Api;
 using ApacBreachersRanked.Infrastructure.Breachers.Entities;
 using ApacBreachersRanked.Infrastructure.Breachers.Events;
@@ -25,8 +26,10 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
 
     public async Task Handle(PollForMatchDataEvent notification, CancellationToken cancellationToken)
     {
-        MatchEntity match = await _dbContext.Matches.FirstOrDefaultAsync(x => x.Id == notification.MatchId, cancellationToken)
-                            ?? throw new KeyNotFoundException($"Invalid match id: {notification.MatchId}");
+        MatchEntity match = await _dbContext.Matches
+                                    .Include(x => x.AllPlayers)
+                                    .FirstOrDefaultAsync(x => x.Id == notification.MatchId, cancellationToken)
+                                ?? throw new KeyNotFoundException($"Invalid match id: {notification.MatchId}");
         List<string> homeUserIds = await _dbContext.BreachersDiscordUserLinks
             .Where(link => match.HomePlayers.Select(player => player.UserId.GetDiscordId()).Contains(link.DiscordUserId))
             .Select(link => link.BreachersUserId)
@@ -64,12 +67,13 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
             return;
         }
 
-        MatchStatEntity matchStatEntity = new()
+        MatchDataEntity matchDataEntity = new()
         {
             Id = notification.MatchId,
             Games = matchingGames
         };
-        _dbContext.MatchStats.Add(matchStatEntity);
+        matchDataEntity.QueueDomainEvent(new MatchDataReadyEvent { MatchId = matchDataEntity.Id });
+        _dbContext.MatchStats.Add(matchDataEntity);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

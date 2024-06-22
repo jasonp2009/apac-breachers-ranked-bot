@@ -18,4 +18,6 @@ public enum GadgetType
     DoorBlocker = 33,
     
     Emp = 40,
+    
+    BreachingFoamForAllTeams = 50
 }

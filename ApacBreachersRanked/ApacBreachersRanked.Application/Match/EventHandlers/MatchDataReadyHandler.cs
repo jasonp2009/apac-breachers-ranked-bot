@@ -8,22 +8,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApacBreachersRanked.Application.Match.EventHandlers;
 
-public class MatchStatsReadyHandler : INotificationHandler<MatchStatsReadyEvent>
+public class MatchDataReadyHandler : INotificationHandler<MatchDataReadyEvent>
 {
-    private readonly IMatchStatService _matchStatService;
+    private readonly IMatchDataService _matchDataService;
     private readonly IDbContext _dbContext;
 
-    public MatchStatsReadyHandler(IMatchStatService matchStatService, IDbContext dbContext)
+    public MatchDataReadyHandler(IMatchDataService matchDataService, IDbContext dbContext)
     {
-        _matchStatService = matchStatService;
+        _matchDataService = matchDataService;
         _dbContext = dbContext;
     }
 
-    public async Task Handle(MatchStatsReadyEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(MatchDataReadyEvent notification, CancellationToken cancellationToken)
     {
-        MatchScore score = await _matchStatService.GetScore(notification.MatchId, cancellationToken);
+        MatchScore score = await _matchDataService.GetScore(notification.MatchId, cancellationToken);
         MatchEntity match =
-            await _dbContext.Matches.SingleAsync(match => match.Id == notification.MatchId, cancellationToken);
+            await _dbContext.Matches
+                .Include(match => match.AllPlayers)
+                .SingleAsync(match => match.Id == notification.MatchId, cancellationToken);
         PendingMatchScore pendingMatchScore = new(match, score);
 
         _dbContext.PendingMatchScores.Add(pendingMatchScore);

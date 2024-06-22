@@ -10,18 +10,18 @@ using DomainMap = ApacBreachersRanked.Domain.Match.Enums.Map;
 
 namespace ApacBreachersRanked.Infrastructure.Breachers.Services;
 
-internal class MatchStatService : IMatchStatService
+internal class MatchDataService : IMatchDataService
 {
     private readonly BreachersDbContext _dbContext;
 
-    public MatchStatService(BreachersDbContext dbContext)
+    public MatchDataService(BreachersDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     public async Task<MatchScore> GetScore(Guid matchId, CancellationToken cancellationToken)
     {
-        (MatchEntity match, MatchStatEntity matchStats) = await GetMatchData(matchId, cancellationToken);
+        (MatchEntity match, MatchDataEntity matchStats) = await GetMatchData(matchId, cancellationToken);
         
         List<BreachersDiscordUserLink> homeUserLinks = await _dbContext.BreachersDiscordUserLinks
             .Where(link => match.HomePlayers.Select(player => player.UserId.GetDiscordId()).Contains(link.DiscordUserId))
@@ -47,13 +47,16 @@ internal class MatchStatService : IMatchStatService
         return matchScore;
     }
 
-    private async Task<(MatchEntity, MatchStatEntity)> GetMatchData(Guid matchId, CancellationToken cancellationToken)
+    private async Task<(MatchEntity, MatchDataEntity)> GetMatchData(Guid matchId, CancellationToken cancellationToken)
     {
-        MatchEntity match = await _dbContext.Matches.FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
+        MatchEntity match = await _dbContext.Matches
+                                .Include(x => x.AllPlayers)
+                                .FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
                             ?? throw new KeyNotFoundException($"Invalid match id: {matchId}");
-        MatchStatEntity matchStats =
-            await _dbContext.MatchStats.FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
+        MatchDataEntity matchDatas =
+            await _dbContext.MatchStats
+                .FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
             ?? throw new KeyNotFoundException($"Match stats not ready for match id: {matchId}");
-        return (match, matchStats);
+        return (match, matchDatas);
     }
 }

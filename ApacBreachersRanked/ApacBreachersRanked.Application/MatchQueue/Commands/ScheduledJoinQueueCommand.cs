@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Application.Common.Mediator;
+﻿using ApacBreachersRanked.Application.BreachersUsers.Queries;
+using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Queries;
 using ApacBreachersRanked.Application.Moderation.Commands;
@@ -53,6 +54,12 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         public async Task<Unit> Handle(ScheduledJoinQueueCommand request, CancellationToken cancellationToken)
         {
             await _mediator.Send(new ThrowIfBannedCommand { UserId = request.DiscordUserId.ToIUserId() }, cancellationToken);
+            
+            await _mediator.Send(new IsUserLinkedQuery
+                {
+                    DiscordUserId = request.DiscordUserId, ThrowWhenNotLinked = true
+                },
+                cancellationToken);
 
             IUser user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
 

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ApacBreachersRanked.Application.BreachersUsers.Exceptions;
 using ApacBreachersRanked.Application.Common.Extensions;
 using ApacBreachersRanked.Application.Common.Services;
 using ApacBreachersRanked.Application.MatchQueue.Commands;
@@ -40,14 +41,21 @@ namespace ApacBreachersRanked.Modules
                 await RespondAsync($"You cannot join the queue due to an active ban.{Environment.NewLine}" +
                                    $"Your ban will expire {ex.ExpiryUtc.ToDiscordRelativeEpoch()}{Environment.NewLine}" +
                                    $"Ban reason: {ex.Reason}",
-                                   ephemeral: true);
+                    ephemeral: true);
                 return;
             }
             catch (UserInMatchException)
             {
                 await RespondAsync($"You are currently in an in-progress match. {Environment.NewLine}" +
-                                    "Please complete the match and confirm the score before joining the queue.",
-                                    ephemeral: true);
+                                   "Please complete the match and confirm the score before joining the queue.",
+                    ephemeral: true);
+                return;
+            }
+            catch (UserNotLinkedException)
+            {
+                await RespondAsync($"Please link your breachers account to your discord account. {Environment.NewLine}" +
+                                        "http://apacbreachersranked.com",
+                    ephemeral: true);
                 return;
             }
             await DeferAsync();
