@@ -223,6 +223,161 @@ export class AbrApiClient {
     }
 
     /**
+     * @param limit (optional) 
+     * @param page (optional) 
+     * @return OK
+     */
+    matchHistory(limit?: number | undefined, page?: number | undefined): Promise<MatchDto[]> {
+        let url_ = this.baseUrl + "/MatchStats/MatchHistory?";
+        if (limit === null)
+            throw new Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "Page=" + encodeURIComponent("" + page) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processMatchHistory(_response);
+        });
+    }
+
+    protected processMatchHistory(response: Response): Promise<MatchDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MatchDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<MatchDto[]>(null as any);
+    }
+
+    /**
+     * @param discordUserId (optional) 
+     * @param limit (optional) 
+     * @param page (optional) 
+     * @return OK
+     */
+    userMatchHistory(discordUserId?: number | undefined, limit?: number | undefined, page?: number | undefined): Promise<MatchDto[]> {
+        let url_ = this.baseUrl + "/MatchStats/UserMatchHistory?";
+        if (discordUserId === null)
+            throw new Error("The parameter 'discordUserId' cannot be null.");
+        else if (discordUserId !== undefined)
+            url_ += "DiscordUserId=" + encodeURIComponent("" + discordUserId) + "&";
+        if (limit === null)
+            throw new Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "Page=" + encodeURIComponent("" + page) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUserMatchHistory(_response);
+        });
+    }
+
+    protected processUserMatchHistory(response: Response): Promise<MatchDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MatchDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<MatchDto[]>(null as any);
+    }
+
+    /**
+     * @param matchId (optional) 
+     * @return OK
+     */
+    matchData(matchId?: string | undefined): Promise<GetMatchDataResponse> {
+        let url_ = this.baseUrl + "/MatchStats/MatchData?";
+        if (matchId === null)
+            throw new Error("The parameter 'matchId' cannot be null.");
+        else if (matchId !== undefined)
+            url_ += "MatchId=" + encodeURIComponent("" + matchId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processMatchData(_response);
+        });
+    }
+
+    protected processMatchData(response: Response): Promise<GetMatchDataResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetMatchDataResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<GetMatchDataResponse>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return OK
      */
@@ -259,6 +414,289 @@ export class AbrApiClient {
         }
         return Promise.resolve<void>(null as any);
     }
+}
+
+export class BreachersGameData implements IBreachersGameData {
+    mapName?: Map;
+    matchMode?: number;
+    matchType?: number;
+    players?: BreachersPlayer[] | null;
+    playersLeft?: BreachersPlayer[] | null;
+    readonly allPlayers?: BreachersPlayer[] | null;
+
+    constructor(data?: IBreachersGameData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.mapName = _data["MapName"] !== undefined ? _data["MapName"] : <any>null;
+            this.matchMode = _data["matchMode"] !== undefined ? _data["matchMode"] : <any>null;
+            this.matchType = _data["matchType"] !== undefined ? _data["matchType"] : <any>null;
+            if (Array.isArray(_data["players"])) {
+                this.players = [] as any;
+                for (let item of _data["players"])
+                    this.players!.push(BreachersPlayer.fromJS(item));
+            }
+            else {
+                this.players = <any>null;
+            }
+            if (Array.isArray(_data["playersLeft"])) {
+                this.playersLeft = [] as any;
+                for (let item of _data["playersLeft"])
+                    this.playersLeft!.push(BreachersPlayer.fromJS(item));
+            }
+            else {
+                this.playersLeft = <any>null;
+            }
+            if (Array.isArray(_data["allPlayers"])) {
+                (<any>this).allPlayers = [] as any;
+                for (let item of _data["allPlayers"])
+                    (<any>this).allPlayers!.push(BreachersPlayer.fromJS(item));
+            }
+            else {
+                (<any>this).allPlayers = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): BreachersGameData {
+        data = typeof data === 'object' ? data : {};
+        let result = new BreachersGameData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["MapName"] = this.mapName !== undefined ? this.mapName : <any>null;
+        data["matchMode"] = this.matchMode !== undefined ? this.matchMode : <any>null;
+        data["matchType"] = this.matchType !== undefined ? this.matchType : <any>null;
+        if (Array.isArray(this.players)) {
+            data["players"] = [];
+            for (let item of this.players)
+                data["players"].push(item.toJSON());
+        }
+        if (Array.isArray(this.playersLeft)) {
+            data["playersLeft"] = [];
+            for (let item of this.playersLeft)
+                data["playersLeft"].push(item.toJSON());
+        }
+        if (Array.isArray(this.allPlayers)) {
+            data["allPlayers"] = [];
+            for (let item of this.allPlayers)
+                data["allPlayers"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBreachersGameData {
+    mapName?: Map;
+    matchMode?: number;
+    matchType?: number;
+    players?: BreachersPlayer[] | null;
+    playersLeft?: BreachersPlayer[] | null;
+    allPlayers?: BreachersPlayer[] | null;
+}
+
+export class BreachersPlayer implements IBreachersPlayer {
+    apiId?: string | null;
+    clanTag?: string | null;
+    gameMatchDataResult?: GameResult;
+    gameTimeInSeconds?: number;
+    readonly gameTime?: string;
+    mvp?: boolean;
+    penaltyReason?: number;
+    rounds?: BreachersRound[] | null;
+    timeAfk?: number;
+    username?: string | null;
+
+    constructor(data?: IBreachersPlayer) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.apiId = _data["ApiId"] !== undefined ? _data["ApiId"] : <any>null;
+            this.clanTag = _data["clanTag"] !== undefined ? _data["clanTag"] : <any>null;
+            this.gameMatchDataResult = _data["GameMatchDataResult"] !== undefined ? _data["GameMatchDataResult"] : <any>null;
+            this.gameTimeInSeconds = _data["gameTimeInSeconds"] !== undefined ? _data["gameTimeInSeconds"] : <any>null;
+            (<any>this).gameTime = _data["gameTime"] !== undefined ? _data["gameTime"] : <any>null;
+            this.mvp = _data["mvp"] !== undefined ? _data["mvp"] : <any>null;
+            this.penaltyReason = _data["penaltyReason"] !== undefined ? _data["penaltyReason"] : <any>null;
+            if (Array.isArray(_data["rounds"])) {
+                this.rounds = [] as any;
+                for (let item of _data["rounds"])
+                    this.rounds!.push(BreachersRound.fromJS(item));
+            }
+            else {
+                this.rounds = <any>null;
+            }
+            this.timeAfk = _data["timeAfk"] !== undefined ? _data["timeAfk"] : <any>null;
+            this.username = _data["Username"] !== undefined ? _data["Username"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): BreachersPlayer {
+        data = typeof data === 'object' ? data : {};
+        let result = new BreachersPlayer();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ApiId"] = this.apiId !== undefined ? this.apiId : <any>null;
+        data["clanTag"] = this.clanTag !== undefined ? this.clanTag : <any>null;
+        data["GameMatchDataResult"] = this.gameMatchDataResult !== undefined ? this.gameMatchDataResult : <any>null;
+        data["gameTimeInSeconds"] = this.gameTimeInSeconds !== undefined ? this.gameTimeInSeconds : <any>null;
+        data["gameTime"] = this.gameTime !== undefined ? this.gameTime : <any>null;
+        data["mvp"] = this.mvp !== undefined ? this.mvp : <any>null;
+        data["penaltyReason"] = this.penaltyReason !== undefined ? this.penaltyReason : <any>null;
+        if (Array.isArray(this.rounds)) {
+            data["rounds"] = [];
+            for (let item of this.rounds)
+                data["rounds"].push(item.toJSON());
+        }
+        data["timeAfk"] = this.timeAfk !== undefined ? this.timeAfk : <any>null;
+        data["Username"] = this.username !== undefined ? this.username : <any>null;
+        return data;
+    }
+}
+
+export interface IBreachersPlayer {
+    apiId?: string | null;
+    clanTag?: string | null;
+    gameMatchDataResult?: GameResult;
+    gameTimeInSeconds?: number;
+    gameTime?: string;
+    mvp?: boolean;
+    penaltyReason?: number;
+    rounds?: BreachersRound[] | null;
+    timeAfk?: number;
+    username?: string | null;
+}
+
+export class BreachersRound implements IBreachersRound {
+    ace?: boolean;
+    assists?: number;
+    botAssists?: number;
+    deaths?: number;
+    firstBlood?: boolean;
+    mvp?: boolean;
+    roundNumber?: number;
+    roundTime?: number;
+    score?: number;
+    team?: BreachersSide;
+    teamWon?: BreachersSide;
+    gadgets?: GameGadget[] | null;
+    weapons?: GameWeapon[] | null;
+
+    constructor(data?: IBreachersRound) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.ace = _data["ace"] !== undefined ? _data["ace"] : <any>null;
+            this.assists = _data["assists"] !== undefined ? _data["assists"] : <any>null;
+            this.botAssists = _data["botAssists"] !== undefined ? _data["botAssists"] : <any>null;
+            this.deaths = _data["deaths"] !== undefined ? _data["deaths"] : <any>null;
+            this.firstBlood = _data["firstBlood"] !== undefined ? _data["firstBlood"] : <any>null;
+            this.mvp = _data["mvp"] !== undefined ? _data["mvp"] : <any>null;
+            this.roundNumber = _data["roundNumber"] !== undefined ? _data["roundNumber"] : <any>null;
+            this.roundTime = _data["roundTime"] !== undefined ? _data["roundTime"] : <any>null;
+            this.score = _data["score"] !== undefined ? _data["score"] : <any>null;
+            this.team = _data["team"] !== undefined ? _data["team"] : <any>null;
+            this.teamWon = _data["teamWon"] !== undefined ? _data["teamWon"] : <any>null;
+            if (Array.isArray(_data["gadgets"])) {
+                this.gadgets = [] as any;
+                for (let item of _data["gadgets"])
+                    this.gadgets!.push(GameGadget.fromJS(item));
+            }
+            else {
+                this.gadgets = <any>null;
+            }
+            if (Array.isArray(_data["weapons"])) {
+                this.weapons = [] as any;
+                for (let item of _data["weapons"])
+                    this.weapons!.push(GameWeapon.fromJS(item));
+            }
+            else {
+                this.weapons = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): BreachersRound {
+        data = typeof data === 'object' ? data : {};
+        let result = new BreachersRound();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ace"] = this.ace !== undefined ? this.ace : <any>null;
+        data["assists"] = this.assists !== undefined ? this.assists : <any>null;
+        data["botAssists"] = this.botAssists !== undefined ? this.botAssists : <any>null;
+        data["deaths"] = this.deaths !== undefined ? this.deaths : <any>null;
+        data["firstBlood"] = this.firstBlood !== undefined ? this.firstBlood : <any>null;
+        data["mvp"] = this.mvp !== undefined ? this.mvp : <any>null;
+        data["roundNumber"] = this.roundNumber !== undefined ? this.roundNumber : <any>null;
+        data["roundTime"] = this.roundTime !== undefined ? this.roundTime : <any>null;
+        data["score"] = this.score !== undefined ? this.score : <any>null;
+        data["team"] = this.team !== undefined ? this.team : <any>null;
+        data["teamWon"] = this.teamWon !== undefined ? this.teamWon : <any>null;
+        if (Array.isArray(this.gadgets)) {
+            data["gadgets"] = [];
+            for (let item of this.gadgets)
+                data["gadgets"].push(item.toJSON());
+        }
+        if (Array.isArray(this.weapons)) {
+            data["weapons"] = [];
+            for (let item of this.weapons)
+                data["weapons"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBreachersRound {
+    ace?: boolean;
+    assists?: number;
+    botAssists?: number;
+    deaths?: number;
+    firstBlood?: boolean;
+    mvp?: boolean;
+    roundNumber?: number;
+    roundTime?: number;
+    score?: number;
+    team?: BreachersSide;
+    teamWon?: BreachersSide;
+    gadgets?: GameGadget[] | null;
+    weapons?: GameWeapon[] | null;
+}
+
+export enum BreachersSide {
+    _0 = 0,
+    _1 = 1,
 }
 
 export class BreachersUser implements IBreachersUser {
@@ -307,6 +745,979 @@ export interface IBreachersUser {
     userName?: string | null;
     clanTag?: string | null;
     fullUserName?: string | null;
+}
+
+export enum GadgetType {
+    _10 = 10,
+    _11 = 11,
+    _12 = 12,
+    _13 = 13,
+    _20 = 20,
+    _21 = 21,
+    _22 = 22,
+    _23 = 23,
+    _30 = 30,
+    _31 = 31,
+    _32 = 32,
+    _33 = 33,
+    _40 = 40,
+    _50 = 50,
+}
+
+export class GameGadget implements IGameGadget {
+    name?: GadgetType;
+    botDamageDone?: number;
+    botKills?: number;
+    damageDone?: number;
+    destroyed?: number;
+    enemyTriggered?: number;
+    friendlyDamageDone?: number;
+    kills?: number;
+    teamHealed?: number;
+    triggered?: number;
+    used?: number;
+
+    constructor(data?: IGameGadget) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["Name"] !== undefined ? _data["Name"] : <any>null;
+            this.botDamageDone = _data["botDamageDone"] !== undefined ? _data["botDamageDone"] : <any>null;
+            this.botKills = _data["botKills"] !== undefined ? _data["botKills"] : <any>null;
+            this.damageDone = _data["damageDone"] !== undefined ? _data["damageDone"] : <any>null;
+            this.destroyed = _data["destroyed"] !== undefined ? _data["destroyed"] : <any>null;
+            this.enemyTriggered = _data["enemyTriggered"] !== undefined ? _data["enemyTriggered"] : <any>null;
+            this.friendlyDamageDone = _data["friendlyDamageDone"] !== undefined ? _data["friendlyDamageDone"] : <any>null;
+            this.kills = _data["kills"] !== undefined ? _data["kills"] : <any>null;
+            this.teamHealed = _data["teamHealed"] !== undefined ? _data["teamHealed"] : <any>null;
+            this.triggered = _data["triggered"] !== undefined ? _data["triggered"] : <any>null;
+            this.used = _data["used"] !== undefined ? _data["used"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GameGadget {
+        data = typeof data === 'object' ? data : {};
+        let result = new GameGadget();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Name"] = this.name !== undefined ? this.name : <any>null;
+        data["botDamageDone"] = this.botDamageDone !== undefined ? this.botDamageDone : <any>null;
+        data["botKills"] = this.botKills !== undefined ? this.botKills : <any>null;
+        data["damageDone"] = this.damageDone !== undefined ? this.damageDone : <any>null;
+        data["destroyed"] = this.destroyed !== undefined ? this.destroyed : <any>null;
+        data["enemyTriggered"] = this.enemyTriggered !== undefined ? this.enemyTriggered : <any>null;
+        data["friendlyDamageDone"] = this.friendlyDamageDone !== undefined ? this.friendlyDamageDone : <any>null;
+        data["kills"] = this.kills !== undefined ? this.kills : <any>null;
+        data["teamHealed"] = this.teamHealed !== undefined ? this.teamHealed : <any>null;
+        data["triggered"] = this.triggered !== undefined ? this.triggered : <any>null;
+        data["used"] = this.used !== undefined ? this.used : <any>null;
+        return data;
+    }
+}
+
+export interface IGameGadget {
+    name?: GadgetType;
+    botDamageDone?: number;
+    botKills?: number;
+    damageDone?: number;
+    destroyed?: number;
+    enemyTriggered?: number;
+    friendlyDamageDone?: number;
+    kills?: number;
+    teamHealed?: number;
+    triggered?: number;
+    used?: number;
+}
+
+export enum GameResult {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
+export class GameWeapon implements IGameWeapon {
+    type?: WeaponType;
+    botDamageDone?: number;
+    botHeadshotKills?: number;
+    botKills?: number;
+    damageDone?: number;
+    friendlyDamageDone?: number;
+    headshotKills?: number;
+    shotsFired?: number;
+    totalHeadshots?: number;
+    totalKills?: number;
+    totalShotsHit?: number;
+
+    constructor(data?: IGameWeapon) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+            this.botDamageDone = _data["botDamageDone"] !== undefined ? _data["botDamageDone"] : <any>null;
+            this.botHeadshotKills = _data["botHeadshotKills"] !== undefined ? _data["botHeadshotKills"] : <any>null;
+            this.botKills = _data["botKills"] !== undefined ? _data["botKills"] : <any>null;
+            this.damageDone = _data["damageDone"] !== undefined ? _data["damageDone"] : <any>null;
+            this.friendlyDamageDone = _data["friendlyDamageDone"] !== undefined ? _data["friendlyDamageDone"] : <any>null;
+            this.headshotKills = _data["headshotKills"] !== undefined ? _data["headshotKills"] : <any>null;
+            this.shotsFired = _data["shotsFired"] !== undefined ? _data["shotsFired"] : <any>null;
+            this.totalHeadshots = _data["totalHeadshots"] !== undefined ? _data["totalHeadshots"] : <any>null;
+            this.totalKills = _data["totalKills"] !== undefined ? _data["totalKills"] : <any>null;
+            this.totalShotsHit = _data["totalShotsHit"] !== undefined ? _data["totalShotsHit"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GameWeapon {
+        data = typeof data === 'object' ? data : {};
+        let result = new GameWeapon();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type !== undefined ? this.type : <any>null;
+        data["botDamageDone"] = this.botDamageDone !== undefined ? this.botDamageDone : <any>null;
+        data["botHeadshotKills"] = this.botHeadshotKills !== undefined ? this.botHeadshotKills : <any>null;
+        data["botKills"] = this.botKills !== undefined ? this.botKills : <any>null;
+        data["damageDone"] = this.damageDone !== undefined ? this.damageDone : <any>null;
+        data["friendlyDamageDone"] = this.friendlyDamageDone !== undefined ? this.friendlyDamageDone : <any>null;
+        data["headshotKills"] = this.headshotKills !== undefined ? this.headshotKills : <any>null;
+        data["shotsFired"] = this.shotsFired !== undefined ? this.shotsFired : <any>null;
+        data["totalHeadshots"] = this.totalHeadshots !== undefined ? this.totalHeadshots : <any>null;
+        data["totalKills"] = this.totalKills !== undefined ? this.totalKills : <any>null;
+        data["totalShotsHit"] = this.totalShotsHit !== undefined ? this.totalShotsHit : <any>null;
+        return data;
+    }
+}
+
+export interface IGameWeapon {
+    type?: WeaponType;
+    botDamageDone?: number;
+    botHeadshotKills?: number;
+    botKills?: number;
+    damageDone?: number;
+    friendlyDamageDone?: number;
+    headshotKills?: number;
+    shotsFired?: number;
+    totalHeadshots?: number;
+    totalKills?: number;
+    totalShotsHit?: number;
+}
+
+export class GetMatchDataResponse implements IGetMatchDataResponse {
+    match?: MatchEntity;
+    matchData?: MatchDataEntity;
+
+    constructor(data?: IGetMatchDataResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.match = _data["match"] ? MatchEntity.fromJS(_data["match"]) : <any>null;
+            this.matchData = _data["matchData"] ? MatchDataEntity.fromJS(_data["matchData"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetMatchDataResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMatchDataResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["match"] = this.match ? this.match.toJSON() : <any>null;
+        data["matchData"] = this.matchData ? this.matchData.toJSON() : <any>null;
+        return data;
+    }
+}
+
+export interface IGetMatchDataResponse {
+    match?: MatchEntity;
+    matchData?: MatchDataEntity;
+}
+
+export class GetMatchResponse implements IGetMatchResponse {
+    id?: string | null;
+    players?: number;
+    timestamp?: string | null;
+    game_data?: BreachersGameData;
+
+    constructor(data?: IGetMatchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.players = _data["players"] !== undefined ? _data["players"] : <any>null;
+            this.timestamp = _data["timestamp"] !== undefined ? _data["timestamp"] : <any>null;
+            this.game_data = _data["game_data"] ? BreachersGameData.fromJS(_data["game_data"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetMatchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMatchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["players"] = this.players !== undefined ? this.players : <any>null;
+        data["timestamp"] = this.timestamp !== undefined ? this.timestamp : <any>null;
+        data["game_data"] = this.game_data ? this.game_data.toJSON() : <any>null;
+        return data;
+    }
+}
+
+export interface IGetMatchResponse {
+    id?: string | null;
+    players?: number;
+    timestamp?: string | null;
+    game_data?: BreachersGameData;
+}
+
+export class IDomainEvent implements IIDomainEvent {
+
+    constructor(data?: IIDomainEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): IDomainEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new IDomainEvent();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IIDomainEvent {
+}
+
+export class IUserId implements IIUserId {
+
+    constructor(data?: IIUserId) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): IUserId {
+        data = typeof data === 'object' ? data : {};
+        let result = new IUserId();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IIUserId {
+}
+
+export enum Map {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4,
+    _5 = 5,
+    _101 = 101,
+    _102 = 102,
+}
+
+export class MapScore implements IMapScore {
+    home?: number;
+    away?: number;
+    outcome?: ScoreOutcome;
+    map?: Map;
+
+    constructor(data?: IMapScore) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.home = _data["home"] !== undefined ? _data["home"] : <any>null;
+            this.away = _data["away"] !== undefined ? _data["away"] : <any>null;
+            this.outcome = _data["outcome"] !== undefined ? _data["outcome"] : <any>null;
+            this.map = _data["map"] !== undefined ? _data["map"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MapScore {
+        data = typeof data === 'object' ? data : {};
+        let result = new MapScore();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["home"] = this.home !== undefined ? this.home : <any>null;
+        data["away"] = this.away !== undefined ? this.away : <any>null;
+        data["outcome"] = this.outcome !== undefined ? this.outcome : <any>null;
+        data["map"] = this.map !== undefined ? this.map : <any>null;
+        return data;
+    }
+}
+
+export interface IMapScore {
+    home?: number;
+    away?: number;
+    outcome?: ScoreOutcome;
+    map?: Map;
+}
+
+export class MatchDataEntity implements IMatchDataEntity {
+    id?: string;
+    domainEvents?: IDomainEvent[] | null;
+    readonly matchId?: string;
+    games?: GetMatchResponse[] | null;
+
+    constructor(data?: IMatchDataEntity) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            if (Array.isArray(_data["domainEvents"])) {
+                this.domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    this.domainEvents!.push(IDomainEvent.fromJS(item));
+            }
+            else {
+                this.domainEvents = <any>null;
+            }
+            (<any>this).matchId = _data["matchId"] !== undefined ? _data["matchId"] : <any>null;
+            if (Array.isArray(_data["games"])) {
+                this.games = [] as any;
+                for (let item of _data["games"])
+                    this.games!.push(GetMatchResponse.fromJS(item));
+            }
+            else {
+                this.games = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): MatchDataEntity {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchDataEntity();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        data["matchId"] = this.matchId !== undefined ? this.matchId : <any>null;
+        if (Array.isArray(this.games)) {
+            data["games"] = [];
+            for (let item of this.games)
+                data["games"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IMatchDataEntity {
+    id?: string;
+    domainEvents?: IDomainEvent[] | null;
+    matchId?: string;
+    games?: GetMatchResponse[] | null;
+}
+
+export class MatchDto implements IMatchDto {
+    matchNumber?: number;
+    status?: MatchStatus;
+    readonly homePlayers?: MatchPlayerDto[] | null;
+    readonly homeMMR?: number;
+    readonly awayPlayers?: MatchPlayerDto[] | null;
+    readonly awayMMR?: number;
+    allPlayers?: MatchPlayerDto[] | null;
+    hostPlayer?: MatchPlayerDto;
+    score?: MatchScore;
+
+    constructor(data?: IMatchDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.matchNumber = _data["matchNumber"] !== undefined ? _data["matchNumber"] : <any>null;
+            this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
+            if (Array.isArray(_data["homePlayers"])) {
+                (<any>this).homePlayers = [] as any;
+                for (let item of _data["homePlayers"])
+                    (<any>this).homePlayers!.push(MatchPlayerDto.fromJS(item));
+            }
+            else {
+                (<any>this).homePlayers = <any>null;
+            }
+            (<any>this).homeMMR = _data["homeMMR"] !== undefined ? _data["homeMMR"] : <any>null;
+            if (Array.isArray(_data["awayPlayers"])) {
+                (<any>this).awayPlayers = [] as any;
+                for (let item of _data["awayPlayers"])
+                    (<any>this).awayPlayers!.push(MatchPlayerDto.fromJS(item));
+            }
+            else {
+                (<any>this).awayPlayers = <any>null;
+            }
+            (<any>this).awayMMR = _data["awayMMR"] !== undefined ? _data["awayMMR"] : <any>null;
+            if (Array.isArray(_data["allPlayers"])) {
+                this.allPlayers = [] as any;
+                for (let item of _data["allPlayers"])
+                    this.allPlayers!.push(MatchPlayerDto.fromJS(item));
+            }
+            else {
+                this.allPlayers = <any>null;
+            }
+            this.hostPlayer = _data["hostPlayer"] ? MatchPlayerDto.fromJS(_data["hostPlayer"]) : <any>null;
+            this.score = _data["score"] ? MatchScore.fromJS(_data["score"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["matchNumber"] = this.matchNumber !== undefined ? this.matchNumber : <any>null;
+        data["status"] = this.status !== undefined ? this.status : <any>null;
+        if (Array.isArray(this.homePlayers)) {
+            data["homePlayers"] = [];
+            for (let item of this.homePlayers)
+                data["homePlayers"].push(item.toJSON());
+        }
+        data["homeMMR"] = this.homeMMR !== undefined ? this.homeMMR : <any>null;
+        if (Array.isArray(this.awayPlayers)) {
+            data["awayPlayers"] = [];
+            for (let item of this.awayPlayers)
+                data["awayPlayers"].push(item.toJSON());
+        }
+        data["awayMMR"] = this.awayMMR !== undefined ? this.awayMMR : <any>null;
+        if (Array.isArray(this.allPlayers)) {
+            data["allPlayers"] = [];
+            for (let item of this.allPlayers)
+                data["allPlayers"].push(item.toJSON());
+        }
+        data["hostPlayer"] = this.hostPlayer ? this.hostPlayer.toJSON() : <any>null;
+        data["score"] = this.score ? this.score.toJSON() : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchDto {
+    matchNumber?: number;
+    status?: MatchStatus;
+    homePlayers?: MatchPlayerDto[] | null;
+    homeMMR?: number;
+    awayPlayers?: MatchPlayerDto[] | null;
+    awayMMR?: number;
+    allPlayers?: MatchPlayerDto[] | null;
+    hostPlayer?: MatchPlayerDto;
+    score?: MatchScore;
+}
+
+export class MatchEntity implements IMatchEntity {
+    id?: string;
+    domainEvents?: IDomainEvent[] | null;
+    matchNumber?: number;
+    status?: MatchStatus;
+    autoCancelDateUtc?: Date;
+    readonly homePlayers?: MatchPlayer[] | null;
+    readonly homeMMR?: number;
+    readonly awayPlayers?: MatchPlayer[] | null;
+    readonly awayMMR?: number;
+    readonly allPlayers?: MatchPlayer[] | null;
+    hostPlayer?: MatchPlayer;
+    score?: MatchScore;
+    readonly cancellationReason?: string | null;
+
+    constructor(data?: IMatchEntity) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            if (Array.isArray(_data["domainEvents"])) {
+                this.domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    this.domainEvents!.push(IDomainEvent.fromJS(item));
+            }
+            else {
+                this.domainEvents = <any>null;
+            }
+            this.matchNumber = _data["matchNumber"] !== undefined ? _data["matchNumber"] : <any>null;
+            this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
+            this.autoCancelDateUtc = _data["autoCancelDateUtc"] ? new Date(_data["autoCancelDateUtc"].toString()) : <any>null;
+            if (Array.isArray(_data["homePlayers"])) {
+                (<any>this).homePlayers = [] as any;
+                for (let item of _data["homePlayers"])
+                    (<any>this).homePlayers!.push(MatchPlayer.fromJS(item));
+            }
+            else {
+                (<any>this).homePlayers = <any>null;
+            }
+            (<any>this).homeMMR = _data["homeMMR"] !== undefined ? _data["homeMMR"] : <any>null;
+            if (Array.isArray(_data["awayPlayers"])) {
+                (<any>this).awayPlayers = [] as any;
+                for (let item of _data["awayPlayers"])
+                    (<any>this).awayPlayers!.push(MatchPlayer.fromJS(item));
+            }
+            else {
+                (<any>this).awayPlayers = <any>null;
+            }
+            (<any>this).awayMMR = _data["awayMMR"] !== undefined ? _data["awayMMR"] : <any>null;
+            if (Array.isArray(_data["allPlayers"])) {
+                (<any>this).allPlayers = [] as any;
+                for (let item of _data["allPlayers"])
+                    (<any>this).allPlayers!.push(MatchPlayer.fromJS(item));
+            }
+            else {
+                (<any>this).allPlayers = <any>null;
+            }
+            this.hostPlayer = _data["hostPlayer"] ? MatchPlayer.fromJS(_data["hostPlayer"]) : <any>null;
+            this.score = _data["score"] ? MatchScore.fromJS(_data["score"]) : <any>null;
+            (<any>this).cancellationReason = _data["cancellationReason"] !== undefined ? _data["cancellationReason"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchEntity {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchEntity();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        data["matchNumber"] = this.matchNumber !== undefined ? this.matchNumber : <any>null;
+        data["status"] = this.status !== undefined ? this.status : <any>null;
+        data["autoCancelDateUtc"] = this.autoCancelDateUtc ? this.autoCancelDateUtc.toISOString() : <any>null;
+        if (Array.isArray(this.homePlayers)) {
+            data["homePlayers"] = [];
+            for (let item of this.homePlayers)
+                data["homePlayers"].push(item.toJSON());
+        }
+        data["homeMMR"] = this.homeMMR !== undefined ? this.homeMMR : <any>null;
+        if (Array.isArray(this.awayPlayers)) {
+            data["awayPlayers"] = [];
+            for (let item of this.awayPlayers)
+                data["awayPlayers"].push(item.toJSON());
+        }
+        data["awayMMR"] = this.awayMMR !== undefined ? this.awayMMR : <any>null;
+        if (Array.isArray(this.allPlayers)) {
+            data["allPlayers"] = [];
+            for (let item of this.allPlayers)
+                data["allPlayers"].push(item.toJSON());
+        }
+        data["hostPlayer"] = this.hostPlayer ? this.hostPlayer.toJSON() : <any>null;
+        data["score"] = this.score ? this.score.toJSON() : <any>null;
+        data["cancellationReason"] = this.cancellationReason !== undefined ? this.cancellationReason : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchEntity {
+    id?: string;
+    domainEvents?: IDomainEvent[] | null;
+    matchNumber?: number;
+    status?: MatchStatus;
+    autoCancelDateUtc?: Date;
+    homePlayers?: MatchPlayer[] | null;
+    homeMMR?: number;
+    awayPlayers?: MatchPlayer[] | null;
+    awayMMR?: number;
+    allPlayers?: MatchPlayer[] | null;
+    hostPlayer?: MatchPlayer;
+    score?: MatchScore;
+    cancellationReason?: string | null;
+}
+
+export class MatchPlayer implements IMatchPlayer {
+    id?: string;
+    domainEvents?: IDomainEvent[] | null;
+    readonly matchId?: string;
+    match?: MatchEntity;
+    userId?: IUserId;
+    readonly name?: string | null;
+    mmr?: number;
+    rank?: Rank;
+    side?: MatchSide;
+    readonly confirmed?: boolean;
+    readonly isHost?: boolean;
+
+    constructor(data?: IMatchPlayer) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            if (Array.isArray(_data["domainEvents"])) {
+                this.domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    this.domainEvents!.push(IDomainEvent.fromJS(item));
+            }
+            else {
+                this.domainEvents = <any>null;
+            }
+            (<any>this).matchId = _data["matchId"] !== undefined ? _data["matchId"] : <any>null;
+            this.match = _data["match"] ? MatchEntity.fromJS(_data["match"]) : <any>null;
+            this.userId = _data["userId"] ? IUserId.fromJS(_data["userId"]) : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.mmr = _data["mmr"] !== undefined ? _data["mmr"] : <any>null;
+            this.rank = _data["rank"] !== undefined ? _data["rank"] : <any>null;
+            this.side = _data["side"] !== undefined ? _data["side"] : <any>null;
+            (<any>this).confirmed = _data["confirmed"] !== undefined ? _data["confirmed"] : <any>null;
+            (<any>this).isHost = _data["isHost"] !== undefined ? _data["isHost"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchPlayer {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchPlayer();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        data["matchId"] = this.matchId !== undefined ? this.matchId : <any>null;
+        data["match"] = this.match ? this.match.toJSON() : <any>null;
+        data["userId"] = this.userId ? this.userId.toJSON() : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["mmr"] = this.mmr !== undefined ? this.mmr : <any>null;
+        data["rank"] = this.rank !== undefined ? this.rank : <any>null;
+        data["side"] = this.side !== undefined ? this.side : <any>null;
+        data["confirmed"] = this.confirmed !== undefined ? this.confirmed : <any>null;
+        data["isHost"] = this.isHost !== undefined ? this.isHost : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchPlayer {
+    id?: string;
+    domainEvents?: IDomainEvent[] | null;
+    matchId?: string;
+    match?: MatchEntity;
+    userId?: IUserId;
+    name?: string | null;
+    mmr?: number;
+    rank?: Rank;
+    side?: MatchSide;
+    confirmed?: boolean;
+    isHost?: boolean;
+}
+
+export class MatchPlayerDto implements IMatchPlayerDto {
+    readonly userId?: number;
+    readonly name?: string | null;
+    readonly mmr?: number;
+    rank?: Rank;
+    side?: MatchSide;
+    readonly confirmed?: boolean;
+    readonly isHost?: boolean;
+
+    constructor(data?: IMatchPlayerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).userId = _data["userId"] !== undefined ? _data["userId"] : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            (<any>this).mmr = _data["mmr"] !== undefined ? _data["mmr"] : <any>null;
+            this.rank = _data["rank"] !== undefined ? _data["rank"] : <any>null;
+            this.side = _data["side"] !== undefined ? _data["side"] : <any>null;
+            (<any>this).confirmed = _data["confirmed"] !== undefined ? _data["confirmed"] : <any>null;
+            (<any>this).isHost = _data["isHost"] !== undefined ? _data["isHost"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchPlayerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchPlayerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId !== undefined ? this.userId : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["mmr"] = this.mmr !== undefined ? this.mmr : <any>null;
+        data["rank"] = this.rank !== undefined ? this.rank : <any>null;
+        data["side"] = this.side !== undefined ? this.side : <any>null;
+        data["confirmed"] = this.confirmed !== undefined ? this.confirmed : <any>null;
+        data["isHost"] = this.isHost !== undefined ? this.isHost : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchPlayerDto {
+    userId?: number;
+    name?: string | null;
+    mmr?: number;
+    rank?: Rank;
+    side?: MatchSide;
+    confirmed?: boolean;
+    isHost?: boolean;
+}
+
+export class MatchScore implements IMatchScore {
+    readonly maps?: MapScore[] | null;
+    roundScore?: Score;
+    mapScore?: Score;
+    outcome?: ScoreOutcome;
+
+    constructor(data?: IMatchScore) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["maps"])) {
+                (<any>this).maps = [] as any;
+                for (let item of _data["maps"])
+                    (<any>this).maps!.push(MapScore.fromJS(item));
+            }
+            else {
+                (<any>this).maps = <any>null;
+            }
+            this.roundScore = _data["roundScore"] ? Score.fromJS(_data["roundScore"]) : <any>null;
+            this.mapScore = _data["mapScore"] ? Score.fromJS(_data["mapScore"]) : <any>null;
+            this.outcome = _data["outcome"] !== undefined ? _data["outcome"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchScore {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchScore();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.maps)) {
+            data["maps"] = [];
+            for (let item of this.maps)
+                data["maps"].push(item.toJSON());
+        }
+        data["roundScore"] = this.roundScore ? this.roundScore.toJSON() : <any>null;
+        data["mapScore"] = this.mapScore ? this.mapScore.toJSON() : <any>null;
+        data["outcome"] = this.outcome !== undefined ? this.outcome : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchScore {
+    maps?: MapScore[] | null;
+    roundScore?: Score;
+    mapScore?: Score;
+    outcome?: ScoreOutcome;
+}
+
+export enum MatchSide {
+    _0 = 0,
+    _1 = 1,
+}
+
+export enum MatchStatus {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+}
+
+export enum Rank {
+    _880 = 880,
+    _940 = 940,
+    _1000 = 1000,
+    _1060 = 1060,
+    _1120 = 1120,
+}
+
+export class Score implements IScore {
+    home?: number;
+    away?: number;
+    outcome?: ScoreOutcome;
+
+    constructor(data?: IScore) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.home = _data["home"] !== undefined ? _data["home"] : <any>null;
+            this.away = _data["away"] !== undefined ? _data["away"] : <any>null;
+            this.outcome = _data["outcome"] !== undefined ? _data["outcome"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): Score {
+        data = typeof data === 'object' ? data : {};
+        let result = new Score();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["home"] = this.home !== undefined ? this.home : <any>null;
+        data["away"] = this.away !== undefined ? this.away : <any>null;
+        data["outcome"] = this.outcome !== undefined ? this.outcome : <any>null;
+        return data;
+    }
+}
+
+export interface IScore {
+    home?: number;
+    away?: number;
+    outcome?: ScoreOutcome;
+}
+
+export enum ScoreOutcome {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
+export enum WeaponType {
+    _10 = 10,
+    _11 = 11,
+    _12 = 12,
+    _13 = 13,
+    _20 = 20,
+    _21 = 21,
+    _22 = 22,
+    _30 = 30,
+    _31 = 31,
+    _32 = 32,
+    _33 = 33,
+    _40 = 40,
+    _41 = 41,
 }
 
 export class ApiException extends Error {

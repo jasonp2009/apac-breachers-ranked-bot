@@ -5,6 +5,7 @@ import {
   Layout,
   MatchQueue,
   Stats,
+  MatchHistory,
   NotFound,
   Account
 } from "./pages";
@@ -18,6 +19,7 @@ function App() {
             <Route index element={<MatchQueue />} />
             <Route path={RouteConstants.Stats} element={<Stats />} />
             <Route path={RouteConstants.Account} element={<Account />} />
+            <Route path={RouteConstants.MatchHistory} element={<MatchHistory />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
