@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Domain.Match.Constants;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Events;
 using ApacBreachersRanked.Infrastructure.Breachers.Api;
@@ -44,6 +45,8 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
         IEnumerable<GetMatchResponse> games = await _breachersApiClient.GetMatchesByUserId(userIdToCheck, cancellationToken);
         List<GetMatchResponse> matchingGames = games.Where(game =>
         {
+            if (match.AutoCancelDateUtc > game.TimeStamp ||
+                !MatchConstants.ValidMaps.Contains(game.GameData.Map)) return false;
             List<string> teamA = game.GameData.AllPlayers
                 .Where(player =>
                     player.Rounds.Any(round => round.RoundNumber == 1 && round.Team == BreachersSide.Revolters))
@@ -62,7 +65,7 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
             await _mediator.Publish(new PollForMatchDataEvent()
             {
                 MatchId = notification.MatchId,
-                ScheduledForUtc = DateTime.UtcNow + TimeSpan.FromSeconds(30)
+                ScheduledForUtc = DateTime.UtcNow + TimeSpan.FromSeconds(10)
             });
             return;
         }

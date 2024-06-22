@@ -18,7 +18,7 @@ public class BeginPollingForMatchDataHandler : INotificationHandler<SideVoteComp
         PollForMatchDataEvent pollEvent = new()
         {
             MatchId = notification.MatchId,
-            ScheduledForUtc = DateTime.UtcNow + TimeSpan.FromMinutes(30)
+            ScheduledForUtc = DateTime.UtcNow + TimeSpan.FromMinutes(15)
         };
         await _mediator.Publish(pollEvent, cancellationToken);
     }
