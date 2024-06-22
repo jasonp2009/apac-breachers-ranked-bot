@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance.Configurations.Match;
 
-public class MatchStatConfiguration : IEntityTypeConfiguration<MatchDataEntity>
+public class MatchDataConfiguration : IEntityTypeConfiguration<MatchDataEntity>
 {
     public void Configure(EntityTypeBuilder<MatchDataEntity> builder)
     {

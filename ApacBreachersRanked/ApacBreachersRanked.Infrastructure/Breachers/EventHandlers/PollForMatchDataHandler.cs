@@ -76,7 +76,7 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
             Games = matchingGames
         };
         matchDataEntity.QueueDomainEvent(new MatchDataReadyEvent { MatchId = matchDataEntity.Id });
-        _dbContext.MatchStats.Add(matchDataEntity);
+        _dbContext.MatchData.Add(matchDataEntity);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

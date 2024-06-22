@@ -54,7 +54,7 @@ internal class MatchDataService : IMatchDataService
                                 .FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
                             ?? throw new KeyNotFoundException($"Invalid match id: {matchId}");
         MatchDataEntity matchDatas =
-            await _dbContext.MatchStats
+            await _dbContext.MatchData
                 .FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
             ?? throw new KeyNotFoundException($"Match stats not ready for match id: {matchId}");
         return (match, matchDatas);

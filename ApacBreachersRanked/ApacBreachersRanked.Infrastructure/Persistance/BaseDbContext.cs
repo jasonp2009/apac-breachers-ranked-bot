@@ -52,7 +52,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
         public DbSet<ActiveBansMessage> ActiveBansMessages => Set<ActiveBansMessage>();
         public DbSet<TimedPing> TimedPings => Set<TimedPing>();
         internal DbSet<ScheduledEvent> ScheduledEvents => Set<ScheduledEvent>();
-        internal DbSet<MatchDataEntity> MatchStats => Set<MatchDataEntity>();
+        internal DbSet<MatchDataEntity> MatchData => Set<MatchDataEntity>();
 
         public async Task ResetMMRAsync()
         {
