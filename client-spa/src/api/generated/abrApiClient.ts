@@ -1202,12 +1202,12 @@ export interface IMatchDataEntity {
 export class MatchDto implements IMatchDto {
     matchNumber?: number;
     status?: MatchStatus;
-    readonly homePlayers?: MatchPlayer[] | null;
+    readonly homePlayers?: MatchPlayerDto[] | null;
     readonly homeMMR?: number;
-    readonly awayPlayers?: MatchPlayer[] | null;
+    readonly awayPlayers?: MatchPlayerDto[] | null;
     readonly awayMMR?: number;
-    allPlayers?: MatchPlayer[] | null;
-    hostPlayer?: MatchPlayer;
+    allPlayers?: MatchPlayerDto[] | null;
+    hostPlayer?: MatchPlayerDto;
     score?: MatchScore;
 
     constructor(data?: IMatchDto) {
@@ -1226,7 +1226,7 @@ export class MatchDto implements IMatchDto {
             if (Array.isArray(_data["homePlayers"])) {
                 (<any>this).homePlayers = [] as any;
                 for (let item of _data["homePlayers"])
-                    (<any>this).homePlayers!.push(MatchPlayer.fromJS(item));
+                    (<any>this).homePlayers!.push(MatchPlayerDto.fromJS(item));
             }
             else {
                 (<any>this).homePlayers = <any>null;
@@ -1235,7 +1235,7 @@ export class MatchDto implements IMatchDto {
             if (Array.isArray(_data["awayPlayers"])) {
                 (<any>this).awayPlayers = [] as any;
                 for (let item of _data["awayPlayers"])
-                    (<any>this).awayPlayers!.push(MatchPlayer.fromJS(item));
+                    (<any>this).awayPlayers!.push(MatchPlayerDto.fromJS(item));
             }
             else {
                 (<any>this).awayPlayers = <any>null;
@@ -1244,12 +1244,12 @@ export class MatchDto implements IMatchDto {
             if (Array.isArray(_data["allPlayers"])) {
                 this.allPlayers = [] as any;
                 for (let item of _data["allPlayers"])
-                    this.allPlayers!.push(MatchPlayer.fromJS(item));
+                    this.allPlayers!.push(MatchPlayerDto.fromJS(item));
             }
             else {
                 this.allPlayers = <any>null;
             }
-            this.hostPlayer = _data["hostPlayer"] ? MatchPlayer.fromJS(_data["hostPlayer"]) : <any>null;
+            this.hostPlayer = _data["hostPlayer"] ? MatchPlayerDto.fromJS(_data["hostPlayer"]) : <any>null;
             this.score = _data["score"] ? MatchScore.fromJS(_data["score"]) : <any>null;
         }
     }
@@ -1291,12 +1291,12 @@ export class MatchDto implements IMatchDto {
 export interface IMatchDto {
     matchNumber?: number;
     status?: MatchStatus;
-    homePlayers?: MatchPlayer[] | null;
+    homePlayers?: MatchPlayerDto[] | null;
     homeMMR?: number;
-    awayPlayers?: MatchPlayer[] | null;
+    awayPlayers?: MatchPlayerDto[] | null;
     awayMMR?: number;
-    allPlayers?: MatchPlayer[] | null;
-    hostPlayer?: MatchPlayer;
+    allPlayers?: MatchPlayerDto[] | null;
+    hostPlayer?: MatchPlayerDto;
     score?: MatchScore;
 }
 
@@ -1507,6 +1507,66 @@ export interface IMatchPlayer {
     matchId?: string;
     match?: MatchEntity;
     userId?: IUserId;
+    name?: string | null;
+    mmr?: number;
+    rank?: Rank;
+    side?: MatchSide;
+    confirmed?: boolean;
+    isHost?: boolean;
+}
+
+export class MatchPlayerDto implements IMatchPlayerDto {
+    readonly userId?: number;
+    readonly name?: string | null;
+    readonly mmr?: number;
+    rank?: Rank;
+    side?: MatchSide;
+    readonly confirmed?: boolean;
+    readonly isHost?: boolean;
+
+    constructor(data?: IMatchPlayerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).userId = _data["userId"] !== undefined ? _data["userId"] : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            (<any>this).mmr = _data["mmr"] !== undefined ? _data["mmr"] : <any>null;
+            this.rank = _data["rank"] !== undefined ? _data["rank"] : <any>null;
+            this.side = _data["side"] !== undefined ? _data["side"] : <any>null;
+            (<any>this).confirmed = _data["confirmed"] !== undefined ? _data["confirmed"] : <any>null;
+            (<any>this).isHost = _data["isHost"] !== undefined ? _data["isHost"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchPlayerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchPlayerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId !== undefined ? this.userId : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["mmr"] = this.mmr !== undefined ? this.mmr : <any>null;
+        data["rank"] = this.rank !== undefined ? this.rank : <any>null;
+        data["side"] = this.side !== undefined ? this.side : <any>null;
+        data["confirmed"] = this.confirmed !== undefined ? this.confirmed : <any>null;
+        data["isHost"] = this.isHost !== undefined ? this.isHost : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchPlayerDto {
+    userId?: number;
     name?: string | null;
     mmr?: number;
     rank?: Rank;

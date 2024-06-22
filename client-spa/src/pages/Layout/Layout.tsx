@@ -13,6 +13,10 @@ export function Layout() {
       {
         label: 'Stats',
         link: RouteConstants.Stats
+      },
+      {
+        label: 'Match History',
+        link: RouteConstants.MatchHistory
       }
     ]
   );

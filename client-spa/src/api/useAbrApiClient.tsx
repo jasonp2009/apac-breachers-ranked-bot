@@ -8,7 +8,7 @@ export function useAbrApiClient() {
     process.env.REACT_APP_ABR_BASE_URL,
     {
       fetch: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
-        const token = cookies[loginCookieKey].access_token;
+        const token = cookies[loginCookieKey]?.access_token;
         if (!!token && !!init) {
           const headers: Headers = new Headers()
           headers.append('Authorization', `Bearer ${token}`)
