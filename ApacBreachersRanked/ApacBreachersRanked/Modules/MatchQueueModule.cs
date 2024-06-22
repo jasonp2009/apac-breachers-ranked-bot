@@ -138,26 +138,44 @@ namespace ApacBreachersRanked.Modules
             }
 
             var whenUtc = parsedResults.Single();
-            ScheduledJoinQueueCommand command = new()
+            try
             {
-                DiscordUserId = Context.User.Id,
-                JoinAtUtc = whenUtc
-            };
-            await _mediator.Send(command);
-            await RespondAsync(ephemeral: true,
-                text: $"You have been scheduled to join the queue at {whenUtc.ToDiscordFullEpoch()}");
+                ScheduledJoinQueueCommand command = new()
+                {
+                    DiscordUserId = Context.User.Id,
+                    JoinAtUtc = whenUtc
+                };
+                await _mediator.Send(command);
+                await RespondAsync(ephemeral: true,
+                    text: $"You have been scheduled to join the queue at {whenUtc.ToDiscordFullEpoch()}");
+            }
+            catch (UserNotLinkedException)
+            {
+                await RespondAsync($"Please link your breachers account to your discord account. {Environment.NewLine}" +
+                                   "http://apacbreachersranked.com",
+                    ephemeral: true);
+            }
         }
 
         [ComponentInteraction("scheduled-join-queue-*")]
         public async Task ScheduledJoinQueueAsync(string scheduledQueueId)
         {
-            ScheduledJoinQueueByIdCommand command = new()
+            try
             {
-                DiscordUserId = Context.User.Id,
-                ScheduledQueueId = Guid.Parse(scheduledQueueId)
-            };
-            await _mediator.Send(command);
-            await DeferAsync();
+                ScheduledJoinQueueByIdCommand command = new()
+                {
+                    DiscordUserId = Context.User.Id,
+                    ScheduledQueueId = Guid.Parse(scheduledQueueId)
+                };
+                await _mediator.Send(command);
+                await DeferAsync();
+            }
+            catch (UserNotLinkedException)
+            {
+                await RespondAsync($"Please link your breachers account to your discord account. {Environment.NewLine}" +
+                                   "http://apacbreachersranked.com",
+                    ephemeral: true);
+            }
         }
 
         [ComponentInteraction("scheduled-leave-queue-*")]

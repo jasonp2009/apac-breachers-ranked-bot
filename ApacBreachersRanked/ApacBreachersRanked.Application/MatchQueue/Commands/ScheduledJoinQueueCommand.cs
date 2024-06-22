@@ -76,6 +76,12 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         {
             await _mediator.Send(new ThrowIfBannedCommand { UserId = request.DiscordUserId.ToIUserId() }, cancellationToken);
             
+            await _mediator.Send(new IsUserLinkedQuery
+                {
+                    DiscordUserId = request.DiscordUserId, ThrowWhenNotLinked = true
+                },
+                cancellationToken);
+            
             IUser user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
 
             ScheduledMatchQueueEntity scheduledQueue = await _mediator.Send(
