@@ -24,7 +24,8 @@ namespace ApacBreachersRanked.Infrastructure
             services.AddScoped<IDbContext, BreachersDbContext>();
 
             services.AddScoped<IBreachersUserService, BreachersUserService>();
-            services.AddScoped<IMatchDataService, MatchDataService>();
+            services.AddScoped<MatchDataService>();
+            services.AddScoped<IMatchDataService>(prv => prv.GetRequiredService<MatchDataService>());
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             

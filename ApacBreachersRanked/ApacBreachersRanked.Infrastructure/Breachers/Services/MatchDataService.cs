@@ -47,7 +47,7 @@ internal class MatchDataService : IMatchDataService
         return matchScore;
     }
 
-    private async Task<(MatchEntity, MatchDataEntity)> GetMatchData(Guid matchId, CancellationToken cancellationToken)
+    public async Task<(MatchEntity, MatchDataEntity)> GetMatchData(Guid matchId, CancellationToken cancellationToken)
     {
         MatchEntity match = await _dbContext.Matches
                                 .Include(x => x.AllPlayers)
