@@ -17,6 +17,7 @@ using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Infrastructure.Breachers.Entities;
 using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
+using Npgsql;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
 {
@@ -51,6 +52,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
         public DbSet<ActiveBansMessage> ActiveBansMessages => Set<ActiveBansMessage>();
         public DbSet<TimedPing> TimedPings => Set<TimedPing>();
         internal DbSet<ScheduledEvent> ScheduledEvents => Set<ScheduledEvent>();
+        internal DbSet<MatchDataEntity> MatchData => Set<MatchDataEntity>();
 
         public async Task ResetMMRAsync()
         {
@@ -73,6 +75,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
                     break;
                 case DatabaseEngine.Postgress:
                     options.UseNpgsql(_options.ConnectionString);
+                    NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
                     break;
                 default:
                     throw new NotImplementedException($"Database engine {_options.DatabaseEngine} is not supported");

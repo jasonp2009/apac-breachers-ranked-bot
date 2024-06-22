@@ -12,6 +12,10 @@ namespace ApacBreachersRanked.Domain.Match.Enums
         Skyscraper,
         Hideout,
         Ship,
-        Arctic
+        Arctic,
+        Dam,
+        
+        Killhouse = 101,
+        Outpost = 102
     }
 }

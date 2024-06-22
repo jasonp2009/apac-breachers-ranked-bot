@@ -8,6 +8,7 @@ public class BreachersPlayer
     public string Id { get; set; }
     public string ClanTag { get; set; }
     [JsonPropertyName("GameMatchDataResult")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public GameResult Result { get; set; }
     public decimal GameTimeInSeconds { get; set; }
     public TimeSpan GameTime => TimeSpan.FromSeconds(Convert.ToDouble(GameTimeInSeconds));

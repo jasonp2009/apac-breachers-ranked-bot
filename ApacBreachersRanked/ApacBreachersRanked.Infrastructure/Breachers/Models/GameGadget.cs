@@ -5,6 +5,7 @@ namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 public class GameGadget
 {
     [JsonPropertyName("Name")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public GadgetType Type { get; set; }
     public int BotDamageDone { get; set; }
     public int BotKills { get; set; }

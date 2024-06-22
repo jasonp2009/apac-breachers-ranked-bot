@@ -1,4 +1,6 @@
-﻿namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 
 public class BreachersRound
 {
@@ -11,7 +13,9 @@ public class BreachersRound
     public int RoundNumber { get; set; }
     public decimal RoundTime { get; set; }
     public int Score { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public BreachersSide Team { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public BreachersSide TeamWon { get; set; }
     public IEnumerable<GameGadget> Gadgets { get; set; }
     public IEnumerable<GameWeapon> Weapons { get; set; }
