@@ -31,7 +31,12 @@ namespace ApacBreachersRanked
         {
             services.Configure<DiscordOptions>(options => configuration.GetSection(DiscordOptions.Key).Bind(options));
 
-            services.AddSingleton<DiscordSocketClient>();
+            services.AddSingleton(new DiscordSocketClient(
+                new DiscordSocketConfig
+                {
+                    LogGatewayIntentWarnings = false
+                }
+            ));
             services.AddSingleton<IDiscordClient>(x => x.GetRequiredService<DiscordSocketClient>());
             services.AddHostedService<DiscordStartupService>();
             return services;
