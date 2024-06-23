@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Config;
+using ApacBreachersRanked.Config;
 using ApacBreachersRanked.Services;
 using Discord;
 using Discord.Interactions;
