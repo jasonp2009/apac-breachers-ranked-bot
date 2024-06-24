@@ -1,7 +1,7 @@
 ﻿using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MMR.Enums;
 
-namespace ApacBreachersRanked.Application.Stats.Models;
+namespace ApacBreachersRanked.Api.Models.Stats;
 
 public class MatchPlayerDto
 {

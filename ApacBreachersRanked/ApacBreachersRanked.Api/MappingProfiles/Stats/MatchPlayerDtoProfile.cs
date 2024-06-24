@@ -1,8 +1,9 @@
-﻿using ApacBreachersRanked.Application.Stats.Models;
+﻿using ApacBreachersRanked.Api.Models.Stats;
+using ApacBreachersRanked.Application.Stats.Models;
 using ApacBreachersRanked.Domain.Match.Entities;
 using AutoMapper;
 
-namespace ApacBreachersRanked.Application.Stats.MappingProfiles;
+namespace ApacBreachersRanked.Api.MappingProfiles.Stats;
 
 public class MatchPlayerDtoProfile : Profile
 {

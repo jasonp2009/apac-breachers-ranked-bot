@@ -1,6 +1,7 @@
-﻿using ApacBreachersRanked.Application.Stats.Models;
+﻿using ApacBreachersRanked.Api.Models.Stats;
 using ApacBreachersRanked.Application.Stats.Queries;
 using ApacBreachersRanked.Infrastructure.Breachers.Queries;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,12 @@ namespace ApacBreachersRanked.Api.Controllers;
 public class MatchStatsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public MatchStatsController(IMediator mediator)
+    public MatchStatsController(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
     [HttpGet("MatchHistory")]
@@ -23,7 +26,8 @@ public class MatchStatsController : ControllerBase
         [FromQuery]GetMatchHistoryQuery query,
         CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(query, cancellationToken));
+        var matches = await _mediator.Send(query, cancellationToken);
+        return Ok(matches.Select(_mapper.Map<MatchDto>));
     }
 
     [HttpGet("UserMatchHistory")]
@@ -32,15 +36,17 @@ public class MatchStatsController : ControllerBase
         [FromQuery]GetUserMatchHistoryQuery query,
         CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(query, cancellationToken));
+        var matches = await _mediator.Send(query, cancellationToken);
+        return Ok(matches.Select(_mapper.Map<MatchDto>));
     }
 
     [HttpGet("MatchData")]
-    [ProducesResponseType<GetMatchDataResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MatchDataDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMatchData(
         [FromQuery] GetMatchDataQuery query,
         CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(query, cancellationToken));
+        var response = await _mediator.Send(query, cancellationToken);
+        return Ok(_mapper.Map<MatchDataDto>(response));
     }
 }

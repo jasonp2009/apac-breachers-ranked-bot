@@ -339,7 +339,7 @@ export class AbrApiClient {
      * @param matchId (optional) 
      * @return OK
      */
-    matchData(matchId?: string | undefined): Promise<GetMatchDataResponse> {
+    matchData(matchId?: string | undefined): Promise<MatchDataDto> {
         let url_ = this.baseUrl + "/MatchStats/MatchData?";
         if (matchId === null)
             throw new Error("The parameter 'matchId' cannot be null.");
@@ -359,14 +359,14 @@ export class AbrApiClient {
         });
     }
 
-    protected processMatchData(response: Response): Promise<GetMatchDataResponse> {
+    protected processMatchData(response: Response): Promise<MatchDataDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = GetMatchDataResponse.fromJS(resultData200);
+            result200 = MatchDataDto.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -374,7 +374,7 @@ export class AbrApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<GetMatchDataResponse>(null as any);
+        return Promise.resolve<MatchDataDto>(null as any);
     }
 
     /**
@@ -922,46 +922,6 @@ export interface IGameWeapon {
     totalShotsHit?: number;
 }
 
-export class GetMatchDataResponse implements IGetMatchDataResponse {
-    match?: MatchEntity;
-    matchData?: MatchDataEntity;
-
-    constructor(data?: IGetMatchDataResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.match = _data["match"] ? MatchEntity.fromJS(_data["match"]) : <any>null;
-            this.matchData = _data["matchData"] ? MatchDataEntity.fromJS(_data["matchData"]) : <any>null;
-        }
-    }
-
-    static fromJS(data: any): GetMatchDataResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetMatchDataResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["match"] = this.match ? this.match.toJSON() : <any>null;
-        data["matchData"] = this.matchData ? this.matchData.toJSON() : <any>null;
-        return data;
-    }
-}
-
-export interface IGetMatchDataResponse {
-    match?: MatchEntity;
-    matchData?: MatchDataEntity;
-}
-
 export class GetMatchResponse implements IGetMatchResponse {
     id?: string | null;
     players?: number;
@@ -1040,36 +1000,6 @@ export class IDomainEvent implements IIDomainEvent {
 export interface IIDomainEvent {
 }
 
-export class IUserId implements IIUserId {
-
-    constructor(data?: IIUserId) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-    }
-
-    static fromJS(data: any): IUserId {
-        data = typeof data === 'object' ? data : {};
-        let result = new IUserId();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        return data;
-    }
-}
-
-export interface IIUserId {
-}
-
 export enum Map {
     _0 = 0,
     _1 = 1,
@@ -1127,6 +1057,46 @@ export interface IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
+}
+
+export class MatchDataDto implements IMatchDataDto {
+    match?: MatchDto;
+    matchData?: MatchDataEntity;
+
+    constructor(data?: IMatchDataDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.match = _data["match"] ? MatchDto.fromJS(_data["match"]) : <any>null;
+            this.matchData = _data["matchData"] ? MatchDataEntity.fromJS(_data["matchData"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MatchDataDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchDataDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["match"] = this.match ? this.match.toJSON() : <any>null;
+        data["matchData"] = this.matchData ? this.matchData.toJSON() : <any>null;
+        return data;
+    }
+}
+
+export interface IMatchDataDto {
+    match?: MatchDto;
+    matchData?: MatchDataEntity;
 }
 
 export class MatchDataEntity implements IMatchDataEntity {
@@ -1200,6 +1170,7 @@ export interface IMatchDataEntity {
 }
 
 export class MatchDto implements IMatchDto {
+    id?: string;
     matchNumber?: number;
     status?: MatchStatus;
     readonly homePlayers?: MatchPlayerDto[] | null;
@@ -1221,6 +1192,7 @@ export class MatchDto implements IMatchDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.matchNumber = _data["matchNumber"] !== undefined ? _data["matchNumber"] : <any>null;
             this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
             if (Array.isArray(_data["homePlayers"])) {
@@ -1263,6 +1235,7 @@ export class MatchDto implements IMatchDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
         data["matchNumber"] = this.matchNumber !== undefined ? this.matchNumber : <any>null;
         data["status"] = this.status !== undefined ? this.status : <any>null;
         if (Array.isArray(this.homePlayers)) {
@@ -1289,6 +1262,7 @@ export class MatchDto implements IMatchDto {
 }
 
 export interface IMatchDto {
+    id?: string;
     matchNumber?: number;
     status?: MatchStatus;
     homePlayers?: MatchPlayerDto[] | null;
@@ -1298,221 +1272,6 @@ export interface IMatchDto {
     allPlayers?: MatchPlayerDto[] | null;
     hostPlayer?: MatchPlayerDto;
     score?: MatchScore;
-}
-
-export class MatchEntity implements IMatchEntity {
-    id?: string;
-    domainEvents?: IDomainEvent[] | null;
-    matchNumber?: number;
-    status?: MatchStatus;
-    autoCancelDateUtc?: Date;
-    readonly homePlayers?: MatchPlayer[] | null;
-    readonly homeMMR?: number;
-    readonly awayPlayers?: MatchPlayer[] | null;
-    readonly awayMMR?: number;
-    readonly allPlayers?: MatchPlayer[] | null;
-    hostPlayer?: MatchPlayer;
-    score?: MatchScore;
-    readonly cancellationReason?: string | null;
-
-    constructor(data?: IMatchEntity) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            if (Array.isArray(_data["domainEvents"])) {
-                this.domainEvents = [] as any;
-                for (let item of _data["domainEvents"])
-                    this.domainEvents!.push(IDomainEvent.fromJS(item));
-            }
-            else {
-                this.domainEvents = <any>null;
-            }
-            this.matchNumber = _data["matchNumber"] !== undefined ? _data["matchNumber"] : <any>null;
-            this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
-            this.autoCancelDateUtc = _data["autoCancelDateUtc"] ? new Date(_data["autoCancelDateUtc"].toString()) : <any>null;
-            if (Array.isArray(_data["homePlayers"])) {
-                (<any>this).homePlayers = [] as any;
-                for (let item of _data["homePlayers"])
-                    (<any>this).homePlayers!.push(MatchPlayer.fromJS(item));
-            }
-            else {
-                (<any>this).homePlayers = <any>null;
-            }
-            (<any>this).homeMMR = _data["homeMMR"] !== undefined ? _data["homeMMR"] : <any>null;
-            if (Array.isArray(_data["awayPlayers"])) {
-                (<any>this).awayPlayers = [] as any;
-                for (let item of _data["awayPlayers"])
-                    (<any>this).awayPlayers!.push(MatchPlayer.fromJS(item));
-            }
-            else {
-                (<any>this).awayPlayers = <any>null;
-            }
-            (<any>this).awayMMR = _data["awayMMR"] !== undefined ? _data["awayMMR"] : <any>null;
-            if (Array.isArray(_data["allPlayers"])) {
-                (<any>this).allPlayers = [] as any;
-                for (let item of _data["allPlayers"])
-                    (<any>this).allPlayers!.push(MatchPlayer.fromJS(item));
-            }
-            else {
-                (<any>this).allPlayers = <any>null;
-            }
-            this.hostPlayer = _data["hostPlayer"] ? MatchPlayer.fromJS(_data["hostPlayer"]) : <any>null;
-            this.score = _data["score"] ? MatchScore.fromJS(_data["score"]) : <any>null;
-            (<any>this).cancellationReason = _data["cancellationReason"] !== undefined ? _data["cancellationReason"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): MatchEntity {
-        data = typeof data === 'object' ? data : {};
-        let result = new MatchEntity();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        if (Array.isArray(this.domainEvents)) {
-            data["domainEvents"] = [];
-            for (let item of this.domainEvents)
-                data["domainEvents"].push(item.toJSON());
-        }
-        data["matchNumber"] = this.matchNumber !== undefined ? this.matchNumber : <any>null;
-        data["status"] = this.status !== undefined ? this.status : <any>null;
-        data["autoCancelDateUtc"] = this.autoCancelDateUtc ? this.autoCancelDateUtc.toISOString() : <any>null;
-        if (Array.isArray(this.homePlayers)) {
-            data["homePlayers"] = [];
-            for (let item of this.homePlayers)
-                data["homePlayers"].push(item.toJSON());
-        }
-        data["homeMMR"] = this.homeMMR !== undefined ? this.homeMMR : <any>null;
-        if (Array.isArray(this.awayPlayers)) {
-            data["awayPlayers"] = [];
-            for (let item of this.awayPlayers)
-                data["awayPlayers"].push(item.toJSON());
-        }
-        data["awayMMR"] = this.awayMMR !== undefined ? this.awayMMR : <any>null;
-        if (Array.isArray(this.allPlayers)) {
-            data["allPlayers"] = [];
-            for (let item of this.allPlayers)
-                data["allPlayers"].push(item.toJSON());
-        }
-        data["hostPlayer"] = this.hostPlayer ? this.hostPlayer.toJSON() : <any>null;
-        data["score"] = this.score ? this.score.toJSON() : <any>null;
-        data["cancellationReason"] = this.cancellationReason !== undefined ? this.cancellationReason : <any>null;
-        return data;
-    }
-}
-
-export interface IMatchEntity {
-    id?: string;
-    domainEvents?: IDomainEvent[] | null;
-    matchNumber?: number;
-    status?: MatchStatus;
-    autoCancelDateUtc?: Date;
-    homePlayers?: MatchPlayer[] | null;
-    homeMMR?: number;
-    awayPlayers?: MatchPlayer[] | null;
-    awayMMR?: number;
-    allPlayers?: MatchPlayer[] | null;
-    hostPlayer?: MatchPlayer;
-    score?: MatchScore;
-    cancellationReason?: string | null;
-}
-
-export class MatchPlayer implements IMatchPlayer {
-    id?: string;
-    domainEvents?: IDomainEvent[] | null;
-    readonly matchId?: string;
-    match?: MatchEntity;
-    userId?: IUserId;
-    readonly name?: string | null;
-    mmr?: number;
-    rank?: Rank;
-    side?: MatchSide;
-    readonly confirmed?: boolean;
-    readonly isHost?: boolean;
-
-    constructor(data?: IMatchPlayer) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            if (Array.isArray(_data["domainEvents"])) {
-                this.domainEvents = [] as any;
-                for (let item of _data["domainEvents"])
-                    this.domainEvents!.push(IDomainEvent.fromJS(item));
-            }
-            else {
-                this.domainEvents = <any>null;
-            }
-            (<any>this).matchId = _data["matchId"] !== undefined ? _data["matchId"] : <any>null;
-            this.match = _data["match"] ? MatchEntity.fromJS(_data["match"]) : <any>null;
-            this.userId = _data["userId"] ? IUserId.fromJS(_data["userId"]) : <any>null;
-            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
-            this.mmr = _data["mmr"] !== undefined ? _data["mmr"] : <any>null;
-            this.rank = _data["rank"] !== undefined ? _data["rank"] : <any>null;
-            this.side = _data["side"] !== undefined ? _data["side"] : <any>null;
-            (<any>this).confirmed = _data["confirmed"] !== undefined ? _data["confirmed"] : <any>null;
-            (<any>this).isHost = _data["isHost"] !== undefined ? _data["isHost"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): MatchPlayer {
-        data = typeof data === 'object' ? data : {};
-        let result = new MatchPlayer();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        if (Array.isArray(this.domainEvents)) {
-            data["domainEvents"] = [];
-            for (let item of this.domainEvents)
-                data["domainEvents"].push(item.toJSON());
-        }
-        data["matchId"] = this.matchId !== undefined ? this.matchId : <any>null;
-        data["match"] = this.match ? this.match.toJSON() : <any>null;
-        data["userId"] = this.userId ? this.userId.toJSON() : <any>null;
-        data["name"] = this.name !== undefined ? this.name : <any>null;
-        data["mmr"] = this.mmr !== undefined ? this.mmr : <any>null;
-        data["rank"] = this.rank !== undefined ? this.rank : <any>null;
-        data["side"] = this.side !== undefined ? this.side : <any>null;
-        data["confirmed"] = this.confirmed !== undefined ? this.confirmed : <any>null;
-        data["isHost"] = this.isHost !== undefined ? this.isHost : <any>null;
-        return data;
-    }
-}
-
-export interface IMatchPlayer {
-    id?: string;
-    domainEvents?: IDomainEvent[] | null;
-    matchId?: string;
-    match?: MatchEntity;
-    userId?: IUserId;
-    name?: string | null;
-    mmr?: number;
-    rank?: Rank;
-    side?: MatchSide;
-    confirmed?: boolean;
-    isHost?: boolean;
 }
 
 export class MatchPlayerDto implements IMatchPlayerDto {
