@@ -2,6 +2,7 @@
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchData.Entities;
+using ApacBreachersRanked.Domain.MatchData.Events;
 using ApacBreachersRanked.Infrastructure.Breachers.Entities;
 using ApacBreachersRanked.Infrastructure.Breachers.Events;
 using ApacBreachersRanked.Infrastructure.Breachers.Models;
@@ -142,6 +143,7 @@ internal class BreachersMatchDataReadyHandler : INotificationHandler<BreachersMa
                 Score = score,
                 Players = matchPlayerData,
             };
+            gameData.QueueDomainEvent(new GameDataReadyEvent { MatchId = gameData.MatchId });
             _breachersDbContext.Add(gameData);
             await _breachersDbContext.SaveChangesAsync(cancellationToken);
         }
