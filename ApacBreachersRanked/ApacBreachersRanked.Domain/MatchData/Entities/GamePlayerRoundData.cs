@@ -2,7 +2,7 @@
 
 namespace ApacBreachersRanked.Domain.MatchData.Entities;
 
-public class MatchPlayerRoundData : IUser
+public class GamePlayerRoundData : IUser
 {
     public IUserId UserId { get; init; }
     public string? Name { get; init; }
@@ -14,6 +14,8 @@ public class MatchPlayerRoundData : IUser
     public bool FirstBlood { get; init; }
     public bool Mvp { get; init; }
     public bool Ace { get; init; }
+    public bool Won { get; init; }
+    public TimeSpan RoundTime { get; init; }
     public IEnumerable<WeaponData> Weapons { get; init; }
     public IEnumerable<GadgetData> Gadgets { get; init; }
 }
