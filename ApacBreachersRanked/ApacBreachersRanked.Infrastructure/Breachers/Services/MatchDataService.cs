@@ -22,7 +22,7 @@ internal class MatchDataService : IMatchDataService
 
     public async Task<MatchScore> GetScore(Guid matchId, CancellationToken cancellationToken)
     {
-        (MatchEntity match, MatchDataEntity matchStats) = await GetMatchData(matchId, cancellationToken);
+        (MatchEntity match, BreachersMatchDataEntity matchStats) = await GetMatchData(matchId, cancellationToken);
         
         List<BreachersDiscordUserLink> homeUserLinks = await _dbContext.BreachersDiscordUserLinks
             .Where(link => match.HomePlayers.Select(player => player.UserId.GetDiscordId()).Contains(link.DiscordUserId))
@@ -48,16 +48,16 @@ internal class MatchDataService : IMatchDataService
         return matchScore;
     }
 
-    public async Task<(MatchEntity, MatchDataEntity)> GetMatchData(Guid matchId, CancellationToken cancellationToken)
+    public async Task<(MatchEntity, BreachersMatchDataEntity)> GetMatchData(Guid matchId, CancellationToken cancellationToken)
     {
         MatchEntity match = await _dbContext.Matches
                                 .Include(x => x.AllPlayers)
                                 .FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
                             ?? throw new KeyNotFoundException($"Invalid match id: {matchId}");
-        MatchDataEntity matchDatas =
+        BreachersMatchDataEntity breachersMatchDatas =
             await _dbContext.MatchData
                 .FirstOrDefaultAsync(x => x.Id == matchId, cancellationToken)
             ?? throw new KeyNotFoundException($"Match stats not ready for match id: {matchId}");
-        return (match, matchDatas);
+        return (match, breachersMatchDatas);
     }
 }

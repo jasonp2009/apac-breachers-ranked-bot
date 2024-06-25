@@ -2,7 +2,7 @@
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
 
-namespace ApacBreachersRanked.Domain.MatchData.Models;
+namespace ApacBreachersRanked.Domain.MatchData.Entities;
 
 public class MatchDataEntity : BaseEntity
 {

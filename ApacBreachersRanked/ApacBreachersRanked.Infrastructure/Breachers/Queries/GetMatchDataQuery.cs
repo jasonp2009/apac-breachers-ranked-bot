@@ -13,7 +13,7 @@ public class GetMatchDataQuery : IQuery<GetMatchDataResponse>
 public class GetMatchDataResponse
 {
     public MatchEntity Match { get; set; }
-    public MatchDataEntity MatchData { get; set; }
+    public BreachersMatchDataEntity MatchData { get; set; }
 }
 
 internal class GetMatchDataQueryHandler : IQueryHandler<GetMatchDataQuery, GetMatchDataResponse>
@@ -27,7 +27,7 @@ internal class GetMatchDataQueryHandler : IQueryHandler<GetMatchDataQuery, GetMa
 
     public async Task<GetMatchDataResponse> Handle(GetMatchDataQuery request, CancellationToken cancellationToken)
     {
-        (MatchEntity match, MatchDataEntity matchData) =
+        (MatchEntity match, BreachersMatchDataEntity matchData) =
             await _matchDataService.GetMatchData(request.MatchId, cancellationToken);
         return new()
         {

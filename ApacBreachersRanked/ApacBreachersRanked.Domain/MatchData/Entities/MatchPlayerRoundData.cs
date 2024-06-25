@@ -1,7 +1,11 @@
-﻿namespace ApacBreachersRanked.Domain.MatchData.Models;
+﻿using ApacBreachersRanked.Domain.User.Interfaces;
 
-public class MatchPlayerRoundData
+namespace ApacBreachersRanked.Domain.MatchData.Entities;
+
+public class MatchPlayerRoundData : IUser
 {
+    public IUserId UserId { get; init; }
+    public string? Name { get; init; }
     public int RoundNumber { get; init; }
     public int Kills => Weapons.Sum(weapon => weapon.Kills) + Gadgets.Sum(gadget => gadget.Kills);
     public int Assists { get; init; }

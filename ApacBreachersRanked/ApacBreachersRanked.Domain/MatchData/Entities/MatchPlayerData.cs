@@ -2,11 +2,11 @@
 using ApacBreachersRanked.Domain.MMR.Enums;
 using ApacBreachersRanked.Domain.User.Interfaces;
 
-namespace ApacBreachersRanked.Domain.MatchData.Models;
+namespace ApacBreachersRanked.Domain.MatchData.Entities;
 
-public class MatchPlayerData
+public class MatchPlayerData : IUser
 {
-    public IUserId UseId { get; init; }
+    public IUserId UserId { get; init; }
     public string? Name { get; init; }
     public decimal Mmr { get; init; }
     public Rank Rank { get; init; }

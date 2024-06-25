@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Application.Users;
 using ApacBreachersRanked.Domain.Match.Constants;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Events;
@@ -70,13 +70,13 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
             return;
         }
 
-        MatchDataEntity matchDataEntity = new()
+        BreachersMatchDataEntity breachersMatchDataEntity = new()
         {
             Id = notification.MatchId,
             Games = matchingGames
         };
-        matchDataEntity.QueueDomainEvent(new MatchDataReadyEvent { MatchId = matchDataEntity.Id });
-        _dbContext.MatchData.Add(matchDataEntity);
+        breachersMatchDataEntity.QueueDomainEvent(new MatchDataReadyEvent { MatchId = breachersMatchDataEntity.Id });
+        _dbContext.MatchData.Add(breachersMatchDataEntity);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

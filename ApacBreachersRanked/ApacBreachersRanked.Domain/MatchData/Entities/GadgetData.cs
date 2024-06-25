@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.MatchData.Enums;
 
-namespace ApacBreachersRanked.Domain.MatchData.Models;
+namespace ApacBreachersRanked.Domain.MatchData.Entities;
 
 public class GadgetData
 {

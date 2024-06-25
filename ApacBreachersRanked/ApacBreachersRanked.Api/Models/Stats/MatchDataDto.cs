@@ -5,5 +5,5 @@ namespace ApacBreachersRanked.Api.Models.Stats;
 public class MatchDataDto
 {
     public MatchDto Match { get; set; }
-    public MatchDataEntity MatchData { get; set; }
+    public BreachersMatchDataEntity MatchData { get; set; }
 }
