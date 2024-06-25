@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 
-namespace ApacBreachersRanked.Domain.Match.Events;
+namespace ApacBreachersRanked.Domain.MatchData.Events;
 
 public class MatchDataReadyEvent : IDomainEvent
 {
