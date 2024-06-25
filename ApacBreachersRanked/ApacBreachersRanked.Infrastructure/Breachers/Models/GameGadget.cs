@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using ApacBreachersRanked.Domain.MatchData.Enums;
 
 namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 

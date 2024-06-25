@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Match.Entities;
 
-namespace ApacBreachersRanked.Domain.Match.Services;
+namespace ApacBreachersRanked.Domain.MatchData.Services;
 
 public interface IMatchDataService
 {

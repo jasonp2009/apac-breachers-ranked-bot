@@ -1,9 +1,11 @@
 ﻿using System.Text.Json.Serialization;
+using ApacBreachersRanked.Domain.MatchData.Enums;
 
 namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
 
 public class GameWeapon
 {
+    [JsonPropertyName("Name")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public WeaponType Type { get; set; }
     public int BotDamageDone { get; set; }
