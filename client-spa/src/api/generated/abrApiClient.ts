@@ -682,6 +682,8 @@ export class GamePlayerData implements IGamePlayerData {
     readonly roundMvps?: number;
     mvp?: boolean;
     readonly aces?: number;
+    readonly weapons?: WeaponData[] | null;
+    readonly gadgets?: GadgetData[] | null;
     rounds?: GamePlayerRoundData[] | null;
 
     constructor(data?: IGamePlayerData) {
@@ -708,6 +710,22 @@ export class GamePlayerData implements IGamePlayerData {
             (<any>this).roundMvps = _data["roundMvps"] !== undefined ? _data["roundMvps"] : <any>null;
             this.mvp = _data["mvp"] !== undefined ? _data["mvp"] : <any>null;
             (<any>this).aces = _data["aces"] !== undefined ? _data["aces"] : <any>null;
+            if (Array.isArray(_data["weapons"])) {
+                (<any>this).weapons = [] as any;
+                for (let item of _data["weapons"])
+                    (<any>this).weapons!.push(WeaponData.fromJS(item));
+            }
+            else {
+                (<any>this).weapons = <any>null;
+            }
+            if (Array.isArray(_data["gadgets"])) {
+                (<any>this).gadgets = [] as any;
+                for (let item of _data["gadgets"])
+                    (<any>this).gadgets!.push(GadgetData.fromJS(item));
+            }
+            else {
+                (<any>this).gadgets = <any>null;
+            }
             if (Array.isArray(_data["rounds"])) {
                 this.rounds = [] as any;
                 for (let item of _data["rounds"])
@@ -741,6 +759,16 @@ export class GamePlayerData implements IGamePlayerData {
         data["roundMvps"] = this.roundMvps !== undefined ? this.roundMvps : <any>null;
         data["mvp"] = this.mvp !== undefined ? this.mvp : <any>null;
         data["aces"] = this.aces !== undefined ? this.aces : <any>null;
+        if (Array.isArray(this.weapons)) {
+            data["weapons"] = [];
+            for (let item of this.weapons)
+                data["weapons"].push(item.toJSON());
+        }
+        if (Array.isArray(this.gadgets)) {
+            data["gadgets"] = [];
+            for (let item of this.gadgets)
+                data["gadgets"].push(item.toJSON());
+        }
         if (Array.isArray(this.rounds)) {
             data["rounds"] = [];
             for (let item of this.rounds)
@@ -764,6 +792,8 @@ export interface IGamePlayerData {
     roundMvps?: number;
     mvp?: boolean;
     aces?: number;
+    weapons?: WeaponData[] | null;
+    gadgets?: GadgetData[] | null;
     rounds?: GamePlayerRoundData[] | null;
 }
 

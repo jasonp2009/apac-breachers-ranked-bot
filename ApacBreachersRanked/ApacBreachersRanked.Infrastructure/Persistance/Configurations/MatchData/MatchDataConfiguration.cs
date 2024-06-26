@@ -19,6 +19,8 @@ public class MatchDataConfiguration : IEntityTypeConfiguration<GameDataEntity>
                 round.OwnsMany(x => x.Weapons);
                 round.OwnsMany(x => x.Gadgets);
             });
+            player.Ignore(x => x.Weapons);
+            player.Ignore(x => x.Gadgets);
         });
 
         builder.Ignore(x => x.HomePlayers);
