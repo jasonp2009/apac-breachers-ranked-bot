@@ -1,4 +1,4 @@
-﻿namespace ApacBreachersRanked.Infrastructure.Breachers.Models;
+﻿namespace ApacBreachersRanked.Domain.MatchData.Enums;
 
 public enum WeaponType
 {

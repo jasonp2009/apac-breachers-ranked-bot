@@ -13,6 +13,7 @@ using ApacBreachersRanked.Application.MMR.Models;
 using ApacBreachersRanked.Application.Moderation.Models;
 using ApacBreachersRanked.Application.PingTimer.Models;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.MatchData.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Infrastructure.Breachers.Entities;
@@ -52,7 +53,8 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
         public DbSet<ActiveBansMessage> ActiveBansMessages => Set<ActiveBansMessage>();
         public DbSet<TimedPing> TimedPings => Set<TimedPing>();
         internal DbSet<ScheduledEvent> ScheduledEvents => Set<ScheduledEvent>();
-        internal DbSet<MatchDataEntity> MatchData => Set<MatchDataEntity>();
+        internal DbSet<BreachersMatchDataEntity> BreachersMatchData => Set<BreachersMatchDataEntity>();
+        public DbSet<GameDataEntity> GameData => Set<GameDataEntity>();
 
         public async Task ResetMMRAsync()
         {

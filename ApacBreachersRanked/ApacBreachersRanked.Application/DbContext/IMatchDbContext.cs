@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApacBreachersRanked.Domain.MatchData.Entities;
 
 namespace ApacBreachersRanked.Application.DbContext
 {
@@ -15,5 +16,6 @@ namespace ApacBreachersRanked.Application.DbContext
         public DbSet<MatchPlayer> MatchPlayers { get; }
         public DbSet<PendingMatchScore> PendingMatchScores { get; }
         public DbSet<MatchThreads> MatchThreads { get; }
+        public DbSet<GameDataEntity> GameData { get; }
     }
 }

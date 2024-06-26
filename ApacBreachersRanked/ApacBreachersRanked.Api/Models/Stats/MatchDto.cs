@@ -1,10 +1,12 @@
-﻿using ApacBreachersRanked.Domain.Match.Entities;
+﻿using ApacBreachersRanked.Application.Stats.Models;
+using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Enums;
 
-namespace ApacBreachersRanked.Application.Stats.Models;
+namespace ApacBreachersRanked.Api.Models.Stats;
 
 public class MatchDto
 {
+    public Guid Id { get; set; }
     public int MatchNumber { get; set; }
     public MatchStatus Status { get; set; }
     public IEnumerable<MatchPlayerDto> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
