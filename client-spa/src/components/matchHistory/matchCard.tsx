@@ -9,7 +9,7 @@
   TableHead,
   TableRow
 } from "@mui/material";
-import { MatchDto, MatchPlayer, MatchPlayerDto } from "../../api/generated/abrApiClient";
+import { MatchDto, MatchPlayerDto } from "../../api/generated/abrApiClient";
 import Typography from "@mui/material/Typography";
 
 class MatchPlayerRow {
