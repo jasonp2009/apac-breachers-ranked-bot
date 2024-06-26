@@ -1,5 +1,6 @@
 ﻿import {
-  Card,
+  Button,
+  Card, CardActions,
   CardContent,
   Paper,
   Table,
@@ -19,9 +20,10 @@ class MatchPlayerRow {
 
 export function MatchCard(props: {
   sx: any,
-  match: MatchDto
+  match: MatchDto,
+  onClick?: (matchId: string) => void
 }) {
-  const { match } = props;
+  const { match, onClick } = props;
   let playerRows: MatchPlayerRow[] = [];
   for(let i = 0; i < Math.max(match.homePlayers?.length ?? 0, match.awayPlayers?.length ?? 0); i++) {
     const item = new MatchPlayerRow();
@@ -63,6 +65,18 @@ export function MatchCard(props: {
             </TableBody>
           </Table>
         </TableContainer>
+        { onClick && (
+          <CardActions
+            sx={{
+              justifyContent: "flex-end",
+              paddingTop: '15px',
+              paddingBottom: 0
+            }}
+          >
+            <Button
+              size="small" onClick={() => match.id && onClick(match.id)}>More</Button>
+          </CardActions>
+        )}
       </CardContent>
     </Card>
   )

@@ -1,5 +1,6 @@
 ﻿export const RouteConstants = {
   Stats: 'stats',
   Account: 'account',
-  MatchHistory: 'matchHistory'
+  MatchHistory: 'matchHistory',
+  MatchDetails: 'matchDetails'
 }
