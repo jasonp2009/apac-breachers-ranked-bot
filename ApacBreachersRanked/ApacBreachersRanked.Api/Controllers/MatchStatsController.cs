@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Api.Models.Stats;
+using ApacBreachersRanked.Application.Match.Queries;
 using ApacBreachersRanked.Application.Stats.Queries;
 using AutoMapper;
 using MediatR;
@@ -37,5 +38,15 @@ public class MatchStatsController : ControllerBase
     {
         var matches = await _mediator.Send(query, cancellationToken);
         return Ok(matches.Select(_mapper.Map<MatchDto>));
+    }
+
+    [HttpGet("MatchData")]
+    [ProducesResponseType<MatchDataDto>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMatchData(
+        [FromQuery] GetMatchDataQuery query,
+        CancellationToken cancellationToken)
+    {
+        var matchData = await _mediator.Send(query, cancellationToken);
+        return Ok(_mapper.Map<MatchDataDto>(matchData));
     }
 }

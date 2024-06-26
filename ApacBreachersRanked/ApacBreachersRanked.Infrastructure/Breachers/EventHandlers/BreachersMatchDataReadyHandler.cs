@@ -110,7 +110,8 @@ internal class BreachersMatchDataReadyHandler : INotificationHandler<BreachersMa
                         RoundNumber = breachersRound.RoundNumber,
                         Weapons = weaponData,
                         Gadgets = gadgetData,
-                        RoundTime = TimeSpan.FromSeconds(Convert.ToDouble(breachersRound.RoundTime))
+                        RoundTime = TimeSpan.FromSeconds(Convert.ToDouble(breachersRound.RoundTime)),
+                        Side = matchPlayer.Side
                     });
                 }
 
@@ -139,7 +140,6 @@ internal class BreachersMatchDataReadyHandler : INotificationHandler<BreachersMa
             GameDataEntity gameData = new()
             {
                 MatchId = match.Id,
-                Match = match,
                 Score = score,
                 Players = matchPlayerData,
             };

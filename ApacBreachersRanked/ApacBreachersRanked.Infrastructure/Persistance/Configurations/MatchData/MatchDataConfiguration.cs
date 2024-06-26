@@ -9,10 +9,6 @@ public class MatchDataConfiguration : IEntityTypeConfiguration<GameDataEntity>
 {
     public void Configure(EntityTypeBuilder<GameDataEntity> builder)
     {
-        builder.HasOne(x => x.Match)
-            .WithOne()
-            .IsRequired()
-            .HasForeignKey<GameDataEntity>(x => x.MatchId);
         builder.OwnsOne(x => x.Score);
         builder.OwnsMany(x => x.Players, player =>
         {
@@ -27,5 +23,6 @@ public class MatchDataConfiguration : IEntityTypeConfiguration<GameDataEntity>
 
         builder.Ignore(x => x.HomePlayers);
         builder.Ignore(x => x.AwayPlayers);
+        builder.Ignore(x => x.Rounds);
     }
 }

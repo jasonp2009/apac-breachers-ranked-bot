@@ -18,10 +18,11 @@ public class GameDataReadyHandler : INotificationHandler<GameDataReadyEvent>
 
     public async Task Handle(GameDataReadyEvent notification, CancellationToken cancellationToken)
     {
-        List<MapScore> mapScores = await _dbContext.GameData
-            .Where(x => x.MatchId == notification.MatchId)
+        List<MapScore> mapScores = (await _dbContext.GameData
+                .Where(x => x.MatchId == notification.MatchId)
+                .ToListAsync(cancellationToken))
             .Select(x => x.Score)
-            .ToListAsync(cancellationToken);
+            .ToList();
         MatchScore score = new();
         foreach (MapScore mapScore in mapScores)
         {
