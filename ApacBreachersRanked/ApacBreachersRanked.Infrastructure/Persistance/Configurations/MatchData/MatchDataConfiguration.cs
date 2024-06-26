@@ -16,8 +16,14 @@ public class MatchDataConfiguration : IEntityTypeConfiguration<GameDataEntity>
             player.OwnsMany(x => x.Rounds, round =>
             {
                 round.Property(x => x.UserId).HasConversion(new ApplicationDiscordUserIdValueConvertor());
-                round.OwnsMany(x => x.Weapons);
-                round.OwnsMany(x => x.Gadgets);
+                round.OwnsMany(x => x.Weapons, weapon =>
+                {
+                    weapon.Ignore(x => x.Name);
+                });
+                round.OwnsMany(x => x.Gadgets, gadget =>
+                {
+                    gadget.Ignore(x => x.Name);
+                });
             });
             player.Ignore(x => x.Weapons);
             player.Ignore(x => x.Gadgets);

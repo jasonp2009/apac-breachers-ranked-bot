@@ -466,6 +466,7 @@ export interface IBreachersUser {
 
 export class GadgetData implements IGadgetData {
     type?: GadgetType;
+    readonly name?: string | null;
     used?: number;
     triggered?: number;
     enemyTriggered?: number;
@@ -487,6 +488,7 @@ export class GadgetData implements IGadgetData {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.used = _data["used"] !== undefined ? _data["used"] : <any>null;
             this.triggered = _data["triggered"] !== undefined ? _data["triggered"] : <any>null;
             this.enemyTriggered = _data["enemyTriggered"] !== undefined ? _data["enemyTriggered"] : <any>null;
@@ -508,6 +510,7 @@ export class GadgetData implements IGadgetData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         data["used"] = this.used !== undefined ? this.used : <any>null;
         data["triggered"] = this.triggered !== undefined ? this.triggered : <any>null;
         data["enemyTriggered"] = this.enemyTriggered !== undefined ? this.enemyTriggered : <any>null;
@@ -522,6 +525,7 @@ export class GadgetData implements IGadgetData {
 
 export interface IGadgetData {
     type?: GadgetType;
+    name?: string | null;
     used?: number;
     triggered?: number;
     enemyTriggered?: number;
@@ -1526,6 +1530,7 @@ export enum ScoreOutcome {
 
 export class WeaponData implements IWeaponData {
     type?: WeaponType;
+    readonly name?: string | null;
     kills?: number;
     headshotKills?: number;
     shotsFired?: number;
@@ -1546,6 +1551,7 @@ export class WeaponData implements IWeaponData {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.kills = _data["kills"] !== undefined ? _data["kills"] : <any>null;
             this.headshotKills = _data["headshotKills"] !== undefined ? _data["headshotKills"] : <any>null;
             this.shotsFired = _data["shotsFired"] !== undefined ? _data["shotsFired"] : <any>null;
@@ -1566,6 +1572,7 @@ export class WeaponData implements IWeaponData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         data["kills"] = this.kills !== undefined ? this.kills : <any>null;
         data["headshotKills"] = this.headshotKills !== undefined ? this.headshotKills : <any>null;
         data["shotsFired"] = this.shotsFired !== undefined ? this.shotsFired : <any>null;
@@ -1579,6 +1586,7 @@ export class WeaponData implements IWeaponData {
 
 export interface IWeaponData {
     type?: WeaponType;
+    name?: string | null;
     kills?: number;
     headshotKills?: number;
     shotsFired?: number;

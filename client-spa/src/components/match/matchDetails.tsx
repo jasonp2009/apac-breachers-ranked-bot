@@ -13,6 +13,7 @@ import { useMatchData } from "../../hooks";
 import React, {useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import {GameDataEntity, GamePlayerData, MatchDataDto, MatchDto, MatchPlayerDto} from "../../api/generated/abrApiClient";
+import {MatchDetailsModal} from "./matchDetailsModal";
 
 
 class GamePlayerRow {
@@ -95,12 +96,28 @@ export function MatchDetails(props: {
                                 <TableRow
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                  <TableCell>{player.homePlayer?.name}</TableCell>
+                                  <TableCell>
+                                    {player.homePlayer?.name}
+                                    {player.homePlayer &&
+                                        <MatchDetailsModal
+                                            buttonText="More"
+                                            data={player.homePlayer}
+                                        />
+                                    }
+                                  </TableCell>
                                   <TableCell align="right">{player.homePlayer?.kills}-{player.homePlayer?.deaths}-{player.homePlayer?.assists}</TableCell>
                                   <TableCell align="right">{player.homePlayer?.damage}</TableCell>
                                   <TableCell align="right">{player.awayPlayer?.damage}</TableCell>
                                   <TableCell align="right">{player.awayPlayer?.kills}-{player.awayPlayer?.deaths}-{player.awayPlayer?.assists}</TableCell>
-                                  <TableCell align="right">{player.awayPlayer?.name}</TableCell>
+                                  <TableCell align="right">
+                                    {player.awayPlayer &&
+                                        <MatchDetailsModal
+                                            buttonText="More"
+                                            data={player.awayPlayer}
+                                        />
+                                    }
+                                    {player.awayPlayer?.name}
+                                  </TableCell>
                                 </TableRow>
                               ))}
                           </TableBody>

@@ -5,6 +5,7 @@ namespace ApacBreachersRanked.Domain.MatchData.Entities;
 public class WeaponData
 {
     public WeaponType Type { get; init; }
+    public string Name => Type.ToString();
     public int Kills { get; init; }
     public int HeadshotKills { get; init; }
     public int ShotsFired { get; init; }
