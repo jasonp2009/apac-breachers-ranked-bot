@@ -466,6 +466,7 @@ export interface IBreachersUser {
 
 export class GadgetData implements IGadgetData {
     type?: GadgetType;
+    readonly name?: string | null;
     used?: number;
     triggered?: number;
     enemyTriggered?: number;
@@ -487,6 +488,7 @@ export class GadgetData implements IGadgetData {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.used = _data["used"] !== undefined ? _data["used"] : <any>null;
             this.triggered = _data["triggered"] !== undefined ? _data["triggered"] : <any>null;
             this.enemyTriggered = _data["enemyTriggered"] !== undefined ? _data["enemyTriggered"] : <any>null;
@@ -508,6 +510,7 @@ export class GadgetData implements IGadgetData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         data["used"] = this.used !== undefined ? this.used : <any>null;
         data["triggered"] = this.triggered !== undefined ? this.triggered : <any>null;
         data["enemyTriggered"] = this.enemyTriggered !== undefined ? this.enemyTriggered : <any>null;
@@ -522,6 +525,7 @@ export class GadgetData implements IGadgetData {
 
 export interface IGadgetData {
     type?: GadgetType;
+    name?: string | null;
     used?: number;
     triggered?: number;
     enemyTriggered?: number;
@@ -682,6 +686,8 @@ export class GamePlayerData implements IGamePlayerData {
     readonly roundMvps?: number;
     mvp?: boolean;
     readonly aces?: number;
+    readonly weapons?: WeaponData[] | null;
+    readonly gadgets?: GadgetData[] | null;
     rounds?: GamePlayerRoundData[] | null;
 
     constructor(data?: IGamePlayerData) {
@@ -708,6 +714,22 @@ export class GamePlayerData implements IGamePlayerData {
             (<any>this).roundMvps = _data["roundMvps"] !== undefined ? _data["roundMvps"] : <any>null;
             this.mvp = _data["mvp"] !== undefined ? _data["mvp"] : <any>null;
             (<any>this).aces = _data["aces"] !== undefined ? _data["aces"] : <any>null;
+            if (Array.isArray(_data["weapons"])) {
+                (<any>this).weapons = [] as any;
+                for (let item of _data["weapons"])
+                    (<any>this).weapons!.push(WeaponData.fromJS(item));
+            }
+            else {
+                (<any>this).weapons = <any>null;
+            }
+            if (Array.isArray(_data["gadgets"])) {
+                (<any>this).gadgets = [] as any;
+                for (let item of _data["gadgets"])
+                    (<any>this).gadgets!.push(GadgetData.fromJS(item));
+            }
+            else {
+                (<any>this).gadgets = <any>null;
+            }
             if (Array.isArray(_data["rounds"])) {
                 this.rounds = [] as any;
                 for (let item of _data["rounds"])
@@ -741,6 +763,16 @@ export class GamePlayerData implements IGamePlayerData {
         data["roundMvps"] = this.roundMvps !== undefined ? this.roundMvps : <any>null;
         data["mvp"] = this.mvp !== undefined ? this.mvp : <any>null;
         data["aces"] = this.aces !== undefined ? this.aces : <any>null;
+        if (Array.isArray(this.weapons)) {
+            data["weapons"] = [];
+            for (let item of this.weapons)
+                data["weapons"].push(item.toJSON());
+        }
+        if (Array.isArray(this.gadgets)) {
+            data["gadgets"] = [];
+            for (let item of this.gadgets)
+                data["gadgets"].push(item.toJSON());
+        }
         if (Array.isArray(this.rounds)) {
             data["rounds"] = [];
             for (let item of this.rounds)
@@ -764,6 +796,8 @@ export interface IGamePlayerData {
     roundMvps?: number;
     mvp?: boolean;
     aces?: number;
+    weapons?: WeaponData[] | null;
+    gadgets?: GadgetData[] | null;
     rounds?: GamePlayerRoundData[] | null;
 }
 
@@ -1106,6 +1140,7 @@ export class MapScore implements IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
+    readonly mapName?: string | null;
 
     constructor(data?: IMapScore) {
         if (data) {
@@ -1122,6 +1157,7 @@ export class MapScore implements IMapScore {
             this.away = _data["away"] !== undefined ? _data["away"] : <any>null;
             this.outcome = _data["outcome"] !== undefined ? _data["outcome"] : <any>null;
             this.map = _data["map"] !== undefined ? _data["map"] : <any>null;
+            (<any>this).mapName = _data["mapName"] !== undefined ? _data["mapName"] : <any>null;
         }
     }
 
@@ -1138,6 +1174,7 @@ export class MapScore implements IMapScore {
         data["away"] = this.away !== undefined ? this.away : <any>null;
         data["outcome"] = this.outcome !== undefined ? this.outcome : <any>null;
         data["map"] = this.map !== undefined ? this.map : <any>null;
+        data["mapName"] = this.mapName !== undefined ? this.mapName : <any>null;
         return data;
     }
 }
@@ -1147,6 +1184,7 @@ export interface IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
+    mapName?: string | null;
 }
 
 export class MatchDataDto implements IMatchDataDto {
@@ -1496,6 +1534,7 @@ export enum ScoreOutcome {
 
 export class WeaponData implements IWeaponData {
     type?: WeaponType;
+    readonly name?: string | null;
     kills?: number;
     headshotKills?: number;
     shotsFired?: number;
@@ -1516,6 +1555,7 @@ export class WeaponData implements IWeaponData {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.kills = _data["kills"] !== undefined ? _data["kills"] : <any>null;
             this.headshotKills = _data["headshotKills"] !== undefined ? _data["headshotKills"] : <any>null;
             this.shotsFired = _data["shotsFired"] !== undefined ? _data["shotsFired"] : <any>null;
@@ -1536,6 +1576,7 @@ export class WeaponData implements IWeaponData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         data["kills"] = this.kills !== undefined ? this.kills : <any>null;
         data["headshotKills"] = this.headshotKills !== undefined ? this.headshotKills : <any>null;
         data["shotsFired"] = this.shotsFired !== undefined ? this.shotsFired : <any>null;
@@ -1549,6 +1590,7 @@ export class WeaponData implements IWeaponData {
 
 export interface IWeaponData {
     type?: WeaponType;
+    name?: string | null;
     kills?: number;
     headshotKills?: number;
     shotsFired?: number;

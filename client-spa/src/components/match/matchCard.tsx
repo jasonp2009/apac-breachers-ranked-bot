@@ -1,5 +1,6 @@
-﻿import {
-  Card,
+import {
+  Button,
+  Card, CardActions,
   CardContent,
   Paper,
   Table,
@@ -19,9 +20,10 @@ class MatchPlayerRow {
 
 export function MatchCard(props: {
   sx: any,
-  match: MatchDto
+  match: MatchDto,
+  onClick?: (matchId: string) => void
 }) {
-  const { match } = props;
+  const { match, onClick } = props;
   let playerRows: MatchPlayerRow[] = [];
   for(let i = 0; i < Math.max(match.homePlayers?.length ?? 0, match.awayPlayers?.length ?? 0); i++) {
     const item = new MatchPlayerRow();
@@ -39,9 +41,16 @@ export function MatchCard(props: {
         <Typography sx={{ textAlign: 'center' }} variant="h5" component="div">
           Match #{match.matchNumber}
         </Typography>
-        <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-          {match.score?.roundScore?.home} - {match.score?.roundScore?.away}
-        </Typography>
+        {match.score?.maps?.map(map => (
+          <div>
+            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
+              {map.mapName}
+            </Typography>
+            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
+              {map.home} - {map.away}
+            </Typography>
+          </div>
+        ))}
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead>
@@ -63,6 +72,18 @@ export function MatchCard(props: {
             </TableBody>
           </Table>
         </TableContainer>
+        { onClick && (
+          <CardActions
+            sx={{
+              justifyContent: "flex-end",
+              paddingTop: '15px',
+              paddingBottom: 0
+            }}
+          >
+            <Button
+              size="small" onClick={() => match.id && onClick(match.id)}>More</Button>
+          </CardActions>
+        )}
       </CardContent>
     </Card>
   )

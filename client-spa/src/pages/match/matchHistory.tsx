@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { useAbrApiClient } from "../../api/useAbrApiClient";
 import { MatchDto } from "../../api/generated/abrApiClient";
 import ListItem from "@mui/material/ListItem";
-import { MatchCard } from "../../components/matchHistory";
+import { MatchCard } from '../../components';
 import List from "@mui/material/List";
 import { useLogin } from "../../hooks";
+import {Route, useNavigate} from "react-router-dom";
+import { RouteConstants } from "../../constants";
 
 export function MatchHistory() {
   const [ myHistoryToggle, setMyHistoryToggle ] = useState<boolean>(false);
   const [ matches, setMatches ] = useState<MatchDto[]>();
   const { isLoggedIn } = useLogin();
+  const navigate = useNavigate();
 
   const abrApi = useAbrApiClient();
 
@@ -30,6 +33,10 @@ export function MatchHistory() {
   
   useEffect(loadMatchData, [myHistoryToggle]);
   
+  const viewMatchDetails = (matchId: string) => {
+    navigate(`/${RouteConstants.MatchDetails}/${matchId}`);
+  }
+  
   return (
     <Box maxWidth={600}>
       {isLoggedIn && (
@@ -42,7 +49,7 @@ export function MatchHistory() {
       <List sx={{display: 'flex', flexWrap: 'wrap'}}>
         {matches && matches.map(match => 
           <ListItem sx={{padding: '10px 0px'}}>
-            <MatchCard sx={{flexGrow: 1, flexBasis: 320}} match={match}/>
+            <MatchCard sx={{flexGrow: 1, flexBasis: 320}} match={match} onClick={viewMatchDetails}/>
           </ListItem>
         )}
       </List>
