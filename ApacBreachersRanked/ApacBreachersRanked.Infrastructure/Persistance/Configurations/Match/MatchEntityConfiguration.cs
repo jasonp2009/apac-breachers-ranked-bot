@@ -24,6 +24,7 @@ public class MatchEntityConfiguration : IEntityTypeConfiguration<MatchEntity>
             score.OwnsMany(p => p.Maps, map =>
             {
                 map.Ignore(p => p.Outcome);
+                map.Ignore(p => p.MapName);
             });
             score.Ignore(p => p.RoundScore);
             score.Ignore(p => p.MapScore);

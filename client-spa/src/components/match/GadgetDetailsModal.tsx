@@ -2,12 +2,12 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
-import { WeaponData} from "../../api/generated/abrApiClient";
+import { GadgetData } from "../../api/generated/abrApiClient";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import {Select, SelectChangeEvent} from '@mui/material';
+import { Select, SelectChangeEvent } from '@mui/material';
 import MenuItem from "@mui/material/MenuItem";
-import { weaponSortFn } from "../../functions";
+import { gadgetSortFn } from "../../functions";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -22,13 +22,13 @@ const style = {
   px: 4,
   pb: 3,
 };
-export function WeaponDetailsModal(props: {
+export function GadgetDetailsModal(props: {
   buttonText: string,
-  data: WeaponData[]
+  data: GadgetData[]
 }) {
   const [open, setOpen] = React.useState(false);
-  const [selectedWeapon, setSelectedWeapon] = React.useState<WeaponData | undefined>(
-    props.data.sort(weaponSortFn)[0]);
+  const [selectedGadget, setSelectedGadget] = React.useState<GadgetData | undefined>(
+    props.data.sort(gadgetSortFn)[0]);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -37,8 +37,8 @@ export function WeaponDetailsModal(props: {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    var weaponName = event.target.value as string;
-    setSelectedWeapon(props.data.find(weapon => weapon.name === weaponName));
+    var gadgetName = event.target.value as string;
+    setSelectedGadget(props.data.find(gadget => gadget.name === gadgetName));
   };
 
   return (
@@ -55,26 +55,27 @@ export function WeaponDetailsModal(props: {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={selectedWeapon?.name ?? ''}
+              value={selectedGadget?.name ?? ''}
               label="Age"
               onChange={handleChange}
             >
-              {props.data.sort(weaponSortFn).map(weapon =>
-                weapon.name && (
-                  <MenuItem value={weapon.name}>{weapon.name}</MenuItem>
+              {props.data.sort(gadgetSortFn).map(gadget =>
+                gadget.name && (
+                  <MenuItem value={gadget.name}>{gadget.name}</MenuItem>
                 )
               )};
             </Select>
-            { selectedWeapon && (
+            { selectedGadget && (
               <Card sx={{ minWidth: 275 }}>
                 <CardContent>
-                  <p>Kills: {selectedWeapon.kills}</p>
-                  <p>Headshot kills: {selectedWeapon.headshotKills}</p>
-                  <p>Damage: {selectedWeapon.damage}</p>
-                  <p>Friendly damage: {selectedWeapon.friendlyDamage}</p>
-                  <p>Shots fired: {selectedWeapon.shotsFired}</p>
-                  <p>Hits: {selectedWeapon.hits}</p>
-                  <p>Headshots: {selectedWeapon.headshots}</p>
+                  <p>Kills: {selectedGadget.kills}</p>
+                  <p>Damage: {selectedGadget.damage}</p>
+                  <p>Friendly damage: {selectedGadget.friendlyDamage}</p>
+                  <p>Used: {selectedGadget.used}</p>
+                  <p>Triggered: {selectedGadget.triggered}</p>
+                  <p>Enemy triggered: {selectedGadget.enemyTriggered}</p>
+                  <p>Destroyed: {selectedGadget.destroyed}</p>
+                  <p>Healed: {selectedGadget.healed}</p>
                 </CardContent>
               </Card>
             )}

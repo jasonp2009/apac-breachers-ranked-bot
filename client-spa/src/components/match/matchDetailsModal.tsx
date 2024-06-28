@@ -1,9 +1,11 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
-import {GamePlayerData} from "../../api/generated/abrApiClient";
-import {WeaponDetailsModal} from "./WeaponDetailsModal";
+import { GamePlayerData } from "../../api/generated/abrApiClient";
+import { WeaponDetailsModal } from "./WeaponDetailsModal";
+import { GadgetDetailsModal } from "./GadgetDetailsModal";
+import { weaponSortFn, gadgetSortFn } from "../../functions";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -30,8 +32,8 @@ export function MatchDetailsModal(props: {
     setOpen(false);
   };
   
-  const favouriteWeapon = props.data.weapons?.sort(weapon => weapon.damage ?? 0)[0].name;
-  const favouriteGadget = props.data.gadgets?.sort(gadget => gadget.used ?? 0)[0].name;
+  const favouriteWeapon = props.data.weapons?.sort(weaponSortFn)[0].name;
+  const favouriteGadget = props.data.gadgets?.sort(gadgetSortFn)[0].name;
 
   return (
     <React.Fragment>
@@ -60,7 +62,15 @@ export function MatchDetailsModal(props: {
                 data={props.data.weapons}
             />
           }
-          <Button onClick={handleClose}>Close</Button>
+          { props.data.gadgets &&
+              <GadgetDetailsModal
+                  buttonText="Gadgets"
+                  data={props.data.gadgets}
+              />
+          }
+          <Button
+            sx={{float: 'right'}}
+            onClick={handleClose}>Close</Button>
         </Box>
       </Modal>
     </React.Fragment>

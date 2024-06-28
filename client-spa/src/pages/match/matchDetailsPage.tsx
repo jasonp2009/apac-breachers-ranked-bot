@@ -1,9 +1,13 @@
-﻿import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { MatchDetails } from "../../components";
+import Box from "@mui/material/Box";
 
 export function MatchDetailsPage() {
   const params = useParams();
   return (
-    <MatchDetails matchId={params.id} />
+    <Box maxWidth={600}>
+      <MatchDetails
+        matchId={params.id} />
+    </Box>
   )
 }

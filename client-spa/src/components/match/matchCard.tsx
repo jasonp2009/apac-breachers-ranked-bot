@@ -1,4 +1,4 @@
-﻿import {
+import {
   Button,
   Card, CardActions,
   CardContent,
@@ -41,9 +41,16 @@ export function MatchCard(props: {
         <Typography sx={{ textAlign: 'center' }} variant="h5" component="div">
           Match #{match.matchNumber}
         </Typography>
-        <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-          {match.score?.roundScore?.home} - {match.score?.roundScore?.away}
-        </Typography>
+        {match.score?.maps?.map(map => (
+          <div>
+            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
+              {map.mapName}
+            </Typography>
+            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
+              {map.home} - {map.away}
+            </Typography>
+          </div>
+        ))}
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead>

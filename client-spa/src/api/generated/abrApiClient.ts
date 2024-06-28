@@ -1140,6 +1140,7 @@ export class MapScore implements IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
+    readonly mapName?: string | null;
 
     constructor(data?: IMapScore) {
         if (data) {
@@ -1156,6 +1157,7 @@ export class MapScore implements IMapScore {
             this.away = _data["away"] !== undefined ? _data["away"] : <any>null;
             this.outcome = _data["outcome"] !== undefined ? _data["outcome"] : <any>null;
             this.map = _data["map"] !== undefined ? _data["map"] : <any>null;
+            (<any>this).mapName = _data["mapName"] !== undefined ? _data["mapName"] : <any>null;
         }
     }
 
@@ -1172,6 +1174,7 @@ export class MapScore implements IMapScore {
         data["away"] = this.away !== undefined ? this.away : <any>null;
         data["outcome"] = this.outcome !== undefined ? this.outcome : <any>null;
         data["map"] = this.map !== undefined ? this.map : <any>null;
+        data["mapName"] = this.mapName !== undefined ? this.mapName : <any>null;
         return data;
     }
 }
@@ -1181,6 +1184,7 @@ export interface IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
+    mapName?: string | null;
 }
 
 export class MatchDataDto implements IMatchDataDto {
