@@ -18,15 +18,13 @@ namespace ApacBreachersRanked.Application.Common.Mediator
             var requestName = request.GetType().Name;
             var requestGuid = Guid.NewGuid().ToString();
 
-            var requestNameWithGuid = $"{requestName} [{requestGuid}]";
-
             var timer = new Stopwatch();
             timer.Start();
 
-            using (var logScope = _logger.BeginScope(requestNameWithGuid))
+            using (var logScope = _logger.BeginScope("{RequestName} [{RequestGuid}]", requestName, requestGuid))
             {
-                _logger.LogInformation("[START] {RequestNameWithGuid}",
-                    requestNameWithGuid);
+                _logger.LogInformation("[START] {RequestName} [{RequestGuid}]",
+                    requestName, requestGuid);
                 TResponse response;
 
                 try
@@ -42,8 +40,9 @@ namespace ApacBreachersRanked.Application.Common.Mediator
                 {
                     timer.Stop();
                     _logger.LogInformation(
-                        "[END] {RequestNameWithGuid} RequestTime: {RequestTime}",
-                        requestNameWithGuid,
+                        "[END] {RequestName} [{RequestGuid}] RequestTime: {RequestTime}",
+                        requestName,
+                        requestGuid,
                         timer.ElapsedMilliseconds);
                 }
                 return response;

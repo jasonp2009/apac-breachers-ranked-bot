@@ -75,6 +75,7 @@ namespace Example.Services
                             await interaction.RespondAsync(result.ErrorReason, ephemeral: true);
                         }
                     }
+                    userContextService.Dispose();
                 }
                 catch
                 {

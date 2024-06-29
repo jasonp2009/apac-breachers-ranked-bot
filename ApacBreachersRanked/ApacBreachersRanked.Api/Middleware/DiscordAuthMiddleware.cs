@@ -18,11 +18,11 @@ public class DiscordAuthMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        var userContextService = context.RequestServices.GetRequiredService<DiscordUserContextService>();
         if (context.Request.Headers.TryGetValue(HeaderNames.Authorization, out StringValues token))
         {
             await using var client = new DiscordRestClient();
             await client.LoginAsync(TokenType.Bearer, token.ToString().Split(' ').LastOrDefault());
-            var userContextService = context.RequestServices.GetRequiredService<DiscordUserContextService>();
             userContextService.SetUserContext(client.CurrentUser);
         }
         else
@@ -35,5 +35,6 @@ public class DiscordAuthMiddleware
 
         // Call the next delegate/middleware in the pipeline.
         await _next(context);
+        userContextService.Dispose();
     }
 }
