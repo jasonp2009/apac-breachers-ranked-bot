@@ -466,7 +466,6 @@ export interface IBreachersUser {
 
 export class GadgetData implements IGadgetData {
     type?: GadgetType;
-    readonly name?: string | null;
     used?: number;
     triggered?: number;
     enemyTriggered?: number;
@@ -488,7 +487,6 @@ export class GadgetData implements IGadgetData {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
-            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.used = _data["used"] !== undefined ? _data["used"] : <any>null;
             this.triggered = _data["triggered"] !== undefined ? _data["triggered"] : <any>null;
             this.enemyTriggered = _data["enemyTriggered"] !== undefined ? _data["enemyTriggered"] : <any>null;
@@ -510,7 +508,6 @@ export class GadgetData implements IGadgetData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
-        data["name"] = this.name !== undefined ? this.name : <any>null;
         data["used"] = this.used !== undefined ? this.used : <any>null;
         data["triggered"] = this.triggered !== undefined ? this.triggered : <any>null;
         data["enemyTriggered"] = this.enemyTriggered !== undefined ? this.enemyTriggered : <any>null;
@@ -525,7 +522,6 @@ export class GadgetData implements IGadgetData {
 
 export interface IGadgetData {
     type?: GadgetType;
-    name?: string | null;
     used?: number;
     triggered?: number;
     enemyTriggered?: number;
@@ -537,20 +533,20 @@ export interface IGadgetData {
 }
 
 export enum GadgetType {
-    _10 = 10,
-    _11 = 11,
-    _12 = 12,
-    _13 = 13,
-    _20 = 20,
-    _21 = 21,
-    _22 = 22,
-    _23 = 23,
-    _30 = 30,
-    _31 = 31,
-    _32 = 32,
-    _33 = 33,
-    _40 = 40,
-    _50 = 50,
+    FragGrenade = "FragGrenade",
+    SmokeGrenade = "SmokeGrenade",
+    IncendiaryGrenade = "IncendiaryGrenade",
+    HealSyringe = "HealSyringe",
+    BreachingFoam = "BreachingFoam",
+    Flashbang = "Flashbang",
+    CloakingDevice = "CloakingDevice",
+    Drone = "Drone",
+    Tripwire = "Tripwire",
+    StaticFieldEmitter = "StaticFieldEmitter",
+    ProximitySensor = "ProximitySensor",
+    DoorBlocker = "DoorBlocker",
+    Emp = "Emp",
+    BreachingFoamForAllTeams = "BreachingFoamForAllTeams",
 }
 
 export class GameDataEntity implements IGameDataEntity {
@@ -1125,14 +1121,14 @@ export interface IIUserId {
 }
 
 export enum Map {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-    _101 = 101,
-    _102 = 102,
+    Factory = "Factory",
+    Skyscraper = "Skyscraper",
+    Hideout = "Hideout",
+    Ship = "Ship",
+    Arctic = "Arctic",
+    Dam = "Dam",
+    Killhouse = "Killhouse",
+    Outpost = "Outpost",
 }
 
 export class MapScore implements IMapScore {
@@ -1140,7 +1136,6 @@ export class MapScore implements IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
-    readonly mapName?: string | null;
 
     constructor(data?: IMapScore) {
         if (data) {
@@ -1157,7 +1152,6 @@ export class MapScore implements IMapScore {
             this.away = _data["away"] !== undefined ? _data["away"] : <any>null;
             this.outcome = _data["outcome"] !== undefined ? _data["outcome"] : <any>null;
             this.map = _data["map"] !== undefined ? _data["map"] : <any>null;
-            (<any>this).mapName = _data["mapName"] !== undefined ? _data["mapName"] : <any>null;
         }
     }
 
@@ -1174,7 +1168,6 @@ export class MapScore implements IMapScore {
         data["away"] = this.away !== undefined ? this.away : <any>null;
         data["outcome"] = this.outcome !== undefined ? this.outcome : <any>null;
         data["map"] = this.map !== undefined ? this.map : <any>null;
-        data["mapName"] = this.mapName !== undefined ? this.mapName : <any>null;
         return data;
     }
 }
@@ -1184,7 +1177,6 @@ export interface IMapScore {
     away?: number;
     outcome?: ScoreOutcome;
     map?: Map;
-    mapName?: string | null;
 }
 
 export class MatchDataDto implements IMatchDataDto {
@@ -1463,23 +1455,23 @@ export interface IMatchScore {
 }
 
 export enum MatchSide {
-    _0 = 0,
-    _1 = 1,
+    Home = "Home",
+    Away = "Away",
 }
 
 export enum MatchStatus {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    PendingConfirmation = "PendingConfirmation",
+    Confirmed = "Confirmed",
+    Completed = "Completed",
+    Cancelled = "Cancelled",
 }
 
 export enum Rank {
-    _880 = 880,
-    _940 = 940,
-    _1000 = 1000,
-    _1060 = 1060,
-    _1120 = 1120,
+    Copper = "Copper",
+    Bronze = "Bronze",
+    Silver = "Silver",
+    Gold = "Gold",
+    Diamond = "Diamond",
 }
 
 export class Score implements IScore {
@@ -1527,14 +1519,13 @@ export interface IScore {
 }
 
 export enum ScoreOutcome {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    Home = "Home",
+    Away = "Away",
+    Draw = "Draw",
 }
 
 export class WeaponData implements IWeaponData {
     type?: WeaponType;
-    readonly name?: string | null;
     kills?: number;
     headshotKills?: number;
     shotsFired?: number;
@@ -1555,7 +1546,6 @@ export class WeaponData implements IWeaponData {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
-            (<any>this).name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.kills = _data["kills"] !== undefined ? _data["kills"] : <any>null;
             this.headshotKills = _data["headshotKills"] !== undefined ? _data["headshotKills"] : <any>null;
             this.shotsFired = _data["shotsFired"] !== undefined ? _data["shotsFired"] : <any>null;
@@ -1576,7 +1566,6 @@ export class WeaponData implements IWeaponData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
-        data["name"] = this.name !== undefined ? this.name : <any>null;
         data["kills"] = this.kills !== undefined ? this.kills : <any>null;
         data["headshotKills"] = this.headshotKills !== undefined ? this.headshotKills : <any>null;
         data["shotsFired"] = this.shotsFired !== undefined ? this.shotsFired : <any>null;
@@ -1590,7 +1579,6 @@ export class WeaponData implements IWeaponData {
 
 export interface IWeaponData {
     type?: WeaponType;
-    name?: string | null;
     kills?: number;
     headshotKills?: number;
     shotsFired?: number;
@@ -1601,19 +1589,19 @@ export interface IWeaponData {
 }
 
 export enum WeaponType {
-    _10 = 10,
-    _11 = 11,
-    _12 = 12,
-    _13 = 13,
-    _20 = 20,
-    _21 = 21,
-    _22 = 22,
-    _30 = 30,
-    _31 = 31,
-    _32 = 32,
-    _33 = 33,
-    _40 = 40,
-    _41 = 41,
+    Jesper = "Jesper",
+    Spectral = "Spectral",
+    Cyclone = "Cyclone",
+    Taurus = "Taurus",
+    Omen = "Omen",
+    Viper = "Viper",
+    RCP = "RCP",
+    Cadillo = "Cadillo",
+    Auril = "Auril",
+    Vezin = "Vezin",
+    Marui = "Marui",
+    Canutt = "Canutt",
+    Urakan = "Urakan",
 }
 
 export class ApiException extends Error {

@@ -5,7 +5,6 @@ namespace ApacBreachersRanked.Domain.Match.Entities
     public class MapScore : Score
     {
         public Map Map { get; private set; }
-        public string MapName => Map.ToString();
         public MapScore(Map map, int home, int away)
             : base(home, away)
         {

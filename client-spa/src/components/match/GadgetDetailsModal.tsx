@@ -37,8 +37,8 @@ export function GadgetDetailsModal(props: {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    var gadgetName = event.target.value as string;
-    setSelectedGadget(props.data.find(gadget => gadget.name === gadgetName));
+    var gadgetType = event.target.value as string;
+    setSelectedGadget(props.data.find(gadget => gadget.type === gadgetType));
   };
 
   return (
@@ -55,13 +55,13 @@ export function GadgetDetailsModal(props: {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={selectedGadget?.name ?? ''}
+              value={selectedGadget?.type ?? ''}
               label="Age"
               onChange={handleChange}
             >
               {props.data.sort(gadgetSortFn).map(gadget =>
-                gadget.name && (
-                  <MenuItem value={gadget.name}>{gadget.name}</MenuItem>
+                gadget.type && (
+                  <MenuItem value={gadget.type}>{gadget.type}</MenuItem>
                 )
               )};
             </Select>

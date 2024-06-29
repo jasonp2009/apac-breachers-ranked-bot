@@ -5,7 +5,6 @@ namespace ApacBreachersRanked.Domain.MatchData.Entities;
 public class GadgetData
 {
     public GadgetType Type { get; init; }
-    public string Name => Type.ToString();
     public int Used { get; init; }
     public int Triggered { get; init; }
     public int EnemyTriggered { get; init; }

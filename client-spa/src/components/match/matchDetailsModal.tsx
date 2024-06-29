@@ -32,8 +32,8 @@ export function MatchDetailsModal(props: {
     setOpen(false);
   };
   
-  const favouriteWeapon = props.data.weapons?.sort(weaponSortFn)[0].name;
-  const favouriteGadget = props.data.gadgets?.sort(gadgetSortFn)[0].name;
+  const favouriteWeapon = props.data.weapons?.sort(weaponSortFn)[0].type;
+  const favouriteGadget = props.data.gadgets?.sort(gadgetSortFn)[0].type;
 
   return (
     <React.Fragment>

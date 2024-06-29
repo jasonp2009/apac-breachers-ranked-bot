@@ -77,7 +77,7 @@ export function MatchDetails(props: {
             {match?.score?.maps?.map(map => (
               <div>
                 <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-                  {map.mapName}
+                  {map.map}
                 </Typography>
                 <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
                   {map.home} - {map.away}

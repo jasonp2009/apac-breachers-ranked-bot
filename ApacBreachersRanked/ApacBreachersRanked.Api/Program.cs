@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ApacBreachersRanked;
 using ApacBreachersRanked.Api.Middleware;
 using ApacBreachersRanked.Application;
@@ -9,7 +10,10 @@ using Serilog.Formatting.Compact;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {

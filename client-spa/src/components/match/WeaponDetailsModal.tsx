@@ -37,8 +37,8 @@ export function WeaponDetailsModal(props: {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    var weaponName = event.target.value as string;
-    setSelectedWeapon(props.data.find(weapon => weapon.name === weaponName));
+    var weaponType = event.target.value as string;
+    setSelectedWeapon(props.data.find(weapon => weapon.type === weaponType));
   };
 
   return (
@@ -55,13 +55,13 @@ export function WeaponDetailsModal(props: {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={selectedWeapon?.name ?? ''}
+              value={selectedWeapon?.type ?? ''}
               label="Age"
               onChange={handleChange}
             >
               {props.data.sort(weaponSortFn).map(weapon =>
-                weapon.name && (
-                  <MenuItem value={weapon.name}>{weapon.name}</MenuItem>
+                weapon.type && (
+                  <MenuItem value={weapon.type}>{weapon.type}</MenuItem>
                 )
               )};
             </Select>
