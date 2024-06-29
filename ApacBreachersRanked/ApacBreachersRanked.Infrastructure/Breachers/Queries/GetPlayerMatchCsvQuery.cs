@@ -40,6 +40,7 @@ public class GetPlayerMatchCsvHandler : IQueryHandler<GetPlayerMatchCsvQuery, st
             playerCsv += $"{player.Id},";
             playerCsv += $"{player.ClanTag},";
             playerCsv += $"{player.UserName},";
+            playerCsv += $"{player.Rounds.Count(round => round.Team == round.TeamWon)},";
             playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalKills) + round.Gadgets.Sum(gadget => gadget.Kills))},";
             playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.HeadshotKills))},";
             playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalKills))},";
@@ -63,6 +64,7 @@ public class GetPlayerMatchCsvHandler : IQueryHandler<GetPlayerMatchCsvQuery, st
         headings += "UserId,";
         headings += "ClanTag,";
         headings += "UserName,";
+        headings += "RoundsWon,";
         headings += "Kills,";
         headings += "HeadshotKills,";
         headings += "WeaponKills,";
