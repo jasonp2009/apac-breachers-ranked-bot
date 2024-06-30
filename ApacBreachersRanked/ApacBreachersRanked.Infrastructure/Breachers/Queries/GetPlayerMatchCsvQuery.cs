@@ -29,26 +29,9 @@ public class GetPlayerMatchCsvHandler : IQueryHandler<GetPlayerMatchCsvQuery, st
 
         GetMatchResponse match = matches[request.MatchNumber];
         string csv = GetHeadings();
-        foreach (var player in match.GameData.AllPlayers)
+        foreach (BreachersPlayer player in match.GameData.AllPlayers.OrderBy(player => player.Rounds.FirstOrDefault()?.Team))
         {
-            string playerCsv = "";
-            playerCsv += $"{match.Id},";
-            playerCsv += $"{match.TimeStampString},";
-            playerCsv += $"{match.GameData.Map.ToString()},";
-            playerCsv += $"{player.GameTime},";
-            playerCsv += $"{player.Result.ToString()},";
-            playerCsv += $"{player.Id},";
-            playerCsv += $"{player.ClanTag},";
-            playerCsv += $"{player.UserName},";
-            playerCsv += $"{player.Rounds.Count(round => round.Team == round.TeamWon)},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalKills) + round.Gadgets.Sum(gadget => gadget.Kills))},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.HeadshotKills))},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalKills))},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Gadgets.Sum(gadget => gadget.Kills))},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Deaths)},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Assists)},";
-            playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.DamageDone) + round.Gadgets.Sum(gadget => gadget.DamageDone))}\r\n";
-            csv += playerCsv;
+            csv += GetPlayerData(match, player);
         }
         return csv;
     }
@@ -57,21 +40,61 @@ public class GetPlayerMatchCsvHandler : IQueryHandler<GetPlayerMatchCsvQuery, st
     {
         string headings = "";
         headings += "GameId,";
-        headings += "TimeStamp,";
-        headings += "Map,";
-        headings += "GameTime,";
-        headings += "Result,";
         headings += "UserId,";
         headings += "ClanTag,";
         headings += "UserName,";
+        headings += "TimeStamp,";
+        headings += "Map,";
+        headings += "GameTime,";
+        headings += "RoundsPlayed,";
+        headings += "Result,";
+        headings += "Score,";
         headings += "RoundsWon,";
+        headings += "MVP,";
+        headings += "Round MVPs,";
         headings += "Kills,";
         headings += "HeadshotKills,";
         headings += "WeaponKills,";
         headings += "GadgetKills,";
         headings += "Deaths,";
         headings += "Assists,";
-        headings += "Damage\r\n";
+        headings += "Weapon Damage,";
+        headings += "Gadget Damage,";
+        headings += "Damage,";
+        headings += "Shots Fired,";
+        headings += "Hits,";
+        headings += "Headshot Hits\r\n";
         return headings;
+    }
+
+    private string GetPlayerData(GetMatchResponse match, BreachersPlayer player)
+    {
+        string playerCsv = "";
+        playerCsv += $"{match.Id},";
+        playerCsv += $"{player.Id},";
+        playerCsv += $"{player.ClanTag},";
+        playerCsv += $"{player.UserName},";
+        playerCsv += $"{match.TimeStampString},";
+        playerCsv += $"{match.GameData.Map.ToString()},";
+        playerCsv += $"{player.GameTime},";
+        playerCsv += $"{player.Rounds.Count()},";
+        playerCsv += $"{player.Result.ToString()},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Score)},";
+        playerCsv += $"{player.Rounds.Count(round => round.Team == round.TeamWon)},";
+        playerCsv += $"{player.Mvp},";
+        playerCsv += $"{player.Rounds.Count(round => round.Mvp)},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalKills) + round.Gadgets.Sum(gadget => gadget.Kills))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.HeadshotKills))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalKills))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Gadgets.Sum(gadget => gadget.Kills))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Deaths)},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Assists)},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.DamageDone))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Gadgets.Sum(gadget => gadget.DamageDone))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.DamageDone) + round.Gadgets.Sum(gadget => gadget.DamageDone))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.ShotsFired))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalShotsHit))},";
+        playerCsv += $"{player.Rounds.Sum(round => round.Weapons.Sum(weapon => weapon.TotalHeadshots))}\r\n";
+        return playerCsv;
     }
 }
