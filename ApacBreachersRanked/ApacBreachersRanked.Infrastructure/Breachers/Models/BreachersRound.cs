@@ -12,7 +12,6 @@ public class BreachersRound
     public bool Mvp { get; set; }
     public int RoundNumber { get; set; }
     public decimal RoundTime { get; set; }
-    public int Score { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public BreachersSide Team { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]

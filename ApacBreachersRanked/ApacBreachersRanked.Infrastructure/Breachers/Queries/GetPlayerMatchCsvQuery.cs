@@ -79,7 +79,7 @@ public class GetPlayerMatchCsvHandler : IQueryHandler<GetPlayerMatchCsvQuery, st
         playerCsv += $"{player.GameTime},";
         playerCsv += $"{player.Rounds.Count()},";
         playerCsv += $"{player.Result.ToString()},";
-        playerCsv += $"{player.Rounds.Sum(round => round.Score)},";
+        playerCsv += $"{player.Score},";
         playerCsv += $"{player.Rounds.Count(round => round.Team == round.TeamWon)},";
         playerCsv += $"{player.Mvp},";
         playerCsv += $"{player.Rounds.Count(round => round.Mvp)},";

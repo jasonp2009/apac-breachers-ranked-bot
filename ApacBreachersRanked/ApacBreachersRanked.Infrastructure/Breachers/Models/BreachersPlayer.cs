@@ -10,6 +10,7 @@ public class BreachersPlayer
     [JsonPropertyName("GameMatchDataResult")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public GameResult Result { get; set; }
+    public int Score { get; set; }
     public decimal GameTimeInSeconds { get; set; }
     public TimeSpan GameTime => TimeSpan.FromSeconds(Convert.ToDouble(GameTimeInSeconds));
     public bool Mvp { get; set; }
