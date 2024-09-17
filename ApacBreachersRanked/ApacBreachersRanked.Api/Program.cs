@@ -34,7 +34,6 @@ builder.Services.UseSqsPublisher(builder.Configuration);
 builder.Services.AddDiscordClient(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddMatchQueueListenderService();
 
 builder.Host.UseSerilog((a, cfg) =>
 {

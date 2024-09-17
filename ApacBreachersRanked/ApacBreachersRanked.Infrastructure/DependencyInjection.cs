@@ -33,10 +33,8 @@ namespace ApacBreachersRanked.Infrastructure
 
         public static IServiceCollection AddMatchQueueListenderService(this IServiceCollection services)
         {
-            services.AddSingleton<MatchQueueListenerService>();
-
-            services.AddHostedService(serviceProvider => serviceProvider.GetRequiredService<MatchQueueListenerService>());
-
+            services.AddHostedService<MatchQueueListenerService>();
+            
             return services;
         }
 
