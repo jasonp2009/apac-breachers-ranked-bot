@@ -1,4 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Common;
+using ApacBreachersRanked.Domain.Match.Constants;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using ApacBreachersRanked.Domain.User.Interfaces;
 
@@ -6,6 +8,7 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
 {
     public class ScheduledMatchQueueEntity : BaseEntity
     {
+        public MatchFormat MatchFormat { get; protected set; } = MatchConstants.DefaultMatchFormat;
         public bool IsOpen { get; protected set; } = true;
         public DateTime ScheduledForUtc { get; private set; }
         public IList<MatchQueueUser> Users { get; private set; } = new List<MatchQueueUser>();
@@ -15,8 +18,9 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
         
         }
 
-        public ScheduledMatchQueueEntity(DateTime scheduledForUtc)
+        public ScheduledMatchQueueEntity(DateTime scheduledForUtc, MatchFormat matchFormat)
         {
+            MatchFormat = matchFormat;
             ScheduledForUtc = scheduledForUtc;
             QueueDomainEvent(ScheduledMatchQueueEvent.FromScheduledMatchQueue(this));
         }

@@ -27,7 +27,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
 
             schedulesMatchQueue.CloseQueue();
 
-            var currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);
+            var currentQueue = await _mediator.Send(new GetCurrentQueueQuery { MatchFormat = schedulesMatchQueue.MatchFormat }, cancellationToken);
 
             foreach (var user in schedulesMatchQueue.Users)
             {

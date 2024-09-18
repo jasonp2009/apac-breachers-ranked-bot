@@ -5,6 +5,7 @@ using ApacBreachersRanked.Application.MatchVote.Models;
 using ApacBreachersRanked.Domain.Match.Enums;
 using Discord;
 using System.Text;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Constants;
 
 namespace ApacBreachersRanked.Application.MatchVote.Extensions
@@ -41,7 +42,7 @@ namespace ApacBreachersRanked.Application.MatchVote.Extensions
         public static MessageComponent GetMapVoteComponents(this MatchVoteModel matchVote)
         {
             ComponentBuilder cb = new();
-            foreach (Map map in MatchConstants.ValidMaps)
+            foreach (Map map in matchVote.Match.MatchFormat.GetMatchConstant(c => c.ValidMaps))
             {
                 cb.WithButton(map.ToString(), $"mapvote-{matchVote.Match.MatchNumber}-{map}");
             }

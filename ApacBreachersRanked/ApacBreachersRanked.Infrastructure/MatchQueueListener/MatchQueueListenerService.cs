@@ -1,6 +1,5 @@
 ﻿using ApacBreachersRanked.Application.Match.Commands;
-using ApacBreachersRanked.Domain.Match.Constants;
-using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Infrastructure.Persistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +11,12 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 {
     public class MatchQueueListenerService : BackgroundService
     {
-        private PeriodicTimer? _timer = null;
+        private PeriodicTimer _timer = null;
         private readonly IServiceProvider _services;
         private readonly ILogger<MatchQueueListenerService> _logger;
         private CancellationToken _stoppingToken;
 
-        private bool IsForceStartEnabled = false;
+        private bool _isForceStartEnabled = false;
 
         public MatchQueueListenerService(IServiceProvider services, ILogger<MatchQueueListenerService> logger)
         {
@@ -39,30 +38,31 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
         {
             using (IServiceScope scope = _services.CreateScope())
             {
-                ILogger<MatchQueueListenerService> logger = scope.ServiceProvider.GetRequiredService<ILogger<MatchQueueListenerService>>();
                 BreachersDbContext dbContext = scope.ServiceProvider.GetRequiredService<BreachersDbContext>();
                 IMediator mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
                 try
                 {
-                    MatchQueueEntity? currentQueue = await dbContext.MatchQueue.Where(x => x.IsOpen)
+                    var currentQueues = await dbContext.MatchQueue.Where(x => x.IsOpen)
                         .Include(x => x.Users)
-                        .FirstOrDefaultAsync(_stoppingToken);
-                    if (IsForceStartEnabled || (currentQueue?.Users.All(x => x.VoteToForce) ?? false))
+                        .ToListAsync(_stoppingToken);
+                    foreach (var currentQueue in currentQueues)
                     {
-                        if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MinCapacity))
+                        var matchConstants = currentQueue.MatchFormat.GetMatchFormatConstants();
+                        if (_isForceStartEnabled || (currentQueue.Users.All(x => x.VoteToForce)))
+                        {
+                            if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MinCapacity, cancellationToken: _stoppingToken))
+                            {
+                                await mediator.Send(new CreateMatchCommand(), _stoppingToken);
+                            }
+                            _isForceStartEnabled = false;
+                            return;
+                        }
+
+                        if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MaxCapacity, cancellationToken: _stoppingToken))
                         {
                             await mediator.Send(new CreateMatchCommand(), _stoppingToken);
                         }
-                        IsForceStartEnabled = false;
-                    } else
-                    {
-                        if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= MatchConstants.MaxCapacity))
-                        {
-                            await mediator.Send(new CreateMatchCommand(), _stoppingToken);
-                        }
-                    } 
-                    
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -73,7 +73,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 
         public void ForceStart()
         {
-            IsForceStartEnabled = true;
+            _isForceStartEnabled = true;
         }
     }
 }

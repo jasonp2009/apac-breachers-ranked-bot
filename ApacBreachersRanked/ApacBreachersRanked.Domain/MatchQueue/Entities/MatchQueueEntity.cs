@@ -1,6 +1,8 @@
 ﻿using ApacBreachersRanked.Domain.Common;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Constants;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using ApacBreachersRanked.Domain.User.Interfaces;
 
@@ -8,13 +10,23 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
 {
     public class MatchQueueEntity : BaseEntity
     {
+        public MatchFormat MatchFormat { get; protected set; } = MatchConstants.DefaultMatchFormat;
         public bool IsOpen { get; protected set; } = true;
         public IList<MatchQueueUser> Users { get; private set; } = new List<MatchQueueUser>();
         public MatchEntity? Match { get; private set; }
 
-        public static MatchQueueEntity CreateNewQueueFromUsers(IEnumerable<MatchQueueUser> users)
+        private MatchQueueEntity() {}
+
+        public MatchQueueEntity(MatchFormat matchFormat)
         {
-            MatchQueueEntity newQueue = new();
+            MatchFormat = matchFormat;
+        }
+        public static MatchQueueEntity CreateNewQueueFromUsers(IEnumerable<MatchQueueUser> users, MatchFormat matchFormat = MatchConstants.DefaultMatchFormat)
+        {
+            MatchQueueEntity newQueue = new()
+            {
+                MatchFormat = matchFormat
+            };
             foreach(MatchQueueUser user in users)
             {
                 newQueue.Users.Add(new MatchQueueUser(user, user.ExpiryUtc, user.JoinedAtUtc));
@@ -36,7 +48,7 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
             {
                 matchQueueUser = new(user, expiryUtc, joinedAtUtc);
                 Users.Add(matchQueueUser);
-                if (Users.Count >= MatchConstants.MaxCapacity)
+                if (Users.Count >= MatchFormat.GetMatchConstant(c => c.MaxCapacity))
                 {
                     QueueDomainEvent(new MatchQueueCapacityReachedEvent { MatchQueueId = Id });
                 }

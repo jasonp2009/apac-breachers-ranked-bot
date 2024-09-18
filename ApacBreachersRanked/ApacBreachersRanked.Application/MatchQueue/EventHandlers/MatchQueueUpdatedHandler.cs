@@ -3,6 +3,7 @@ using ApacBreachersRanked.Application.Common.Extensions;
 using ApacBreachersRanked.Application.Config;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Models;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
@@ -53,7 +54,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
                 return;
             }
             int inProgressMatches = await _dbContext.Matches
-                .Where(match => match.Status == MatchStatus.PendingConfirmation || match.Status == MatchStatus.Confirmed)
+                .Where(match => (match.Status == MatchStatus.PendingConfirmation || match.Status == MatchStatus.Confirmed) && match.MatchFormat == matchQueue.MatchFormat)
                 .CountAsync(cancellationToken);
             Task<MatchQueueMessage?> matchQueueMessageTask = _dbContext.MatchQueueMessages
                 .Where(x => x.MatchQueue.Id == matchQueue.Id)
@@ -64,8 +65,10 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
                 matchQueueMessageTask,
                 readyUpChannelTask);
 
-            Embed embed = GetEmbed(matchQueue.Users, inProgressMatches);
-            string pings = matchQueue.Users.Count >= 4 ? $"<@&{_breachersDiscordOptions.PingRoleId}>" : "";
+            Embed embed = GetEmbed(matchQueue, inProgressMatches);
+            string pings = matchQueue.Users.Count >= matchQueue.MatchFormat.GetMatchConstant(c => c.PingAtPlayers)
+                ? $"<@&{_breachersDiscordOptions.PingRoleId}>"
+                : "";
             MatchQueueMessage? matchQueueMessage = matchQueueMessageTask.Result;
             IMessageChannel readyUpChannel = readyUpChannelTask.Result as IMessageChannel;
 
@@ -91,8 +94,8 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             else
             {
                 ComponentBuilder cb = new();
-                cb.WithButton("Join 30", "join-queue-30", style: ButtonStyle.Success);
-                cb.WithButton("Join 60", "join-queue-60", style: ButtonStyle.Success);
+                cb.WithButton("Join 30", $"join-queue-30-{matchQueue.MatchFormat}", style: ButtonStyle.Success);
+                cb.WithButton("Join 60", $"join-queue-60-{matchQueue.MatchFormat}", style: ButtonStyle.Success);
                 cb.WithButton("Leave", "leave-queue", style: ButtonStyle.Danger);
                 cb.WithButton("Force", "vote-force-match", style: ButtonStyle.Primary);
 
@@ -107,13 +110,14 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             }
         }
 
-        private Embed GetEmbed(IList<MatchQueueUser> users, int inProgressMatches)
+        private Embed GetEmbed(MatchQueueEntity matchQueue, int inProgressMatches)
         {
+            var users = matchQueue.Users;
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.WithTitle("APAC Breachers Ranked Queue");
+            embedBuilder.WithTitle($"APAC Breachers {matchQueue.MatchFormat.GetFriendlyName()} Queue");
             embedBuilder.WithDescription(string.Join(Environment.NewLine, users.Select(GetUserLine)));
             StringBuilder footerBuilder = new();
-            footerBuilder.AppendLine($"{users.Count}/10 players in queue");
+            footerBuilder.AppendLine($"{users.Count}/{matchQueue.MatchFormat.GetMatchConstant(c => c.MaxCapacity)} players in queue");
             if (inProgressMatches != 0)
             {
                 footerBuilder.AppendLine($"{inProgressMatches} match(s) in progress");

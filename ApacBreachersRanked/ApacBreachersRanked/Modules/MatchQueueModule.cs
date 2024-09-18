@@ -6,6 +6,7 @@ using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Application.MatchQueue.Exceptions;
 using ApacBreachersRanked.Application.Moderation.Exceptions;
 using ApacBreachersRanked.AutoCompleteHandlers;
+using ApacBreachersRanked.Domain.Match.Enums;
 using Discord.Interactions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -24,15 +25,16 @@ namespace ApacBreachersRanked.Modules
             _logger = logger;
         }
 
-        [ComponentInteraction("join-queue-*")]
-        public async Task JoinQueueAsync(int timeoutMins)
+        [ComponentInteraction("join-queue-*-*")]
+        public async Task JoinQueueAsync(int timeoutMins, MatchFormat matchFormat)
         {
             try
             {
                 JoinQueueCommand command = new JoinQueueCommand()
                 {
                     DiscordUserId = Context.User.Id,
-                    TimeoutMins = timeoutMins
+                    TimeoutMins = timeoutMins,
+                    MatchFormat = matchFormat
                 };
                 await _mediator.Send(command);
             }
