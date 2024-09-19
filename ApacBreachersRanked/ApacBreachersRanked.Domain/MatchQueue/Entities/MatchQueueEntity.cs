@@ -21,7 +21,7 @@ namespace ApacBreachersRanked.Domain.MatchQueue.Entities
         {
             MatchFormat = matchFormat;
         }
-        public static MatchQueueEntity CreateNewQueueFromUsers(IEnumerable<MatchQueueUser> users, MatchFormat matchFormat = MatchConstants.DefaultMatchFormat)
+        public static MatchQueueEntity CreateNewQueueFromUsers(IEnumerable<MatchQueueUser> users, MatchFormat matchFormat)
         {
             MatchQueueEntity newQueue = new()
             {

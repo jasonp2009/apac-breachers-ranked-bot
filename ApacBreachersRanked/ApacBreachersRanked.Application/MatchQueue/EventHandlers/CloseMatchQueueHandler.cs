@@ -65,7 +65,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
 
             List<MatchQueueUser> remainingUsers = matchQueue.Users.Where(matchQueueUser => !matchPlayerIds.Any(x => x.Equals(matchQueueUser.UserId))).ToList();
 
-            MatchQueueEntity newMatchQueue = MatchQueueEntity.CreateNewQueueFromUsers(remainingUsers);
+            MatchQueueEntity newMatchQueue = MatchQueueEntity.CreateNewQueueFromUsers(remainingUsers, matchQueue.MatchFormat);
 
             await _dbContext.MatchQueue.AddAsync(newMatchQueue);
         }

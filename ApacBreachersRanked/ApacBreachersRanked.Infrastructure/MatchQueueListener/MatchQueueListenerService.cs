@@ -52,7 +52,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                         {
                             if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MinCapacity, cancellationToken: _stoppingToken))
                             {
-                                await mediator.Send(new CreateMatchCommand { MatchFormat = currentQueue.MatchFormat}, _stoppingToken);
+                                await mediator.Send(new CreateMatchCommand { MatchFormat = currentQueue.MatchFormat }, _stoppingToken);
                             }
                             _isForceStartEnabled = false;
                             continue;
@@ -60,7 +60,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
 
                         if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MaxCapacity, cancellationToken: _stoppingToken))
                         {
-                            await mediator.Send(new CreateMatchCommand { MatchFormat = currentQueue.MatchFormat}, _stoppingToken);
+                            await mediator.Send(new CreateMatchCommand { MatchFormat = currentQueue.MatchFormat }, _stoppingToken);
                         }
                     }
                 }
