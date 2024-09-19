@@ -34,11 +34,11 @@ namespace ApacBreachersRanked.Domain.Match.Constants
                 MatchFormat.Ranked2V2,
                 new()
                 {
-                    FriendlyName = "Ranked 2v2",
-                    PingAtPlayers = 2,
-                    MaxCapacity = 4,
+                    FriendlyName = "Ranked 3v3",
+                    PingAtPlayers = 3,
+                    MaxCapacity = 6,
                     MinCapacity = 4,
-                    MaxTeamSize = 2,
+                    MaxTeamSize = 3,
                     MinTeamSize = 2,
                     AutoCancelMins = 3,
                     ValidMaps =

@@ -55,7 +55,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                                 await mediator.Send(new CreateMatchCommand(), _stoppingToken);
                             }
                             _isForceStartEnabled = false;
-                            return;
+                            continue;
                         }
 
                         if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MaxCapacity, cancellationToken: _stoppingToken))
