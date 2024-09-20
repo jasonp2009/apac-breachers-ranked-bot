@@ -97,7 +97,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
                 cb.WithButton("Join 30", $"join-queue-30-{matchQueue.MatchFormat}", style: ButtonStyle.Success);
                 cb.WithButton("Join 60", $"join-queue-60-{matchQueue.MatchFormat}", style: ButtonStyle.Success);
                 cb.WithButton("Leave", "leave-queue", style: ButtonStyle.Danger);
-                cb.WithButton("Force", "vote-force-match", style: ButtonStyle.Primary);
+                cb.WithButton("Force", $"vote-force-match-{matchQueue.MatchFormat}", style: ButtonStyle.Primary);
 
                 IUserMessage message = await readyUpChannel.SendMessageAsync(text: pings, embed: embed, components: cb.Build());
                 matchQueueMessage = new()

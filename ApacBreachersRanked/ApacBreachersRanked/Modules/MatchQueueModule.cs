@@ -74,12 +74,13 @@ namespace ApacBreachersRanked.Modules
             await DeferAsync();
         }
 
-        [ComponentInteraction("vote-force-match")]
-        public async Task VoteForceMatchAsync()
+        [ComponentInteraction("vote-force-match-*")]
+        public async Task VoteForceMatchAsync(MatchFormat matchFormat)
         {
             VoteToForceCommand command = new VoteToForceCommand()
             {
-                DiscordUserId = Context.User.Id
+                DiscordUserId = Context.User.Id,
+                MatchFormat = matchFormat
             };
             await _mediator.Send(command);
             await DeferAsync();
