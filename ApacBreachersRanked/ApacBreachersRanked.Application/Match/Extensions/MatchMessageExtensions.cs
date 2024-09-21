@@ -27,7 +27,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         public static Embed GenerateMatchWelcomeEmbed(this MatchEntity match)
         {
             EmbedBuilder eb = new();
-            eb.WithTitle("Welcome to the match");
+            eb.WithTitle($"Welcome to the {match.MatchFormat.GetFriendlyName()} match");
             eb.WithDescription($"The match will begin once all players have confirmed{Environment.NewLine}" +
                                $"The match will auto-cancel {match.AutoCancelDateUtc.ToDiscordRelativeEpoch()} if all players have not confirmed");
             eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, true);
@@ -45,7 +45,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         public static Embed GenerateMatchConfirmedEmbed(this MatchEntity match, MatchVoteModel matchVote)
         {
             EmbedBuilder eb = new();
-            eb.WithTitle("The match is confirmed");
+            eb.WithTitle($"The {match.MatchFormat.GetFriendlyName()} match is confirmed");
             StringBuilder sb = new();
             sb.AppendLine($"{match.HostPlayer?.Name} is host");
             sb.AppendLine($"PW: {RandomExtensions.RandomNumber(10, 99)}");
@@ -74,7 +74,7 @@ namespace ApacBreachersRanked.Application.Match.Extensions
         public static Embed GenerateMatchResultEmbed(this MatchEntity match, IQueryable<MMRAdjustment> mmrAdjustments)
         {
             EmbedBuilder eb = new();
-            eb.WithTitle($"Match #{match.MatchNumber}");
+            eb.WithTitle($"{match.MatchFormat.GetFriendlyName()} match #{match.MatchNumber}");
             eb.AddScoreFields(match.Score!);
             eb.AddTeamField($"Home ({match.HomeMMR.ToString("0")})", match.HomePlayers, withMMR: true, mmrAdjustments: mmrAdjustments);
             eb.AddTeamField($"Away ({match.AwayMMR.ToString("0")})", match.AwayPlayers, withMMR: true, mmrAdjustments: mmrAdjustments);
