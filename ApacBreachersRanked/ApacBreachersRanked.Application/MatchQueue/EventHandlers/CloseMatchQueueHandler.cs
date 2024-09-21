@@ -43,16 +43,13 @@ namespace ApacBreachersRanked.Application.MatchQueue.Events
                 .Where(x => x.Id == notification.MatchQueueId)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (matchQueue == null) return;
-
-            if (matchQueue.Match != null)
-            {
-                CreateNewQueueWithRemainingPlayers(matchQueue);
-
-                await _dbContext.SaveChangesAsync(cancellationToken);
-            }
-
+            if (matchQueue?.Match == null) return;
+            
             await DeleteOldQueueMessage(matchQueue, cancellationToken);
+            
+            CreateNewQueueWithRemainingPlayers(matchQueue);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         private async void CreateNewQueueWithRemainingPlayers(MatchQueueEntity matchQueue)
