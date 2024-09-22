@@ -1,44 +1,46 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.User.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApacBreachersRanked.Application.MMR.Queries
+namespace ApacBreachersRanked.Application.MMR.Queries;
+
+public class GetPlayerMMRsQuery : IQuery<List<PlayerMMR>>
 {
-    public class GetPlayerMMRsQuery : IQuery<List<PlayerMMR>>
+    public IEnumerable<IUser> Users { get; set; }
+    public MatchFormat MatchFormat { get; set; }
+}
+
+public class GetPlayerMMRsQueryHandler : IQueryHandler<GetPlayerMMRsQuery, List<PlayerMMR>>
+{
+    private readonly IDbContext _dbContext;
+
+    public GetPlayerMMRsQueryHandler(IDbContext dbContext)
     {
-        public IEnumerable<IUser> Users { get; set; }
+        _dbContext = dbContext;
     }
 
-    public class GetPlayerMMRsQueryHandler : IQueryHandler<GetPlayerMMRsQuery, List<PlayerMMR>>
+    public async Task<List<PlayerMMR>> Handle(GetPlayerMMRsQuery request, CancellationToken cancellationToken)
     {
-        private readonly IDbContext _dbContext;
+        List<PlayerMMR> playerMMRs = new();
 
-        public GetPlayerMMRsQueryHandler(IDbContext dbContext)
+        foreach (var user in request.Users)
         {
-            _dbContext = dbContext;
-        }
+            var playerMMR = await _dbContext.PlayerMMRs
+                .Where(x => x.UserId.Equals(user.UserId) && x.MatchFormat == request.MatchFormat)
+                .FirstOrDefaultAsync(cancellationToken);
 
-        public async Task<List<PlayerMMR>> Handle(GetPlayerMMRsQuery request, CancellationToken cancellationToken)
-        {
-            List<PlayerMMR> playerMMRs = new();
-
-            foreach (IUser user in request.Users)
+            if (playerMMR == null)
             {
-                PlayerMMR? playerMMR = await _dbContext.PlayerMMRs
-                    .Where(x => x.UserId.Equals(user.UserId))
-                    .FirstOrDefaultAsync(cancellationToken);
-
-                if (playerMMR == null)
-                {
-                    playerMMR = new(user);
-                    await _dbContext.PlayerMMRs.AddAsync(playerMMR, cancellationToken);
-                }
-                playerMMRs.Add(playerMMR);
+                playerMMR = new PlayerMMR(user, request.MatchFormat);
+                await _dbContext.PlayerMMRs.AddAsync(playerMMR, cancellationToken);
             }
 
-            return playerMMRs;
+            playerMMRs.Add(playerMMR);
         }
+
+        return playerMMRs;
     }
 }

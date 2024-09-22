@@ -1,9 +1,8 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 
-namespace ApacBreachersRanked.Domain.MMR.Events
+namespace ApacBreachersRanked.Domain.MMR.Events;
+
+public class MatchMMRCalculatedEvent : IDomainEvent
 {
-    public class MatchMMRCalculatedEvent : IDomainEvent
-    {
-        public Guid MatchId { get; set; }
-    }
+    public Guid MatchId { get; set; }
 }

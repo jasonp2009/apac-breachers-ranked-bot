@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.MMR.Queries;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Services;
 using ApacBreachersRanked.Domain.User.Interfaces;
@@ -15,7 +16,7 @@ namespace ApacBreachersRanked.Application.MMR.Services
             _mediator = mediator;
         }
 
-        Task<List<PlayerMMR>> IMMRAdjustmentService.GetPlayerMMRsAsync(IEnumerable<IUser> users, CancellationToken cancellationToken)
-            => _mediator.Send(new GetPlayerMMRsQuery { Users = users }, cancellationToken);
+        Task<List<PlayerMMR>> IMMRAdjustmentService.GetPlayerMMRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, CancellationToken cancellationToken)
+            => _mediator.Send(new GetPlayerMMRsQuery { Users = users, MatchFormat = matchFormat }, cancellationToken);
     }
 }
