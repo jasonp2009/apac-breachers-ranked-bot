@@ -2,6 +2,6 @@
 
 public enum MatchFormat
 {
-    Ranked5V5,
-    Ranked2V2,
+    Ranked = 55,
+    RankedShortStack = 33
 }
