@@ -21,16 +21,16 @@ namespace ApacBreachersRanked.Domain.Match.Services
         {
             List<IUser> users = matchQueue.Users.Take(10).Select(user => user as IUser).ToList();
 
-            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMMRsAsync(users, cancellationToken);
+            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMMRsAsync(users, matchQueue.MatchFormat, cancellationToken);
 
-            (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs);
+            (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs, matchQueue.MatchFormat.GetMatchFormatConstants());
 
             return new MatchEntity(matchQueue, home, away);
         }
 
-        public (List<PlayerMMR> Home, List<PlayerMMR> Away) AllocateTeams(List<PlayerMMR> playerMMRs)
+        public (List<PlayerMMR> Home, List<PlayerMMR> Away) AllocateTeams(List<PlayerMMR> playerMMRs, MatchFormatConstants matchConstants)
         {
-            (List<PlayerMMR> firstList, List<PlayerMMR> secondList) = DividePlayerMMRList(playerMMRs);
+            (List<PlayerMMR> firstList, List<PlayerMMR> secondList) = DividePlayerMMRList(playerMMRs, matchConstants);
 
             List<PlayerMMR> Home, Away;
 
@@ -48,7 +48,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
         }
 
         // Chat-GPT algo (idk how good it is)
-        public static (List<PlayerMMR>, List<PlayerMMR>) DividePlayerMMRList(List<PlayerMMR> playerMMRs)
+        public static (List<PlayerMMR>, List<PlayerMMR>) DividePlayerMMRList(List<PlayerMMR> playerMMRs, MatchFormatConstants matchConstants)
         {
 
             playerMMRs = playerMMRs.OrderByDescending(x => x.MMR).ToList();
@@ -58,7 +58,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
             (List<PlayerMMR>, List<PlayerMMR>) bestPartition = (new List<PlayerMMR>(), new List<PlayerMMR>());
             int bestDiff = int.MaxValue;
 
-            PartitionPlayerMMRList(playerMMRs, topPlayer, secondTopPlayer, (int)playerMMRs[0].MMR, (int)playerMMRs[1].MMR, 2, Math.Min(MatchConstants.MaxTeamSize,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(playerMMRs, topPlayer, secondTopPlayer, (int)playerMMRs[0].MMR, (int)playerMMRs[1].MMR, 2, Math.Min(matchConstants.MaxTeamSize,(int)(playerMMRs.Count/2)), ref bestPartition, ref bestDiff, matchConstants);
 
             return bestPartition;
         }
@@ -72,9 +72,10 @@ namespace ApacBreachersRanked.Domain.Match.Services
             int index,
             int minTeamSize,
             ref (List<PlayerMMR>, List<PlayerMMR>) bestPartition,
-            ref int bestDiff)
+            ref int bestDiff,
+            MatchFormatConstants matchConstants)
         {
-            if (list1.Count >= minTeamSize && list1.Count <= MatchConstants.MaxTeamSize && list2.Count >= minTeamSize && list2.Count <= MatchConstants.MaxTeamSize)
+            if (list1.Count >= minTeamSize && list1.Count <= matchConstants.MaxTeamSize && list2.Count >= minTeamSize && list2.Count <= matchConstants.MaxTeamSize)
             {
                 int diff = Math.Abs(mmr1 - mmr2);
                 if (diff < bestDiff)
@@ -84,15 +85,15 @@ namespace ApacBreachersRanked.Domain.Match.Services
                 }
             }
 
-            if (index >= remainingPlayers.Count || list1.Count > MatchConstants.MaxTeamSize || list2.Count > MatchConstants.MaxTeamSize) return;
+            if (index >= remainingPlayers.Count || list1.Count > matchConstants.MaxTeamSize || list2.Count > matchConstants.MaxTeamSize) return;
 
             PlayerMMR player = remainingPlayers[index];
             list1.Add(player);
-            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1 + (int)player.MMR, mmr2, index + 1, minTeamSize, ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1 + (int)player.MMR, mmr2, index + 1, minTeamSize, ref bestPartition, ref bestDiff, matchConstants);
             list1.RemoveAt(list1.Count - 1);
 
             list2.Add(player);
-            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1, mmr2 + (int)player.MMR, index + 1, minTeamSize, ref bestPartition, ref bestDiff);
+            PartitionPlayerMMRList(remainingPlayers, list1, list2, mmr1, mmr2 + (int)player.MMR, index + 1, minTeamSize, ref bestPartition, ref bestDiff, matchConstants);
             list2.RemoveAt(list2.Count - 1);
         }
 

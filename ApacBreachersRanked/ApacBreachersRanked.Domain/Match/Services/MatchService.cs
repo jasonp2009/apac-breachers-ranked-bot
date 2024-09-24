@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Domain.Match.Entities;
+﻿using ApacBreachersRanked.Domain.Helpers;
+using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Services;
@@ -19,11 +20,11 @@ namespace ApacBreachersRanked.Domain.Match.Services
         {
             List<IUser> users = matchQueue.Users
                 .OrderBy(x => x.JoinedAtUtc)
-                .Take(10)
+                .Take(matchQueue.MatchFormat.GetMatchConstant(c => c.MaxCapacity))
                 .Select(user => user as IUser)
                 .ToList();
 
-            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMMRsAsync(users, cancellationToken);
+            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMMRsAsync(users, matchQueue.MatchFormat, cancellationToken);
 
             (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs);
 

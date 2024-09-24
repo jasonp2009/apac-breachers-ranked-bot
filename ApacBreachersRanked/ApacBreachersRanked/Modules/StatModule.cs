@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Stats.Extensions;
 using ApacBreachersRanked.Application.Stats.Models;
 using ApacBreachersRanked.Application.Stats.Queries;
+using ApacBreachersRanked.Domain.Match.Enums;
 using Discord.Interactions;
 using Discord.WebSocket;
 using MediatR;
@@ -15,7 +16,10 @@ namespace ApacBreachersRanked.Modules
         }
 
         [SlashCommand("basic", "Get basic stats")]
-        public async Task Stats(SocketUser? user = null)
+        public async Task Stats(
+            [Summary("matchFormat", "The format for which you want to get stats for")]
+            MatchFormat matchFormat,
+            SocketUser? user = null)
         {
             await RespondAsync("This command is disabled", ephemeral: true);
             return;
@@ -23,7 +27,8 @@ namespace ApacBreachersRanked.Modules
             await DeferAsync(ephemeral: true);
             BasicPlayerStats stats = await _mediator.Send(new GetBasicPlayerStatsQuery
             {
-                DiscordUserId = user.Id
+                DiscordUserId = user.Id,
+                MatchFormat = matchFormat
             });
             await Context.Interaction.FollowupAsync(embed: stats.GetBasicStatsEmbed(), ephemeral: true);
         }

@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Domain.Common;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MMR.Enums;
 using ApacBreachersRanked.Domain.MMR.Events;
 using ApacBreachersRanked.Domain.MMR.Helpers;
@@ -10,16 +11,18 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
     {
         public IUserId UserId { get; private set; } = null!;
         public string? Name { get; set; }
+        public MatchFormat MatchFormat { get; set; }
         public decimal MMR { get; private set; } = 1000;
         public Rank? Rank { get; private set; }
         public IList<MMRAdjustment> Adjustments { get; private set; } = new List<MMRAdjustment>();
 
         private PlayerMMR() { }
 
-        public PlayerMMR(IUser user, decimal? mmr = null, Rank? rank = null)
+        public PlayerMMR(IUser user, MatchFormat matchFormat, decimal? mmr = null, Rank? rank = null)
         {
             UserId = user.UserId;
             Name = user.Name;
+            MatchFormat = matchFormat; 
             MMR = mmr ?? 1000;
             Rank = rank;
         }

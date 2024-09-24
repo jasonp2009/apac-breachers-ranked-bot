@@ -14,6 +14,7 @@ namespace ApacBreachersRanked.Application.Stats.Queries
     public class GetBasicPlayerStatsQuery : IQuery<BasicPlayerStats>
     {
         public ulong DiscordUserId { get; set; }
+        public MatchFormat MatchFormat { get; set; }
     }
 
     public class GetBasicStatsQueryHandler : IQueryHandler<GetBasicPlayerStatsQuery, BasicPlayerStats>
@@ -38,18 +39,19 @@ namespace ApacBreachersRanked.Application.Stats.Queries
             {
                 user = new UnknownDiscordUser(request.DiscordUserId.ToIUserId());
             }
-            
+
 
             List<MatchEntity> matches = await _dbContext.Matches.AsNoTracking()
                 .Include(x => x.AllPlayers)
                 .Include(x => x.Score)
-                .Where(x => x.Status == MatchStatus.Completed && x.AllPlayers.Any(player => player.UserId.Equals(user.UserId)))
+                .Where(x => x.Status == MatchStatus.Completed && x.MatchFormat == request.MatchFormat &&
+                            x.AllPlayers.Any(player => player.UserId.Equals(user.UserId)))
                 .ToListAsync(cancellationToken);
 
             PlayerMMR playerMMR = await _dbContext.PlayerMMRs
                 .Where(x => x.UserId.Equals(user.UserId))
                 .FirstOrDefaultAsync(cancellationToken)
-                ?? new(user);
+                ?? new(user, request.MatchFormat);
 
             BasicMatchPlayerStats matchStats = new();
 
@@ -79,6 +81,7 @@ namespace ApacBreachersRanked.Application.Stats.Queries
             BasicPlayerStats stats = new()
             {
                 User = user,
+                MatchFormat = request.MatchFormat,
                 MMR = playerMMR.MMR,
                 Match = matchStats
             };

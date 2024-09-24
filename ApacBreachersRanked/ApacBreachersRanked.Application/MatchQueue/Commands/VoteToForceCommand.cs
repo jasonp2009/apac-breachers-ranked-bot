@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
     public class VoteToForceCommand : ICommand
     {
         public ulong DiscordUserId { get; set; }
+        public MatchFormat MatchFormat { get; set; }
     }
 
     public class VoteToForceCommandHandler : ICommandHandler<VoteToForceCommand>
@@ -24,7 +26,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         {
             MatchQueueEntity? currentQueue = await _dbContext.MatchQueue
                 .Include(x => x.Users)
-                .Where(x => x.IsOpen)
+                .Where(x => x.IsOpen && x.MatchFormat == request.MatchFormat)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (currentQueue == null)

@@ -2,6 +2,7 @@
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Queries;
 using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
 
@@ -24,11 +25,14 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         }
         public async Task<Unit> Handle(LeaveQueueCommand request, CancellationToken cancellationToken)
         {
-            MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);
+            foreach (var matchFormat in MatchConstantsExtensions.GetEnabledMatchFormats())
+            {
+                MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery { MatchFormat = matchFormat}, cancellationToken);
 
-            currentQueue.RemoveUserFromQueue(request.DiscordUserId.ToIUserId());
+                currentQueue.RemoveUserFromQueue(request.DiscordUserId.ToIUserId());
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
 
             return Unit.Value;
         }

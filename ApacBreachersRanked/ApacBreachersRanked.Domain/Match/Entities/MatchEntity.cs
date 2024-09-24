@@ -12,9 +12,14 @@ namespace ApacBreachersRanked.Domain.Match.Entities
 
     public class MatchEntity : BaseEntity
     {
+        public MatchFormat MatchFormat { get; private set; } = MatchConstants.DefaultMatchFormat;
         public int MatchNumber { get; set; }
         public MatchStatus Status { get; private set; } = MatchStatus.PendingConfirmation;
-        public DateTime AutoCancelDateUtc { get; init; } = DateTime.UtcNow + TimeSpan.FromMinutes(MatchConstants.AutoCancelMins);
+
+        public DateTime AutoCancelDateUtc { get; init; } = DateTime.UtcNow +
+                                                           TimeSpan.FromMinutes(
+                                                               MatchConstants.DefaultMatchFormat.GetMatchConstant(c =>
+                                                                   c.AutoCancelMins));
         public IEnumerable<MatchPlayer> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
         public decimal HomeMMR => HomePlayers.Average(x => x.MMR);
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
@@ -26,6 +31,11 @@ namespace ApacBreachersRanked.Domain.Match.Entities
         private MatchEntity() { }
         internal MatchEntity(MatchQueueEntity matchQueue, IList<PlayerMMR> home, IList<PlayerMMR> away)
         {
+            MatchFormat = matchQueue.MatchFormat;
+            AutoCancelDateUtc = DateTime.UtcNow +
+                                TimeSpan.FromMinutes(
+                                    MatchFormat.GetMatchConstant(c =>
+                                        c.AutoCancelMins));
             matchQueue.CloseQueueAndSetMatch(this);
             foreach (PlayerMMR homePlayer in home)
             {

@@ -1,4 +1,5 @@
 ﻿using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.Match.Constants;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Infrastructure.Breachers.Api;
@@ -54,7 +55,7 @@ internal class PollForMatchDataHandler : INotificationHandler<PollForMatchDataEv
             List<GetMatchResponse> matchingGames = games.Where(game =>
             {
                 if (match.AutoCancelDateUtc > game.TimeStamp ||
-                    !MatchConstants.ValidMaps.Contains(game.GameData.Map)) return false;
+                    !match.MatchFormat.GetMatchConstant(c => c.ValidMaps).Contains(game.GameData.Map)) return false;
                 List<string> teamA = game.GameData.AllPlayers
                     .Where(player =>
                         player.Rounds.Any(round => round.RoundNumber == 1 && round.Team == BreachersSide.Revolters))

@@ -4,6 +4,8 @@ using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Queries;
 using ApacBreachersRanked.Application.Moderation.Commands;
 using ApacBreachersRanked.Application.Users;
+using ApacBreachersRanked.Domain.Match.Constants;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.User.Interfaces;
 using FluentValidation;
@@ -16,6 +18,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
     {
         public ulong DiscordUserId { get; set; }
         public DateTime JoinAtUtc { get; set; }
+        public MatchFormat MatchFormat { get; set; } = MatchConstants.DefaultMatchFormat;
     }
 
     public class ScheduledJoinQueueByIdCommand : ICommand
@@ -63,7 +66,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
 
             IUser user = await _mediator.Send(new GetDiscordUserQuery { DiscordUserId = request.DiscordUserId }, cancellationToken);
 
-            ScheduledMatchQueueEntity currentQueue = await _mediator.Send(new GetScheduleQueueQuery { ScheduledForUtc = request.JoinAtUtc }, cancellationToken);
+            ScheduledMatchQueueEntity currentQueue = await _mediator.Send(new GetScheduleQueueQuery { ScheduledForUtc = request.JoinAtUtc, MatchFormat = request.MatchFormat}, cancellationToken);
 
             currentQueue.AddUserToQueue(user);
 

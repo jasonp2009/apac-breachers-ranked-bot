@@ -1,6 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Domain.Match.Entities;
+using ApacBreachersRanked.Domain.Match.Enums;
 using ApacBreachersRanked.Domain.Match.Services;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
@@ -11,7 +12,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
 {
     public class CreateMatchCommand : ICommand
     {
-
+        public MatchFormat MatchFormat { get; set; }
     }
     public class CreateMatchCommandHandler : ICommandHandler<CreateMatchCommand>
     {
@@ -32,7 +33,7 @@ namespace ApacBreachersRanked.Application.Match.Commands
         {
             MatchQueueEntity? matchQueue = await _dbContext.MatchQueue
                 .Include(x => x.Users)
-                .Where(x => x.IsOpen)
+                .Where(x => x.IsOpen && x.MatchFormat == notification.MatchFormat)
                 .FirstOrDefaultAsync(cancellationToken);
             if (matchQueue == null || !matchQueue.IsOpen) return Unit.Value;
 

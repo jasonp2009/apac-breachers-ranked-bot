@@ -1,9 +1,8 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 
-namespace ApacBreachersRanked.Application.MMR.Models
+namespace ApacBreachersRanked.Application.MMR.Models;
+
+public class LeaderBoardMessage : BaseEntity
 {
-    public class LeaderBoardMessage : BaseEntity
-    {
-        public ulong LeaderBoardMessageId { get; set; }
-    }
+    public ulong LeaderBoardMessageId { get; set; }
 }

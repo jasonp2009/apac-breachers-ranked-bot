@@ -1,6 +1,6 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
-using ApacBreachersRanked.Domain.MatchQueue.Entities;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.MatchQueue.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +20,15 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         }
         public async Task<Unit> Handle(InitialiseQueueCommand request, CancellationToken cancellationToken)
         {
-            MatchQueueEntity? currentQueue = await _dbContext.MatchQueue
+            var currentQueues = await _dbContext.MatchQueue
                 .Where(x => x.IsOpen)
-                .FirstOrDefaultAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            if (currentQueue == null || !currentQueue.IsOpen)
+            foreach (var matchFormat in MatchConstantsExtensions.GetEnabledMatchFormats())
             {
-                currentQueue = new();
+                var currentQueue = currentQueues.FirstOrDefault(queue => queue.MatchFormat == matchFormat);
+                if (currentQueue is { IsOpen: true }) continue;
+                currentQueue = new(matchFormat);
                 currentQueue.QueueDomainEvent(new MatchQueueUpdatedEvent { MatchQueueId = currentQueue.Id });
                 await _dbContext.MatchQueue.AddAsync(currentQueue);
                 await _dbContext.SaveChangesAsync(cancellationToken);

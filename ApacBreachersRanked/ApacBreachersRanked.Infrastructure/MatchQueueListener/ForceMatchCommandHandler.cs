@@ -1,7 +1,7 @@
 ﻿using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MatchQueue.Commands;
-using ApacBreachersRanked.Domain.Match.Constants;
+using ApacBreachersRanked.Domain.Helpers;
 using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +25,9 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                 .FirstOrDefaultAsync(cancellationToken);
             if (matchQueue == null) return Unit.Value;
 
-            if (matchQueue.Users.Count < MatchConstants.MinCapacity) throw new InvalidOperationException($"There must be atleast {MatchConstants.MinCapacity} players to force match");
+            var matchConstants = matchQueue.MatchFormat.GetMatchFormatConstants();
+            
+            if (matchQueue.Users.Count < matchConstants.MinCapacity) throw new InvalidOperationException($"There must be atleast {matchConstants.MinCapacity} players to force match");
 
             return Unit.Value;
         }

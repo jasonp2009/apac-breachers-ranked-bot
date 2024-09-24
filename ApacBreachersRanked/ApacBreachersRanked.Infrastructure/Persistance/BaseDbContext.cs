@@ -18,6 +18,7 @@ using ApacBreachersRanked.Domain.MatchQueue.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Infrastructure.Breachers.Entities;
 using ApacBreachersRanked.Infrastructure.ScheduledEventHandling;
+using Newtonsoft.Json;
 using Npgsql;
 
 namespace ApacBreachersRanked.Infrastructure.Persistance
@@ -129,7 +130,7 @@ namespace ApacBreachersRanked.Infrastructure.Persistance
 
         private int GetDomainEventHash(IDomainEvent domainEvent)
         {
-            return HashCode.Combine(domainEvent.GetType().FullName, JsonSerializer.Serialize(domainEvent));
+            return HashCode.Combine(domainEvent.GetType().FullName, JsonConvert.SerializeObject(domainEvent));
         }
     }
 }

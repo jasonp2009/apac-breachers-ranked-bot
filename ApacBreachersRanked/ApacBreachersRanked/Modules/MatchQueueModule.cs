@@ -6,6 +6,7 @@ using ApacBreachersRanked.Application.MatchQueue.Commands;
 using ApacBreachersRanked.Application.MatchQueue.Exceptions;
 using ApacBreachersRanked.Application.Moderation.Exceptions;
 using ApacBreachersRanked.AutoCompleteHandlers;
+using ApacBreachersRanked.Domain.Match.Enums;
 using Discord.Interactions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -24,15 +25,16 @@ namespace ApacBreachersRanked.Modules
             _logger = logger;
         }
 
-        [ComponentInteraction("join-queue-*")]
-        public async Task JoinQueueAsync(int timeoutMins)
+        [ComponentInteraction("join-queue-*-*")]
+        public async Task JoinQueueAsync(int timeoutMins, MatchFormat matchFormat)
         {
             try
             {
                 JoinQueueCommand command = new JoinQueueCommand()
                 {
                     DiscordUserId = Context.User.Id,
-                    TimeoutMins = timeoutMins
+                    TimeoutMins = timeoutMins,
+                    MatchFormat = matchFormat
                 };
                 await _mediator.Send(command);
             }
@@ -72,12 +74,13 @@ namespace ApacBreachersRanked.Modules
             await DeferAsync();
         }
 
-        [ComponentInteraction("vote-force-match")]
-        public async Task VoteForceMatchAsync()
+        [ComponentInteraction("vote-force-match-*")]
+        public async Task VoteForceMatchAsync(MatchFormat matchFormat)
         {
             VoteToForceCommand command = new VoteToForceCommand()
             {
-                DiscordUserId = Context.User.Id
+                DiscordUserId = Context.User.Id,
+                MatchFormat = matchFormat
             };
             await _mediator.Send(command);
             await DeferAsync();
