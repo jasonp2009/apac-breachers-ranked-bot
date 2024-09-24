@@ -31,8 +31,6 @@ public class CloseMatchQueueHandler : INotificationHandler<MatchQueueClosedEvent
 
     public async Task Handle(MatchQueueClosedEvent notification, CancellationToken cancellationToken)
     {
-        if (await _dbContext.MatchQueue.AnyAsync(x => x.IsOpen, cancellationToken)) return;
-
         var matchQueue = await _dbContext.MatchQueue
             .Include(x => x.Match)
             .Include(x => x.Users)
