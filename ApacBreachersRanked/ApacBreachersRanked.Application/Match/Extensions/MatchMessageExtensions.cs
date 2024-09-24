@@ -93,6 +93,14 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             return eb.Build();
         }
 
+        public static MessageComponent GenerateMatchResultComponent(this MatchEntity match)
+        {
+            ComponentBuilder cb = new();
+            cb.WithButton("stats", style: ButtonStyle.Link,
+                url: $"https://apacbreachersranked.com/matchDetails/{match.Id.ToString()}");
+            return cb.Build();
+        }
+
         public static Embed GenerateCurrentMatchEmbed(this MatchEntity match, MatchVoteModel? matchVote)
         {
             EmbedBuilder eb = new();

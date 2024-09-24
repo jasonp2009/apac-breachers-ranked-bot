@@ -38,12 +38,12 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
 
             if (await _discordClient.GetChannelAsync(_options.MatchResultsChannelId) is IMessageChannel matchResultsChannel)
             {
-                await matchResultsChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments));
+                await matchResultsChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments), components: match.GenerateMatchResultComponent());
             }
 
             if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel threadChannel)
             {
-                await threadChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments));
+                await threadChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments), components: match.GenerateMatchResultComponent());
                 await threadChannel.ModifyAsync(chnl => {
                     chnl.Archived = true;
                     chnl.Locked = true;
