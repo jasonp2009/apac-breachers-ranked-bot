@@ -21,9 +21,9 @@ namespace ApacBreachersRanked.Domain.Match.Entities
                                                                MatchConstants.DefaultMatchFormat.GetMatchConstant(c =>
                                                                    c.AutoCancelMins));
         public IEnumerable<MatchPlayer> HomePlayers => AllPlayers.Where(player => player.Side == MatchSide.Home);
-        public decimal HomeMMR => HomePlayers.Average(x => x.MMR);
+        public decimal HomeMMR => HomePlayers.Any() ? HomePlayers.Average(x => x.MMR) : 0;
         public IEnumerable<MatchPlayer> AwayPlayers => AllPlayers.Where(player => player.Side == MatchSide.Away);
-        public decimal AwayMMR => AwayPlayers.Average(x => x.MMR);
+        public decimal AwayMMR => AwayPlayers.Any() ? AwayPlayers.Average(x => x.MMR) : 0;
         public IList<MatchPlayer> AllPlayers { get; private set; } = new List<MatchPlayer>();
         public MatchPlayer HostPlayer => AllPlayers.FirstOrDefault(player => player.IsHost);
         public MatchScore Score { get; private set; } = null;

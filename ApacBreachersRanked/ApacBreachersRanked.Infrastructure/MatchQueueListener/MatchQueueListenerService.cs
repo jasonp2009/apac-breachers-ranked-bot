@@ -48,9 +48,9 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                     foreach (var currentQueue in currentQueues)
                     {
                         var matchConstants = currentQueue.MatchFormat.GetMatchFormatConstants();
-                        if (_isForceStartEnabled || (currentQueue.Users.All(x => x.VoteToForce)))
+                        if (_isForceStartEnabled || currentQueue.Users.All(x => x.VoteToForce))
                         {
-                            if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MinCapacity, cancellationToken: _stoppingToken))
+                            if (currentQueue.Users.Count >= matchConstants.MinCapacity)
                             {
                                 await mediator.Send(new CreateMatchCommand { MatchFormat = currentQueue.MatchFormat }, _stoppingToken);
                             }
@@ -58,7 +58,7 @@ namespace ApacBreachersRanked.Infrastructure.MatchQueueListener
                             continue;
                         }
 
-                        if (await dbContext.MatchQueue.AnyAsync(x => x.IsOpen && x.Users.Count >= matchConstants.MaxCapacity, cancellationToken: _stoppingToken))
+                        if (currentQueue.Users.Count >= matchConstants.MaxCapacity)
                         {
                             await mediator.Send(new CreateMatchCommand { MatchFormat = currentQueue.MatchFormat }, _stoppingToken);
                         }
