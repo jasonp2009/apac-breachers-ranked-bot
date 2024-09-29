@@ -76,6 +76,6 @@ public class MmrAdjustmentService : IMmrAdjustmentService
     private static decimal CalculatePlayerMmrAdjustment(decimal teamMmrAdjustment, List<PlayerMMR> teamMmRs,
         PlayerMMR playerMmr)
     {
-        return teamMmrAdjustment / teamMmRs.Count * (playerMmr.MMR / teamMmRs.Average(x => x.MMR));
+        return teamMmrAdjustment / teamMmRs.Count;
     }
 }

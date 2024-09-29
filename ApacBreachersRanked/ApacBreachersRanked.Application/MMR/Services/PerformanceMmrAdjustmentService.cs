@@ -11,8 +11,8 @@ namespace ApacBreachersRanked.Application.MMR.Services;
 
 public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
 {
-    private static readonly decimal KFactor = 24;
-    private static readonly decimal PerfomanceWeighting = 0.5M;
+    private const decimal KFactor = 24;
+    private const decimal PerfomanceWeighting = 0.3M;
     
     private readonly MmrAdjustmentService _mmrAdjustmentService = new();
     private readonly IDbContext _dbContext;
@@ -25,7 +25,7 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
     public async Task<IEnumerable<MMRAdjustment>> CalculateAdjustmentsAsync(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, CancellationToken cancellationToken)
     {
         var playerMmrsList = playerMmrs.ToList();
-        var mmrAdjustments = await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, playerMmrsList, cancellationToken);
+        var mmrAdjustments = (await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, playerMmrsList, cancellationToken)).ToList();
         var gameData =
             await _dbContext.GameData.FirstOrDefaultAsync(gameData => gameData.MatchId == match.Id, cancellationToken);
         if (gameData is null)
@@ -33,7 +33,9 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
             return mmrAdjustments;
         }
 
-        var performanceAdjustments = CalculatePerformanceAdjustments(match, playerMmrsList, gameData).ToList();
+        var kFactor = mmrAdjustments.Sum(adj => Math.Abs(adj.Adjustment)) / mmrAdjustments.Count * 2;
+        
+        var performanceAdjustments = CalculatePerformanceAdjustments(match, playerMmrsList, gameData, kFactor).ToList();
 
         var finalAdjustments = new List<MMRAdjustment>();
         foreach (var mmrAdjustment in mmrAdjustments)
@@ -47,7 +49,7 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
         return finalAdjustments;
     }
     
-    private IEnumerable<MMRAdjustment> CalculatePerformanceAdjustments(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, GameDataEntity gameData)
+    private IEnumerable<MMRAdjustment> CalculatePerformanceAdjustments(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, GameDataEntity gameData, decimal kFactor = KFactor)
     {
         if (!match.HomePlayers.Any()) throw new ArgumentException(nameof(match.HomePlayers));
         if (!match.AwayPlayers.Any()) throw new ArgumentException(nameof(match.AwayPlayers));
@@ -68,24 +70,24 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
             adjustments.Add(new MMRAdjustment(
                 player.UserId,
                 match.MatchFormat,
-                CalculatePlayerMmrAdjustment(player, homePlayerMmrs, gameData),
+                CalculatePlayerMmrAdjustment(player, homePlayerMmrs, gameData, kFactor),
                 match));
 
         foreach (var player in awayPlayerMmrs)
             adjustments.Add(new MMRAdjustment(
                 player.UserId,
                 match.MatchFormat,
-                CalculatePlayerMmrAdjustment(player, awayPlayerMmrs, gameData),
+                CalculatePlayerMmrAdjustment(player, awayPlayerMmrs, gameData, kFactor),
                 match));
 
         return adjustments;
     }
 
-    private static decimal CalculatePlayerMmrAdjustment(PlayerMMR playerMmr, List<PlayerMMR> teamMmrs, GameDataEntity gameData)
+    private static decimal CalculatePlayerMmrAdjustment(PlayerMMR playerMmr, List<PlayerMMR> teamMmrs, GameDataEntity gameData, decimal kFactor)
     {
         decimal expected = CalculateExpected(playerMmr, teamMmrs);
         decimal actual = CalculateActual(playerMmr.UserId, gameData);
-        return MmrExtensions.CalculateAdjustment(KFactor, expected, actual);
+        return MmrExtensions.CalculateAdjustment(kFactor, expected, actual);
     }
     
     private static decimal CalculateExpected(PlayerMMR playerMmr, List<PlayerMMR> teamMmrs)
