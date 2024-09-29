@@ -12,7 +12,7 @@ public class MmrAdjustmentService : IMmrAdjustmentService
     private static readonly decimal MapWeighting = 0.55M;
     private static readonly decimal RoundWeighting = 0.45M;
 
-    public IEnumerable<MMRAdjustment> CalculateAdjustments(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs)
+    public async Task<IEnumerable<MMRAdjustment>> CalculateAdjustmentsAsync(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, CancellationToken cancellationToken)
     {
         if (!match.HomePlayers.Any()) throw new ArgumentException(nameof(match.HomePlayers));
         if (!match.AwayPlayers.Any()) throw new ArgumentException(nameof(match.AwayPlayers));

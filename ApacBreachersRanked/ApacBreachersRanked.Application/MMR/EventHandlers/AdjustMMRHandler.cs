@@ -36,7 +36,7 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
                     .FirstAsync(cancellationToken);
                 var allPlayerMmrs =
                     await _mmrService.GetPlayerMmRsAsync(match.AllPlayers, match.MatchFormat, cancellationToken);
-                var adjustments = _mmrAdjustmentService.CalculateAdjustments(match,allPlayerMmrs).ToList();
+                var adjustments = (await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, allPlayerMmrs, cancellationToken)).ToList();
 
                 allPlayerMmrs.ApplyAdjustmentsToPlayerMmrs(adjustments);
                 match.QueueDomainEvent(new MatchMMRCalculatedEvent { MatchId = match.Id });

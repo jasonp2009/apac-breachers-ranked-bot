@@ -24,7 +24,7 @@ namespace ApacBreachersRanked.Application
 
             services.AddScoped<IUserService, UserService>();
 
-            services.AddScoped<IMmrAdjustmentService, MmrAdjustmentService>();
+            services.AddScoped<IMmrAdjustmentService, PerformanceMmrAdjustmentService>();
 
             services.AddScoped<IMmrService, MMRService>();
 

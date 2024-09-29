@@ -12,6 +12,7 @@ public class GamePlayerData : IUser
     public Rank? Rank { get; init; }
     public MatchSide Side { get; init; }
     public TimeSpan GameTime { get; init; }
+    public int Score { get; init; }
     public int Kills => Rounds.Sum(round => round.Kills);
     public int Assists => Rounds.Sum(round => round.Assists);
     public int Deaths => Rounds.Count(round => round.Died);

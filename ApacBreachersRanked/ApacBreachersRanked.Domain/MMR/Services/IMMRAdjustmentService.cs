@@ -5,5 +5,5 @@ namespace ApacBreachersRanked.Domain.MMR.Services;
 
 public interface IMmrAdjustmentService
 {
-    public IEnumerable<MMRAdjustment> CalculateAdjustments(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs);
+    public Task<IEnumerable<MMRAdjustment>> CalculateAdjustmentsAsync(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, CancellationToken cancellationToken);
 }
