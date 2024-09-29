@@ -10,9 +10,9 @@ namespace ApacBreachersRanked.Domain.Match.Services
 {
     public class OldMatchService : IMatchService
     {
-        private readonly IMMRService _mmrService;
+        private readonly IMmrService _mmrService;
 
-        public OldMatchService(IMMRService mmrService)
+        public OldMatchService(IMmrService mmrService)
         {
             _mmrService = mmrService;
         }
@@ -21,7 +21,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
         {
             List<IUser> users = matchQueue.Users.Take(10).Select(user => user as IUser).ToList();
 
-            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMMRsAsync(users, matchQueue.MatchFormat, cancellationToken);
+            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMmRsAsync(users, matchQueue.MatchFormat, cancellationToken);
 
             (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs, matchQueue.MatchFormat.GetMatchFormatConstants());
 

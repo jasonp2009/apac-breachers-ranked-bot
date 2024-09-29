@@ -4,8 +4,8 @@ using ApacBreachersRanked.Domain.User.Interfaces;
 
 namespace ApacBreachersRanked.Domain.MMR.Services
 {
-    public interface IMMRService
+    public interface IMmrService
     {
-        public Task<List<PlayerMMR>> GetPlayerMMRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, CancellationToken cancellationToken = default);
+        public Task<List<PlayerMMR>> GetPlayerMmRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, CancellationToken cancellationToken = default);
     }
 }

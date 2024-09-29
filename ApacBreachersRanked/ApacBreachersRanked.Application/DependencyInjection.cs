@@ -24,9 +24,9 @@ namespace ApacBreachersRanked.Application
 
             services.AddScoped<IUserService, UserService>();
 
-            services.AddScoped<IMMRAdjustmentService, MMRAdjustmentService>();
+            services.AddScoped<IMmrAdjustmentService, MmrAdjustmentService>();
 
-            services.AddScoped<IMMRService, MMRService>();
+            services.AddScoped<IMmrService, MMRService>();
 
             services.AddScoped<DiscordUserContextService>();
 

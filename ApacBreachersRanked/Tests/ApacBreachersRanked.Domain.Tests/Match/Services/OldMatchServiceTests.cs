@@ -12,12 +12,12 @@ namespace ApacBreachersRanked.Tests.Match.Services
 {
     public class OldMatchServiceTests
     {
-        private readonly IMMRService _mmrService;
+        private readonly IMmrService _mmrService;
         private readonly IMatchService _sut;
 
         public OldMatchServiceTests()
         {
-            _mmrService = Substitute.For<IMMRService>();
+            _mmrService = Substitute.For<IMmrService>();
             _sut = new OldMatchService(_mmrService);
         }
 
@@ -35,7 +35,7 @@ namespace ApacBreachersRanked.Tests.Match.Services
                 playerMMRs.Add(new PlayerMMR(new TestUser(), mmr));
             }
 
-            _mmrService.GetPlayerMMRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
+            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
 
             // ACT
             MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(), default);
@@ -66,7 +66,7 @@ namespace ApacBreachersRanked.Tests.Match.Services
 
                 decimal reasonableMaxDiff = Math.Abs(playerMMRs.OrderByDescending(x => x.MMR).Where((x, i) => i % 2 == 0).Average(x => x.MMR) - playerMMRs.OrderByDescending(x => x.MMR).Where((x, i) => i % 2 == 1).Average(x => x.MMR))*10;
 
-                _mmrService.GetPlayerMMRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
+                _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
 
                 // ACT
                 MatchEntity greedyResult = await _sut.CreateMatchFromQueueAsync(new(), default);
@@ -103,7 +103,7 @@ namespace ApacBreachersRanked.Tests.Match.Services
                 };
 
 
-            _mmrService.GetPlayerMMRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(players);
+            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(players);
 
             MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(), default);
 
