@@ -17,12 +17,12 @@ namespace ApacBreachersRanked.Domain.Tests.Match.Services
 {
     public class NewMatchServiceTests
     {
-        private readonly IMMRService _mmrService;
+        private readonly IMmrService _mmrService;
         private readonly IMatchService _sut;
 
         public NewMatchServiceTests()
         {
-            _mmrService = Substitute.For<IMMRService>();
+            _mmrService = Substitute.For<IMmrService>();
             _sut = new MatchService(_mmrService);
         }
 
@@ -40,7 +40,7 @@ namespace ApacBreachersRanked.Domain.Tests.Match.Services
                 playerMMRs.Add(new PlayerMMR(new TestUser(), mmr));
             }
 
-            _mmrService.GetPlayerMMRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
+            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
 
             // ACT
             MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(), default);
@@ -72,7 +72,7 @@ namespace ApacBreachersRanked.Domain.Tests.Match.Services
                 };
 
 
-            _mmrService.GetPlayerMMRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(players);
+            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(players);
 
             MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(), default);
 

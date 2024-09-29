@@ -123,6 +123,7 @@ internal class BreachersMatchDataReadyHandler : INotificationHandler<BreachersMa
                     Rank = matchPlayer.Rank,
                     Side = matchPlayer.Side,
                     Mvp = breachersPlayer.Mvp,
+                    Score = breachersPlayer.Score,
                     GameTime = breachersPlayer.GameTime,
                     Rounds = roundData
                 });

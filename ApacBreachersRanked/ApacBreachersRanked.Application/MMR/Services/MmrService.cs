@@ -7,7 +7,7 @@ using MediatR;
 
 namespace ApacBreachersRanked.Application.MMR.Services
 {
-    internal class MMRService : IMMRService
+    internal class MMRService : IMmrService
     {
         private readonly IMediator _mediator;
 
@@ -15,7 +15,7 @@ namespace ApacBreachersRanked.Application.MMR.Services
         {
             _mediator = mediator;
         }
-        public Task<List<PlayerMMR>> GetPlayerMMRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, CancellationToken cancellationToken = default)
+        public Task<List<PlayerMMR>> GetPlayerMmRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, CancellationToken cancellationToken = default)
             => _mediator.Send(new GetPlayerMMRsQuery { Users = users, MatchFormat = matchFormat }, cancellationToken);
     }
 }

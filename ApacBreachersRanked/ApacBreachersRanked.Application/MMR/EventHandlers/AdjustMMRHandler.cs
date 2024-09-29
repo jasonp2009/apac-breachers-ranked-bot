@@ -1,6 +1,8 @@
 ﻿using ApacBreachersRanked.Application.DbContext;
+using ApacBreachersRanked.Application.MMR.Extensions;
 using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.Match.Events;
+using ApacBreachersRanked.Domain.MMR.Events;
 using ApacBreachersRanked.Domain.MMR.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +13,16 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
     public class AdjustMMRHandler : INotificationHandler<MatchCompletedEvent>
     {
         private readonly IDbContext _dbContext;
-        private readonly IMMRAdjustmentService _mmrAdjustmentService;
+        private readonly IMmrService _mmrService;
+        private readonly IMmrAdjustmentService _mmrAdjustmentService;
         private readonly ILogger<AdjustMMRHandler> _logger;
 
-        public AdjustMMRHandler(IDbContext dbContext, IMMRAdjustmentService mmrAdjustmentService, ILogger<AdjustMMRHandler> logger)
+        public AdjustMMRHandler(IDbContext dbContext, IMmrAdjustmentService mmrAdjustmentService, ILogger<AdjustMMRHandler> logger, IMmrService mmrService)
         {
             _dbContext = dbContext;
             _mmrAdjustmentService = mmrAdjustmentService;
             _logger = logger;
+            _mmrService = mmrService;
         }
 
         public async Task Handle(MatchCompletedEvent notification, CancellationToken cancellationToken)
@@ -30,8 +34,12 @@ namespace ApacBreachersRanked.Application.MMR.EventHandlers
                     .Include(x => x.Score)
                     .Where(match => match.Id == notification.MatchId)
                     .FirstAsync(cancellationToken);
+                var allPlayerMmrs =
+                    await _mmrService.GetPlayerMmRsAsync(match.AllPlayers, match.MatchFormat, cancellationToken);
+                var adjustments = (await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, allPlayerMmrs, cancellationToken)).ToList();
 
-                await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, cancellationToken);
+                allPlayerMmrs.ApplyAdjustmentsToPlayerMmrs(adjustments);
+                match.QueueDomainEvent(new MatchMMRCalculatedEvent { MatchId = match.Id });
 
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
