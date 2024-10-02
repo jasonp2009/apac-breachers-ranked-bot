@@ -68,25 +68,10 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
             Embed embed = GetEmbed(matchQueue, inProgressMatches);
             string pings = matchQueue.Users.Count >= matchQueue.MatchFormat.GetMatchConstant(c => c.PingAtPlayers)
                 ? $"<@&{_breachersDiscordOptions.PingRoleId}>"
-                : string.Empty;
+                : "";
             MatchQueueMessage? matchQueueMessage = matchQueueMessageTask.Result;
-            
             IMessageChannel readyUpChannel = readyUpChannelTask.Result as IMessageChannel;
-            if (readyUpChannel is null) throw new NullReferenceException("Could not find ready up channel");
 
-            if (pings != string.Empty &&
-                matchQueueMessage is not null &&
-                matchQueueMessage.DiscordMessageId != 0 &&
-                matchQueueMessage.IsDeleted == false &&
-                (matchQueueMessage.LastPingedUtc is null ||
-                matchQueueMessage.LastPingedUtc + TimeSpan.FromMinutes(30) < DateTime.UtcNow))
-            {
-                await readyUpChannel.DeleteMessageAsync(matchQueueMessage.DiscordMessageId);
-                matchQueueMessage.IsDeleted = true;
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                matchQueueMessage = null;
-            }
-            
             if (matchQueueMessage?.DiscordMessageId != null && matchQueueMessage?.DiscordMessageId != 0)
             {
                 try
@@ -118,8 +103,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
                 matchQueueMessage = new()
                 {
                     MatchQueue = matchQueue,
-                    DiscordMessageId = message.Id,
-                    LastPingedUtc = pings != string.Empty ? DateTime.UtcNow : null
+                    DiscordMessageId = message.Id
                 };
                 _dbContext.MatchQueueMessages.Add(matchQueueMessage);
                 await _dbContext.SaveChangesAsync(cancellationToken);

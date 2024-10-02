@@ -13,6 +13,5 @@ namespace ApacBreachersRanked.Application.MatchQueue.Models
         public MatchQueueEntity MatchQueue { get; set; } = null!;
         public ulong DiscordMessageId { get; set; }
         public bool IsDeleted { get; set; } = false;
-        public DateTime? LastPingedUtc { get; set; }
     }
 }
