@@ -13,6 +13,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddDiscordClient(host.Configuration);
         services.AddApplication(host.Configuration);
         services.AddInfrastructure(host.Configuration);
+        services.AddMatchQueueListenderService();
     })
     .UseSerilog((a, cfg) =>
     {
