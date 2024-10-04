@@ -51,12 +51,12 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
             
             foreach (var matchFormat in MatchConstantsExtensions.GetEnabledMatchFormats().Where(format => format != request.MatchFormat))
             {
-                MatchQueueEntity otherQueue = await _mediator.Send(new GetCurrentQueueQuery { MatchFormat = matchFormat }, cancellationToken);
+                MatchQueueEntity otherQueue = await _mediator.Send(new GetCurrentQueueQuery(matchFormat), cancellationToken);
 
                 otherQueue.RemoveUserFromQueue(request.DiscordUserId.ToIUserId());
             }
             
-            MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery { MatchFormat = request.MatchFormat }, cancellationToken);
+            MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(request.MatchFormat), cancellationToken);
 
             currentQueue.AddUserToQueue(user, DateTime.UtcNow + TimeSpan.FromMinutes(request.TimeoutMins));
 

@@ -8,6 +8,10 @@ namespace ApacBreachersRanked.Application.MatchQueue.Queries
 {
     public class GetCurrentQueueQuery : IQuery<MatchQueueEntity>
     {
+        public GetCurrentQueueQuery(MatchFormat matchFormat)
+        {
+            MatchFormat = matchFormat;
+        }
         public MatchFormat MatchFormat { get; init; }
     }
 

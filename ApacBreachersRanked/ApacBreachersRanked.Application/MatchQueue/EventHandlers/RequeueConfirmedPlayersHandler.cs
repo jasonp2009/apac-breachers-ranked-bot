@@ -35,7 +35,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.EventHandlers
                 .Where(x => x.Match != null && x.Match.Id == notification.MatchId)
                 .SingleAsync(cancellationToken);
 
-            MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(), cancellationToken);
+            MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(matchQueue.MatchFormat), cancellationToken);
 
             foreach (MatchPlayer? player in match.AllPlayers.Where(player => player.Confirmed))
             {

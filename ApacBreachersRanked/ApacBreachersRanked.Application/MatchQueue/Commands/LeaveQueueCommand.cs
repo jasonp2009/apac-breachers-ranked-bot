@@ -27,7 +27,7 @@ namespace ApacBreachersRanked.Application.MatchQueue.Commands
         {
             foreach (var matchFormat in MatchConstantsExtensions.GetEnabledMatchFormats())
             {
-                MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery { MatchFormat = matchFormat}, cancellationToken);
+                MatchQueueEntity currentQueue = await _mediator.Send(new GetCurrentQueueQuery(matchFormat), cancellationToken);
 
                 currentQueue.RemoveUserFromQueue(request.DiscordUserId.ToIUserId());
 
