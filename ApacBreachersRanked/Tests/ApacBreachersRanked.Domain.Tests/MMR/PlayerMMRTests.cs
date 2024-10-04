@@ -1,4 +1,5 @@
-﻿using ApacBreachersRanked.Domain.MMR.Entities;
+﻿using ApacBreachersRanked.Domain.Match.Enums;
+using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Enums;
 using ApacBreachersRanked.Domain.Tests.User;
 using ApacBreachersRanked.Domain.User.Interfaces;
@@ -18,9 +19,9 @@ namespace ApacBreachersRanked.Domain.Tests.MMR
             // ARRANGE
             IUser testUser = new TestUser();
 
-            PlayerMMR playerMMR = new PlayerMMR(testUser, MMR, rank);
+            PlayerMMR playerMMR = new PlayerMMR(testUser, MatchFormat.Ranked, MMR, rank);
 
-            MMRAdjustment mmrAdjustment = new MMRAdjustment(testUser.UserId, adjustment, null!);
+            MMRAdjustment mmrAdjustment = new MMRAdjustment(testUser.UserId, MatchFormat.Ranked, adjustment, null!);
 
             // ACT
             playerMMR.ApplyAdjustment(mmrAdjustment);

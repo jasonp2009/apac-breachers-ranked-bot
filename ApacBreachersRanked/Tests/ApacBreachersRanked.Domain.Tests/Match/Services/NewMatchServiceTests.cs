@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApacBreachersRanked.Domain.Match.Enums;
 
 namespace ApacBreachersRanked.Domain.Tests.Match.Services
 {
@@ -36,14 +37,14 @@ namespace ApacBreachersRanked.Domain.Tests.Match.Services
             for (int i = RandomExtensions.RandomNumber(2, 2); i >= 0; i--)
             {
                 decimal mmr = RandomExtensions.RandomNumber(100, 2000);
-                playerMMRs.Add(new PlayerMMR(new TestUser(), mmr));
-                playerMMRs.Add(new PlayerMMR(new TestUser(), mmr));
+                playerMMRs.Add(new PlayerMMR(new TestUser(), MatchFormat.Ranked, mmr));
+                playerMMRs.Add(new PlayerMMR(new TestUser(), MatchFormat.Ranked, mmr));
             }
 
-            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(playerMMRs);
+            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>(), MatchFormat.Ranked).Returns(playerMMRs);
 
             // ACT
-            MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(), default);
+            MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(MatchFormat.Ranked), default);
 
             // ASSERT
             decimal totalHomeMMR = playerMMRs.Where(x => result.HomePlayers.Any(player => player.UserId.Equals(x.UserId))).Sum(x => x.MMR);
@@ -63,18 +64,18 @@ namespace ApacBreachersRanked.Domain.Tests.Match.Services
 
             List<PlayerMMR> players = new()
                 {
-                    new PlayerMMR(bestPlayer, 125),
-                    new PlayerMMR(secondBestPlayer, 120),
-                    new PlayerMMR(new TestUser(), 110),
-                    new PlayerMMR(new TestUser(), 100),
-                    new PlayerMMR(new TestUser(), 90),
-                    new PlayerMMR(new TestUser(), 55)
+                    new PlayerMMR(bestPlayer, MatchFormat.Ranked, 125),
+                    new PlayerMMR(secondBestPlayer, MatchFormat.Ranked, 120),
+                    new PlayerMMR(new TestUser(), MatchFormat.Ranked, 110),
+                    new PlayerMMR(new TestUser(), MatchFormat.Ranked, 100),
+                    new PlayerMMR(new TestUser(), MatchFormat.Ranked, 90),
+                    new PlayerMMR(new TestUser(), MatchFormat.Ranked, 55)
                 };
 
 
-            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>()).Returns(players);
+            _mmrService.GetPlayerMmRsAsync(Arg.Any<IEnumerable<IUser>>(), MatchFormat.Ranked).Returns(players);
 
-            MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(), default);
+            MatchEntity result = await _sut.CreateMatchFromQueueAsync(new(MatchFormat.Ranked), default);
 
             if (result.HomePlayers.Any(x => x.Equals(bestPlayer)))
             {
