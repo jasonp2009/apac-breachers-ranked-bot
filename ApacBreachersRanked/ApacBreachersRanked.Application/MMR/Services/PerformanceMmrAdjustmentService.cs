@@ -28,7 +28,7 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
         var mmrAdjustments = (await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, playerMmrsList, cancellationToken)).ToList();
         var gameData =
             await _dbContext.GameData.FirstOrDefaultAsync(gameData => gameData.MatchId == match.Id, cancellationToken);
-        if (gameData is null)
+        if (gameData is null || gameData.HomePlayers.All(homePlayer => homePlayer.Score == 0) || gameData.AwayPlayers.All(awayPlayer => awayPlayer.Score == 0))
         {
             return mmrAdjustments;
         }
