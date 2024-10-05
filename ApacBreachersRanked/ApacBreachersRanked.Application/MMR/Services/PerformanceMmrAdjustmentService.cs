@@ -99,6 +99,6 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
     {
         var gamePlayerData = gameData.Players.First(gamePlayer => gamePlayer.UserId.Equals(player));
         var teamPlayerData = gameData.Players.Where(gamePlayer => gamePlayer.Side == gamePlayerData.Side);
-        return (decimal)gamePlayerData.Score / teamPlayerData.Sum(x => x.Score);
+        return (decimal)gamePlayerData.Score / ((decimal)teamPlayerData.Average(x => x.Score) * 2);
     }
 }
