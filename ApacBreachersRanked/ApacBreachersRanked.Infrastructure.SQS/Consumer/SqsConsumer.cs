@@ -1,4 +1,4 @@
-﻿using Amazon;
+using Amazon;
 using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
@@ -40,7 +40,7 @@ namespace ApacBreachersRanked.Infrastructure.SQS.Consumer
                     QueueUrl = _config.QueueUrl,
                     MaxNumberOfMessages = _config.MaxMessages,
                     WaitTimeSeconds = _config.WaitTime
-                });
+                }, stoppingToken);
 
                 await Task.WhenAll(messageResponse.Messages.Select(HandleMessage));
             }

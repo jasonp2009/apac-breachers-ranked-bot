@@ -33,9 +33,9 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
             return mmrAdjustments;
         }
 
-        var kFactor = mmrAdjustments.Sum(adj => Math.Abs(adj.Adjustment)) / mmrAdjustments.Count * 2;
+        var mmrAdjustmentScale = mmrAdjustments.Sum(adj => Math.Abs(adj.Adjustment)) / mmrAdjustments.Count;
         
-        var performanceAdjustments = CalculatePerformanceAdjustments(match, playerMmrsList, gameData, kFactor).ToList();
+        var performanceAdjustments = CalculatePerformanceAdjustments(match, playerMmrsList, gameData, mmrAdjustmentScale).ToList();
 
         var finalAdjustments = new List<MMRAdjustment>();
         foreach (var mmrAdjustment in mmrAdjustments)
@@ -49,13 +49,14 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
         return finalAdjustments;
     }
     
-    private IEnumerable<MMRAdjustment> CalculatePerformanceAdjustments(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, GameDataEntity gameData, decimal kFactor = KFactor)
+    private IEnumerable<MMRAdjustment> CalculatePerformanceAdjustments(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, GameDataEntity gameData, decimal scale)
     {
         if (!match.HomePlayers.Any()) throw new ArgumentException(nameof(match.HomePlayers));
         if (!match.AwayPlayers.Any()) throw new ArgumentException(nameof(match.AwayPlayers));
         if (match?.Score is null) throw new ArgumentNullException(nameof(match.Score));
 
-        List<MMRAdjustment> adjustments = new();
+        List<MMRAdjustment> homeAdjustments = new();
+        List<MMRAdjustment> awayAdjustments = new();
 
         var playerMmrsList = playerMmrs.ToList();
 
@@ -67,20 +68,30 @@ public class PerformanceMmrAdjustmentService : IMmrAdjustmentService
                 match.AwayPlayers.Any(awayPlayer => awayPlayer.UserId.Equals(playerMmr.UserId))).ToList();
 
         foreach (var player in homePlayerMmrs)
-            adjustments.Add(new MMRAdjustment(
+            homeAdjustments.Add(new MMRAdjustment(
                 player.UserId,
                 match.MatchFormat,
-                CalculatePlayerMmrAdjustment(player, homePlayerMmrs, gameData, kFactor),
+                CalculatePlayerMmrAdjustment(player, homePlayerMmrs, gameData, KFactor),
                 match));
+        var homeAverage = homeAdjustments.Average(adj => Math.Abs(adj.Adjustment));
+        foreach (var homeAdjustment in homeAdjustments)
+        {
+            homeAdjustment.Adjustment *= scale / homeAverage;
+        }
 
         foreach (var player in awayPlayerMmrs)
-            adjustments.Add(new MMRAdjustment(
+            awayAdjustments.Add(new MMRAdjustment(
                 player.UserId,
                 match.MatchFormat,
-                CalculatePlayerMmrAdjustment(player, awayPlayerMmrs, gameData, kFactor),
+                CalculatePlayerMmrAdjustment(player, awayPlayerMmrs, gameData, KFactor),
                 match));
+        var awayAverage = homeAdjustments.Average(adj => Math.Abs(adj.Adjustment));
+        foreach (var awayAdjustment in awayAdjustments)
+        {
+            awayAdjustment.Adjustment *= scale / awayAverage;
+        }
 
-        return adjustments;
+        return [..homeAdjustments, ..awayAdjustments];
     }
 
     private static decimal CalculatePlayerMmrAdjustment(PlayerMMR playerMmr, List<PlayerMMR> teamMmrs, GameDataEntity gameData, decimal kFactor)

@@ -20,6 +20,6 @@ public class MMRAdjustment
 
     public IUserId UserId { get; private set; }
     public MatchFormat MatchFormat { get; private set; }
-    public decimal Adjustment { get; private set; }
+    public decimal Adjustment { get; set; }
     public MatchEntity Match { get; private set; }
 }

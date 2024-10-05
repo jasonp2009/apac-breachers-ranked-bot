@@ -6,6 +6,7 @@ using ApacBreachersRanked.Domain.Match.Entities;
 using ApacBreachersRanked.Domain.MMR.Entities;
 using ApacBreachersRanked.Domain.MMR.Events;
 using Discord;
+using Discord.Net;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -41,13 +42,20 @@ namespace ApacBreachersRanked.Application.Match.EventHandlers
                 await matchResultsChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments), components: match.GenerateMatchResultComponent());
             }
 
-            if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel threadChannel)
+            try
             {
-                await threadChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments), components: match.GenerateMatchResultComponent());
-                await threadChannel.ModifyAsync(chnl => {
-                    chnl.Archived = true;
-                    chnl.Locked = true;
-                });
+                if (await _discordClient.GetChannelAsync(matchThreads.MatchThreadId) is IThreadChannel threadChannel)
+                {
+                    await threadChannel.SendMessageAsync(embed: match.GenerateMatchResultEmbed(mmrAdjustments), components: match.GenerateMatchResultComponent());
+                    await threadChannel.ModifyAsync(chnl => {
+                        chnl.Archived = true;
+                        chnl.Locked = true;
+                    });
+                }
+            }
+            catch (HttpException)
+            {
+                // Ignore
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using ApacBreachersRanked.Application.Common.Mediator;
+using ApacBreachersRanked.Application.Common.Mediator;
 using ApacBreachersRanked.Application.DbContext;
 using ApacBreachersRanked.Application.MMR.Extensions;
 using ApacBreachersRanked.Domain.Match.Entities;
@@ -13,6 +13,7 @@ namespace ApacBreachersRanked.Application.MMR.Commands
 {
     public class RecalculateMMRCommand : ICommand
     {
+        public int FromMatchNumber { get; set; }
     }
 
     public class RecalculateMMRCommandHandler : ICommandHandler<RecalculateMMRCommand>
@@ -34,15 +35,28 @@ namespace ApacBreachersRanked.Application.MMR.Commands
         {
             try
             {
-                await _dbContext.ResetMMRAsync();
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
                 List<MatchEntity> matches = await _dbContext.Matches
                     .Include(x => x.AllPlayers)
                     .Include(x => x.Score)
-                    .Where(x => x.Status == Domain.Match.Enums.MatchStatus.Completed)
+                    .Where(x => x.Status == Domain.Match.Enums.MatchStatus.Completed && x.MatchNumber >= request.FromMatchNumber)
                     .OrderBy(x => x.MatchNumber)
                     .ToListAsync(cancellationToken);
+
+                foreach (MatchEntity match in matches)
+                {
+                    var mmrAdjustments = await _dbContext.MMRAdjustments.Where(adj => adj.Match == match)
+                        .ToListAsync(cancellationToken);
+                    foreach (var mmrAdjustment in mmrAdjustments)
+                    {
+                        var playerMmr = await _dbContext.PlayerMMRs.FirstOrDefaultAsync(playerMmr =>
+                            playerMmr.UserId.Equals(mmrAdjustment.UserId) && playerMmr.MatchFormat == match.MatchFormat, cancellationToken);
+                        playerMmr.MMR -= mmrAdjustment.Adjustment;
+                        playerMmr.Adjustments.Remove(mmrAdjustment);
+                        _dbContext.MMRAdjustments.Remove(mmrAdjustment);
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
 
                 foreach (MatchEntity match in matches)
                 {

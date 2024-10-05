@@ -92,12 +92,13 @@ namespace ApacBreachersRanked.Modules
 
         [SlashCommand("recalculatemmr", "recalc")]
         [RequireOwner]
-        public async Task RecalculateMMR()
+        public async Task RecalculateMMR(
+            [Summary("FromMatchNumber")] int fromMatchNumber)
         {
             await DeferAsync(ephemeral: true);
             try
             {
-                await _mediator.Send(new RecalculateMMRCommand());
+                await _mediator.Send(new RecalculateMMRCommand { FromMatchNumber = fromMatchNumber });
                 await Context.Interaction.FollowupAsync("MMR Recalculated", ephemeral: true);
             }
             catch (Exception ex)
