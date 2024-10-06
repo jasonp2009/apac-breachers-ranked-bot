@@ -26,9 +26,28 @@ namespace ApacBreachersRanked.Domain.Match.Services
 
             List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMmRsAsync(users, matchQueue.MatchFormat, cancellationToken);
 
+            playerMMRs = (await GetNewPlayedAdjustedMmrsAsync(playerMMRs, cancellationToken)).ToList();
+
             (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs);
 
             return new MatchEntity(matchQueue, home, away);
+        }
+
+        public async Task<IEnumerable<PlayerMMR>> GetNewPlayedAdjustedMmrsAsync(IEnumerable<PlayerMMR> playerMmrs, CancellationToken cancellationToken)
+        {
+            var matchesPlayed = await _mmrService.GetMatchesPlayedAsync(playerMmrs, cancellationToken);
+            return matchesPlayed.Select(pair =>
+            {
+                if (pair.Value >= 5) return pair.Key;
+
+                var curMmr = pair.Key;
+
+                return new PlayerMMR(
+                    curMmr,
+                    curMmr.MatchFormat,
+                    curMmr.MMR - (5 - pair.Value) * 10,
+                    curMmr.Rank);
+            });
         }
 
         public (List<PlayerMMR> Home, List<PlayerMMR> Away) AllocateTeams(List<PlayerMMR> playerMMRs)
