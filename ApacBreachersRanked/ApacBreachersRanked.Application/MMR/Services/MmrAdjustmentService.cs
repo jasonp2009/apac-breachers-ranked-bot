@@ -11,6 +11,7 @@ public class MmrAdjustmentService : IMmrAdjustmentService
     private static readonly decimal KFactor = 24;
     private static readonly decimal MapWeighting = 0.55M;
     private static readonly decimal RoundWeighting = 0.45M;
+    private static readonly decimal BonusMmr = 1;
 
     public async Task<IEnumerable<MMRAdjustment>> CalculateAdjustmentsAsync(MatchEntity match, IEnumerable<PlayerMMR> playerMmrs, CancellationToken cancellationToken)
     {
@@ -35,14 +36,14 @@ public class MmrAdjustmentService : IMmrAdjustmentService
             adjustments.Add(new MMRAdjustment(
                 player.UserId,
                 match.MatchFormat,
-                CalculatePlayerMmrAdjustment(homeTeamMmrAdjustment, homePlayerMmrs, player),
+                CalculatePlayerMmrAdjustment(homeTeamMmrAdjustment, homePlayerMmrs, player) + BonusMmr,
                 match));
 
         foreach (var player in awayPlayerMmrs)
             adjustments.Add(new MMRAdjustment(
                 player.UserId,
                 match.MatchFormat,
-                CalculatePlayerMmrAdjustment(-homeTeamMmrAdjustment, awayPlayerMmrs, player),
+                CalculatePlayerMmrAdjustment(-homeTeamMmrAdjustment, awayPlayerMmrs, player) + BonusMmr,
                 match));
 
         return adjustments;
