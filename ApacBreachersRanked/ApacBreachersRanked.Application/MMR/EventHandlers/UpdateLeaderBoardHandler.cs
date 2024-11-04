@@ -48,7 +48,7 @@ public class UpdateLeaderBoardHandler : INotificationHandler<MatchMMRCalculatedE
         foreach (var matchFormat in MatchConstantsExtensions.GetEnabledMatchFormats())
         {
             var top50Players = await _dbContext.PlayerMMRs
-                .Where(x => x.MatchFormat == matchFormat)
+                .Where(x => x.MatchFormat == matchFormat && x.Rank != null)
                 .OrderByDescending(x => x.MMR)
                 .Take(50)
                 .ToListAsync(cancellationToken);

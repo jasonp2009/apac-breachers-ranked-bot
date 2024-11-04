@@ -69,7 +69,7 @@ namespace ApacBreachersRanked.Application.MMR.Commands
                         player.SetRank(playerMMR?.Rank);
                     }
                     var allPlayerMmrs =
-                        await _mmrService.GetPlayerMmRsAsync(match.AllPlayers, match.MatchFormat, cancellationToken);
+                        await _mmrService.GetPlayerMmRsAsync(match.AllPlayers, match.MatchFormat, true, cancellationToken);
                     var adjustments = (await _mmrAdjustmentService.CalculateAdjustmentsAsync(match, allPlayerMmrs, cancellationToken)).ToList();
 
                     allPlayerMmrs.ApplyAdjustmentsToPlayerMmrs(adjustments);

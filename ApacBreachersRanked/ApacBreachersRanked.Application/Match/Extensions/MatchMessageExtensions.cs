@@ -176,12 +176,19 @@ namespace ApacBreachersRanked.Application.Match.Extensions
             sb.Append(player.GetUserMention());
             if (withMMR)
             {
-                sb.Append($" **{player.MMR.ToString("0")}**");
-                if (mmrAdjustment != null)
+                if (player.Rank == null)
                 {
-                    sb.Append(" (");
-                    if (mmrAdjustment >= 0) sb.Append("+");
-                    sb.Append($"{mmrAdjustment?.ToString("0.#")})");
+                    sb.Append($" **Unranked**");
+                }
+                else
+                {
+                    sb.Append($" **{player.MMR.ToString("0")}**");
+                    if (mmrAdjustment != null)
+                    {
+                        sb.Append(" (");
+                        if (mmrAdjustment >= 0) sb.Append("+");
+                        sb.Append($"{mmrAdjustment?.ToString("0.#")})");
+                    }
                 }
             }
             if (withConfirmation) sb.Append(" " + (player.Confirmed ? ConfirmedEmoji : PendingConfirmationEmoji));
