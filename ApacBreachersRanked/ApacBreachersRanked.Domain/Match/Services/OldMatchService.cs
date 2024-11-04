@@ -21,7 +21,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
         {
             List<IUser> users = matchQueue.Users.Take(10).Select(user => user as IUser).ToList();
 
-            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMmRsAsync(users, matchQueue.MatchFormat, cancellationToken);
+            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMmRsAsync(users, matchQueue.MatchFormat, cancellationToken: cancellationToken);
 
             (List<PlayerMMR> home, List<PlayerMMR> away) = AllocateTeams(playerMMRs, matchQueue.MatchFormat.GetMatchFormatConstants());
 

@@ -11,6 +11,7 @@ public class GetPlayerMMRsQuery : IQuery<List<PlayerMMR>>
 {
     public IEnumerable<IUser> Users { get; set; }
     public MatchFormat MatchFormat { get; set; }
+    public bool IncludeAdjustments { get; set; }
 }
 
 public class GetPlayerMMRsQueryHandler : IQueryHandler<GetPlayerMMRsQuery, List<PlayerMMR>>
@@ -24,23 +25,29 @@ public class GetPlayerMMRsQueryHandler : IQueryHandler<GetPlayerMMRsQuery, List<
 
     public async Task<List<PlayerMMR>> Handle(GetPlayerMMRsQuery request, CancellationToken cancellationToken)
     {
-        List<PlayerMMR> playerMMRs = new();
+        List<PlayerMMR> playerMmrs = new();
 
         foreach (var user in request.Users)
         {
-            var playerMMR = await _dbContext.PlayerMMRs
-                .Where(x => x.UserId.Equals(user.UserId) && x.MatchFormat == request.MatchFormat)
-                .FirstOrDefaultAsync(cancellationToken);
+            var query = _dbContext.PlayerMMRs
+                .Where(x => x.UserId.Equals(user.UserId) && x.MatchFormat == request.MatchFormat);
 
-            if (playerMMR == null)
+            if (request.IncludeAdjustments)
             {
-                playerMMR = new PlayerMMR(user, request.MatchFormat);
-                await _dbContext.PlayerMMRs.AddAsync(playerMMR, cancellationToken);
+                query = query.Include(playerMmr => playerMmr.Adjustments);
             }
 
-            playerMMRs.Add(playerMMR);
+            var playerMmr = await query.FirstOrDefaultAsync(cancellationToken);
+
+            if (playerMmr == null)
+            {
+                playerMmr = new PlayerMMR(user, request.MatchFormat);
+                await _dbContext.PlayerMMRs.AddAsync(playerMmr, cancellationToken);
+            }
+
+            playerMmrs.Add(playerMmr);
         }
 
-        return playerMMRs;
+        return playerMmrs;
     }
 }

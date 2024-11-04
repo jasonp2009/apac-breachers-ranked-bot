@@ -1,5 +1,6 @@
 ﻿using ApacBreachersRanked.Domain.Common;
 using ApacBreachersRanked.Domain.Match.Enums;
+using ApacBreachersRanked.Domain.MMR.Constants;
 using ApacBreachersRanked.Domain.MMR.Enums;
 using ApacBreachersRanked.Domain.MMR.Events;
 using ApacBreachersRanked.Domain.MMR.Helpers;
@@ -31,10 +32,15 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
         {
             decimal newMMR = MMR + adjustment.Adjustment;
 
-            if (Rank == null)
+            if (Adjustments.Count < MmrConstants.UnrankedMatches)
+            {
+                Rank = null;
+            }
+            else if (Rank == null)
             {
                 Rank = RankHelpers.GetRankForMMR(newMMR);
-            } else
+            }
+            else
             {
                 try
                 {

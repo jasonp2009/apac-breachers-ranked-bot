@@ -19,7 +19,7 @@ namespace ApacBreachersRanked.Application.MMR.Services
             _mediator = mediator;
             _dbContext = dbContext;
         }
-        public Task<List<PlayerMMR>> GetPlayerMmRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, CancellationToken cancellationToken = default)
+        public Task<List<PlayerMMR>> GetPlayerMmRsAsync(IEnumerable<IUser> users, MatchFormat matchFormat, bool includeAdjustments = false, CancellationToken cancellationToken = default)
             => _mediator.Send(new GetPlayerMMRsQuery { Users = users, MatchFormat = matchFormat }, cancellationToken);
 
         public async Task<Dictionary<PlayerMMR, int>> GetMatchesPlayedAsync(IEnumerable<PlayerMMR> mmrs, CancellationToken cancellationToken = default)

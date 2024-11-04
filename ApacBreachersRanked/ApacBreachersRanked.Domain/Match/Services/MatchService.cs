@@ -24,7 +24,7 @@ namespace ApacBreachersRanked.Domain.Match.Services
                 .Select(user => user as IUser)
                 .ToList();
 
-            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMmRsAsync(users, matchQueue.MatchFormat, cancellationToken);
+            List<PlayerMMR> playerMMRs = await _mmrService.GetPlayerMmRsAsync(users, matchQueue.MatchFormat, cancellationToken: cancellationToken);
 
             playerMMRs = (await GetNewPlayedAdjustedMmrsAsync(playerMMRs, cancellationToken)).ToList();
 
