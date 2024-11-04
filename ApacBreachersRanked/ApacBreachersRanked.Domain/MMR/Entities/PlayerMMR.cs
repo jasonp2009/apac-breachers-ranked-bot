@@ -30,7 +30,9 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
 
         public void ApplyAdjustment(MMRAdjustment adjustment)
         {
-            decimal newMMR = MMR + adjustment.Adjustment;
+            Adjustments.Add(adjustment);
+            var oldMmr = MMR;
+            MMR += adjustment.Adjustment;
 
             if (Adjustments.Count < MmrConstants.UnrankedMatches)
             {
@@ -38,14 +40,14 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
             }
             else if (Rank == null)
             {
-                Rank = RankHelpers.GetRankForMMR(newMMR);
+                Rank = RankHelpers.GetRankForMMR(MMR);
             }
             else
             {
                 try
                 {
-                    Rank rankByMMR = RankHelpers.GetRankForMMR(MMR);
-                    Rank newRankByMMR = RankHelpers.GetRankForMMR(newMMR);
+                    Rank rankByMMR = RankHelpers.GetRankForMMR(oldMmr);
+                    Rank newRankByMMR = RankHelpers.GetRankForMMR(MMR);
                     if (Rank != rankByMMR && rankByMMR == newRankByMMR)
                     {
                         bool isRankUp = (int)Rank < (int)newRankByMMR;
@@ -64,9 +66,6 @@ namespace ApacBreachersRanked.Domain.MMR.Entities
                     throw;
                 }
             }
-
-            MMR = newMMR;
-            Adjustments.Add(adjustment);
             QueueDomainEvent(new PlayerMMRAdjustedEvent { UserId = UserId });
         }
     }
