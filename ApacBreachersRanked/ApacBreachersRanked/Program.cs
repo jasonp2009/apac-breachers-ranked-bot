@@ -9,6 +9,7 @@ using Serilog.Formatting.Compact;
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((host,services) =>
     {
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(host.Configuration));
         services.UseSqsPublisher(host.Configuration);
         services.AddInteractionService(host.Configuration);
         services.AddApplication(host.Configuration);
