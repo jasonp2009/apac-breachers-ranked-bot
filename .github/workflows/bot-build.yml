@@ -9,6 +9,7 @@ jobs:
   build:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    environment: Production
     permissions:
       packages: write
       contents: read
