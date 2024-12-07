@@ -26,7 +26,8 @@ public static class MatchConstants
                     Map.Hideout,
                     Map.Ship,
                     Map.Arctic,
-                    Map.Dam
+                    Map.Dam,
+                    Map.Mall
                 ]
             }
         },
@@ -48,7 +49,8 @@ public static class MatchConstants
                     Map.Hideout,
                     Map.Ship,
                     Map.Arctic,
-                    Map.Dam
+                    Map.Dam,
+                    Map.Mall
                 ]
             }
         }

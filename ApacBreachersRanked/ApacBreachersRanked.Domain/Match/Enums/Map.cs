@@ -14,6 +14,7 @@ namespace ApacBreachersRanked.Domain.Match.Enums
         Ship,
         Arctic,
         Dam,
+        Mall,
         
         Killhouse = 101,
         Outpost = 102
