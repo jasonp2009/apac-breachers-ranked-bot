@@ -6,6 +6,7 @@ public enum GadgetType
     SmokeGrenade = 11,
     IncendiaryGrenade = 12,
     HealSyringe = 13,
+    CloneProjector = 14,
     
     BreachingFoam = 20,
     Flashbang = 21,
