@@ -79,8 +79,14 @@ public class UpdateLeaderBoardHandler : INotificationHandler<MatchMMRCalculatedE
             await _dbContext.LeaderBoardMessages.AddAsync(leaderBoardMessage, cancellationToken);
         }
 
-        if (await _discordClient.GetChannelAsync(_config.LeaderBoardChannelId) is ITextChannel channel)
+        if (await _discordClient.GetChannelAsync(_config.LeaderBoardChannelId) is IThreadChannel channel)
         {
+            if (channel.IsArchived || channel.IsLocked)
+                await channel.ModifyAsync(channelProperties =>
+                {
+                    channelProperties.Archived = false;
+                    channelProperties.Locked = false;
+                });
             if (leaderBoardMessage.LeaderBoardMessageId != 0 &&
                 await channel.GetMessageAsync(leaderBoardMessage.LeaderBoardMessageId) is IUserMessage message)
             {
