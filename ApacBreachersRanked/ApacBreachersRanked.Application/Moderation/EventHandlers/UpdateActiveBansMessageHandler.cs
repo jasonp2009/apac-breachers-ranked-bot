@@ -63,8 +63,14 @@ namespace ApacBreachersRanked.Application.Moderation.EventHandlers
                 await _dbContext.ActiveBansMessages.AddAsync(activeBanMessage);
             }
 
-            if (await _discordClient.GetChannelAsync(_options.ActiveBanChannelId) is ITextChannel channel)
+            if (await _discordClient.GetChannelAsync(_options.ActiveBanChannelId) is IThreadChannel channel)
             {
+                if (channel.IsArchived || channel.IsLocked)
+                    await channel.ModifyAsync(channelProperties =>
+                    {
+                        channelProperties.Archived = false;
+                        channelProperties.Locked = false;
+                    });
                 if (activeBanMessage.ActiveBansMessageId != 0 &&
                     await channel.GetMessageAsync(activeBanMessage.ActiveBansMessageId) is IUserMessage message)
                 {
